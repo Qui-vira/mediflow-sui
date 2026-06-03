@@ -1,0 +1,18 @@
+{
+  "criteria": [
+    {"keyword_flags": ["suicide", "kill myself", "end my life", "self-harm"], "risk_level": "critical", "action": "Immediate crisis intervention"},
+    {"keyword_flags": ["hurt someone", "harm others", "violent thoughts"], "risk_level": "critical", "action": "Immediate safety assessment"},
+    {"keyword_flags": ["hearing voices", "paranoid", "psychosis"], "risk_level": "high", "action": "Urgent psychiatric review within 24h"},
+    {"keyword_flags": ["cannot sleep", "panic attacks", "severe anxiety"], "risk_level": "medium", "action": "Priority intake within 48h"},
+    {"keyword_flags": ["feeling sad", "low mood", "loss of interest"], "risk_level": "medium", "action": "PHQ-9 screening recommended"},
+    {"keyword_flags": ["stress at work", "relationship issues"], "risk_level": "low", "action": "Standard intake pathway"},
+    {"keyword_flags": ["mild anxiety", "worried"], "risk_level": "low", "action": "Standard intake pathway"}
+  ],
+  "phq9_thresholds": {
+    "minimal": {"min": 0, "max": 4, "risk_level": "low"},
+    "mild": {"min": 5, "max": 9, "risk_level": "low"},
+    "moderate": {"min": 10, "max": 14, "risk_level": "medium"},
+    "moderately_severe": {"min": 15, "max": 19, "risk_level": "high"},
+    "severe": {"min": 20, "max": 27, "risk_level": "critical"}
+  }
+}

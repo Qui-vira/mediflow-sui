@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {"test_name": "Full Blood Count", "requires_referral": false, "sample_type": "blood"},
+    {"test_name": "Malaria Parasite", "requires_referral": false, "sample_type": "blood"},
+    {"test_name": "HIV Screening", "requires_referral": false, "sample_type": "blood"},
+    {"test_name": "Urinalysis", "requires_referral": false, "sample_type": "urine"},
+    {"test_name": "Liver Function Test", "requires_referral": true, "sample_type": "blood"},
+    {"test_name": "Kidney Function Test", "requires_referral": true, "sample_type": "blood"},
+    {"test_name": "Chest X-Ray", "requires_referral": true, "sample_type": "imaging"},
+    {"test_name": "Abdominal Ultrasound", "requires_referral": true, "sample_type": "imaging"},
+    {"test_name": "ECG", "requires_referral": true, "sample_type": "cardiac"},
+    {"test_name": "HbA1c", "requires_referral": true, "sample_type": "blood"},
+    {"test_name": "Thyroid Panel", "requires_referral": true, "sample_type": "blood"},
+    {"test_name": "CT Scan Head", "requires_referral": true, "sample_type": "imaging"},
+    {"test_name": "MRI Spine", "requires_referral": true, "sample_type": "imaging"},
+    {"test_name": "Pap Smear", "requires_referral": true, "sample_type": "cervical"},
+    {"test_name": "COVID-19 PCR", "requires_referral": false, "sample_type": "swab"}
+  ]
+}

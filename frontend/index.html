@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedBand — Case Intake</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4f;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #00c896;
+      --accent-dim: #00a67d;
+      --danger: #ff6b6b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      width: 100%;
+      max-width: 520px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+      margin-top: 1rem;
+    }
+    label:first-of-type { margin-top: 0; }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    button {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #0f1419;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover { background: var(--accent-dim); }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: "Cascadia Code", "Consolas", monospace;
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 320px;
+      overflow-y: auto;
+      display: none;
+    }
+    #result.visible { display: block; }
+    #result.error { border-color: var(--danger); color: var(--danger); }
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #0f1419;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MedBand <span class="badge">Phase 1</span></h1>
+    <p class="subtitle">The Billionaire Republic — Healthcare Workflow Intake</p>
+
+    <form id="caseForm">
+      <label for="sector">Healthcare Sector</label>
+      <select id="sector" name="sector" required>
+        <option value="pharmacy">Pharmacy</option>
+        <option value="hospital_triage">Hospital Triage</option>
+        <option value="lab">Lab / Diagnostics</option>
+        <option value="mental_health">Mental Health</option>
+        <option value="hmo_claims">HMO / Insurance Claims</option>
+        <option value="emergency">Emergency Dispatch</option>
+      </select>
+
+      <label for="name">Patient / Caller Name</label>
+      <input type="text" id="name" name="name" placeholder="e.g. Ada Okonkwo" required>
+
+      <label for="issue">Issue / Complaint</label>
+      <textarea id="issue" name="issue" placeholder="Describe symptoms, concern, or emergency..." required></textarea>
+
+      <label for="service">Requested Service</label>
+      <input type="text" id="service" name="service" placeholder="Drug name, test, procedure code, etc." required>
+
+      <label for="urgency">Urgency</label>
+      <select id="urgency" name="urgency" required>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="critical">Critical</option>
+      </select>
+
+      <button type="submit" id="submitBtn">Submit Case</button>
+    </form>
+
+    <pre id="result"></pre>
+  </div>
+
+  <script>
+    const form = document.getElementById('caseForm');
+    const result = document.getElementById('result');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+      result.classList.remove('error', 'visible');
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/submit', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        result.textContent = JSON.stringify(data, null, 2);
+        result.classList.add('visible');
+        if (!response.ok) result.classList.add('error');
+      } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+        result.classList.add('visible', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Case';
+      }
+    });
+  </script>
+</body>
+</html>

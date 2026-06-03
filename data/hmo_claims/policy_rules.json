@@ -1,0 +1,10 @@
+{
+  "policies": [
+    {"policy_number": "HMO-2024-001", "status": "active", "plan_type": "Premium", "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Maternity"], "exclusions": ["Cosmetic Surgery", "Experimental Treatments"]},
+    {"policy_number": "HMO-2024-002", "status": "active", "plan_type": "Standard", "covered_procedures": ["GP Consultation", "Lab Tests", "Emergency"], "exclusions": ["Dental", "Optical", "Maternity"]},
+    {"policy_number": "HMO-2024-003", "status": "expired", "plan_type": "Basic", "covered_procedures": ["GP Consultation"], "exclusions": ["Surgery", "Specialist Care", "Lab Tests"]},
+    {"policy_number": "HMO-2024-004", "status": "active", "plan_type": "Corporate", "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Dental", "Optical"], "exclusions": ["Cosmetic Surgery"]},
+    {"policy_number": "HMO-2024-005", "status": "active", "plan_type": "Premium", "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Maternity", "Mental Health"], "exclusions": ["Weight Loss Surgery"]},
+    {"policy_number": "HMO-2023-099", "status": "suspended", "plan_type": "Standard", "covered_procedures": [], "exclusions": ["All procedures — payment overdue"]}
+  ]
+}

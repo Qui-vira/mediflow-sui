@@ -1,0 +1,14 @@
+{
+  "coverage": [
+    {"procedure_code": "CONS-GP", "covered_amount_ngn": 15000, "limit_remaining_ngn": 485000, "co_pay_ngn": 0},
+    {"procedure_code": "LAB-FBC", "covered_amount_ngn": 4500, "limit_remaining_ngn": 195500, "co_pay_ngn": 500},
+    {"procedure_code": "LAB-LFT", "covered_amount_ngn": 12000, "limit_remaining_ngn": 138000, "co_pay_ngn": 3000},
+    {"procedure_code": "SURG-APP", "covered_amount_ngn": 350000, "limit_remaining_ngn": 1650000, "co_pay_ngn": 150000},
+    {"procedure_code": "MAT-DEL", "covered_amount_ngn": 450000, "limit_remaining_ngn": 1050000, "co_pay_ngn": 67500},
+    {"procedure_code": "DENT-EXTR", "covered_amount_ngn": 8000, "limit_remaining_ngn": 92000, "co_pay_ngn": 3200},
+    {"procedure_code": "OPT-EXAM", "covered_amount_ngn": 5000, "limit_remaining_ngn": 75000, "co_pay_ngn": 2500},
+    {"procedure_code": "MH-THER", "covered_amount_ngn": 25000, "limit_remaining_ngn": 275000, "co_pay_ngn": 6250},
+    {"procedure_code": "EMER-ADM", "covered_amount_ngn": 500000, "limit_remaining_ngn": 2500000, "co_pay_ngn": 50000},
+    {"procedure_code": "COSM-RHINO", "covered_amount_ngn": 0, "limit_remaining_ngn": 0, "co_pay_ngn": 0}
+  ]
+}

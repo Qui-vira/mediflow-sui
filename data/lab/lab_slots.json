@@ -1,0 +1,16 @@
+{
+  "slots": [
+    {"test_name": "Full Blood Count", "slots_today": 45, "next_available_date": "today", "prep_instructions": "No fasting required"},
+    {"test_name": "Malaria Parasite", "slots_today": 60, "next_available_date": "today", "prep_instructions": "No special prep"},
+    {"test_name": "HIV Screening", "slots_today": 30, "next_available_date": "today", "prep_instructions": "Counselling required before test"},
+    {"test_name": "Urinalysis", "slots_today": 50, "next_available_date": "today", "prep_instructions": "Mid-stream clean catch sample"},
+    {"test_name": "Liver Function Test", "slots_today": 12, "next_available_date": "today", "prep_instructions": "Fast 8-12 hours"},
+    {"test_name": "Kidney Function Test", "slots_today": 12, "next_available_date": "today", "prep_instructions": "Fast 8-12 hours"},
+    {"test_name": "Chest X-Ray", "slots_today": 8, "next_available_date": "tomorrow", "prep_instructions": "Remove metal objects"},
+    {"test_name": "Abdominal Ultrasound", "slots_today": 6, "next_available_date": "tomorrow", "prep_instructions": "Fast 6 hours, full bladder"},
+    {"test_name": "ECG", "slots_today": 15, "next_available_date": "today", "prep_instructions": "Avoid caffeine 2 hours prior"},
+    {"test_name": "HbA1c", "slots_today": 10, "next_available_date": "today", "prep_instructions": "No fasting required"},
+    {"test_name": "CT Scan Head", "slots_today": 2, "next_available_date": "2026-06-05", "prep_instructions": "Fast 4 hours, contrast allergy check"},
+    {"test_name": "MRI Spine", "slots_today": 1, "next_available_date": "2026-06-07", "prep_instructions": "Remove all metal, screening form required"}
+  ]
+}

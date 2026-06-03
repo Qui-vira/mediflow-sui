@@ -1,0 +1,14 @@
+{
+  "rules": [
+    {"test_name": "Liver Function Test", "valid_departments": ["Internal Medicine", "Gastroenterology", "General Practice"], "referral_valid_days": 30},
+    {"test_name": "Kidney Function Test", "valid_departments": ["Internal Medicine", "Nephrology", "General Practice"], "referral_valid_days": 30},
+    {"test_name": "Chest X-Ray", "valid_departments": ["Pulmonology", "Emergency", "Internal Medicine"], "referral_valid_days": 14},
+    {"test_name": "Abdominal Ultrasound", "valid_departments": ["Gastroenterology", "Surgery", "Obstetrics"], "referral_valid_days": 21},
+    {"test_name": "ECG", "valid_departments": ["Cardiology", "Emergency", "Internal Medicine"], "referral_valid_days": 7},
+    {"test_name": "HbA1c", "valid_departments": ["Endocrinology", "Internal Medicine", "Diabetes Clinic"], "referral_valid_days": 90},
+    {"test_name": "Thyroid Panel", "valid_departments": ["Endocrinology", "Internal Medicine"], "referral_valid_days": 60},
+    {"test_name": "CT Scan Head", "valid_departments": ["Neurology", "Emergency", "Neurosurgery"], "referral_valid_days": 7},
+    {"test_name": "MRI Spine", "valid_departments": ["Orthopedics", "Neurology", "Neurosurgery"], "referral_valid_days": 14},
+    {"test_name": "Pap Smear", "valid_departments": ["Obstetrics", "Gynecology", "Family Planning"], "referral_valid_days": 180}
+  ]
+}

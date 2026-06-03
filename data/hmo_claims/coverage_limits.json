@@ -1,0 +1,14 @@
+{
+  "limits": [
+    {"procedure_code": "CONS-GP", "covered_percentage": 100, "annual_limit_ngn": 500000},
+    {"procedure_code": "LAB-FBC", "covered_percentage": 90, "annual_limit_ngn": 200000},
+    {"procedure_code": "LAB-LFT", "covered_percentage": 80, "annual_limit_ngn": 150000},
+    {"procedure_code": "SURG-APP", "covered_percentage": 70, "annual_limit_ngn": 2000000},
+    {"procedure_code": "MAT-DEL", "covered_percentage": 85, "annual_limit_ngn": 1500000},
+    {"procedure_code": "DENT-EXTR", "covered_percentage": 60, "annual_limit_ngn": 100000},
+    {"procedure_code": "OPT-EXAM", "covered_percentage": 50, "annual_limit_ngn": 80000},
+    {"procedure_code": "MH-THER", "covered_percentage": 75, "annual_limit_ngn": 300000},
+    {"procedure_code": "EMER-ADM", "covered_percentage": 90, "annual_limit_ngn": 3000000},
+    {"procedure_code": "COSM-RHINO", "covered_percentage": 0, "annual_limit_ngn": 0}
+  ]
+}

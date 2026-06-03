@@ -1,0 +1,15 @@
+{
+  "rules": [
+    {"symptom_keywords": ["chest pain", "crushing", "radiating arm"], "triage_level": "red", "action": "Immediate ECG and physician review"},
+    {"symptom_keywords": ["difficulty breathing", "cannot breathe", "gasping"], "triage_level": "red", "action": "Immediate oxygen and physician"},
+    {"symptom_keywords": ["unconscious", "unresponsive", "collapsed"], "triage_level": "red", "action": "Activate resuscitation protocol"},
+    {"symptom_keywords": ["severe bleeding", "hemorrhage", "blood loss"], "triage_level": "red", "action": "Immediate hemorrhage control"},
+    {"symptom_keywords": ["high fever", "confusion", "stiff neck"], "triage_level": "red", "action": "Suspected meningitis — isolate"},
+    {"symptom_keywords": ["moderate pain", "persistent vomiting", "dehydration"], "triage_level": "yellow", "action": "Review within 30 minutes"},
+    {"symptom_keywords": ["fever", "cough", "sore throat"], "triage_level": "yellow", "action": "Review within 30 minutes"},
+    {"symptom_keywords": ["abdominal pain", "nausea"], "triage_level": "yellow", "action": "Review within 30 minutes"},
+    {"symptom_keywords": ["minor cut", "sprain", "mild headache"], "triage_level": "green", "action": "Standard queue — can wait"},
+    {"symptom_keywords": ["routine checkup", "prescription refill"], "triage_level": "green", "action": "Standard queue"},
+    {"symptom_keywords": ["cold symptoms", "runny nose"], "triage_level": "green", "action": "Standard queue"}
+  ]
+}

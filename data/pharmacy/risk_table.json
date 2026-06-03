@@ -1,0 +1,19 @@
+{
+  "interactions": [
+    {"drug_name": "Warfarin", "interacts_with": "Ibuprofen", "severity": "critical", "note": "Increased bleeding risk"},
+    {"drug_name": "Warfarin", "interacts_with": "Aspirin", "severity": "critical", "note": "Severe bleeding risk — avoid combination"},
+    {"drug_name": "Metformin", "interacts_with": "Alcohol", "severity": "high", "note": "Lactic acidosis risk"},
+    {"drug_name": "Amoxicillin", "interacts_with": "Methotrexate", "severity": "high", "note": "Increased methotrexate toxicity"},
+    {"drug_name": "Amlodipine", "interacts_with": "Grapefruit", "severity": "medium", "note": "Increased drug levels"},
+    {"drug_name": "Azithromycin", "interacts_with": "Warfarin", "severity": "high", "note": "Enhanced anticoagulant effect"},
+    {"drug_name": "Ciprofloxacin", "interacts_with": "Antacids", "severity": "medium", "note": "Reduced absorption"},
+    {"drug_name": "Losartan", "interacts_with": "Potassium supplements", "severity": "high", "note": "Hyperkalemia risk"},
+    {"drug_name": "Omeprazole", "interacts_with": "Clopidogrel", "severity": "medium", "note": "Reduced antiplatelet effect"},
+    {"drug_name": "Atorvastatin", "interacts_with": "Grapefruit", "severity": "medium", "note": "Increased statin levels"},
+    {"drug_name": "Diclofenac", "interacts_with": "Lisinopril", "severity": "high", "note": "Reduced antihypertensive effect"},
+    {"drug_name": "Salbutamol", "interacts_with": "Beta-blockers", "severity": "medium", "note": "Reduced bronchodilator effect"},
+    {"drug_name": "Insulin Glargine", "interacts_with": "Alcohol", "severity": "high", "note": "Hypoglycemia risk"},
+    {"drug_name": "Tramadol", "interacts_with": "SSRIs", "severity": "critical", "note": "Serotonin syndrome risk"},
+    {"drug_name": "Prednisolone", "interacts_with": "NSAIDs", "severity": "medium", "note": "Increased GI ulcer risk"}
+  ]
+}

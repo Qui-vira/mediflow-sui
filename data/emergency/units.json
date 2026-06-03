@@ -1,0 +1,14 @@
+{
+  "units": [
+    {"unit_id": "AMB-001", "unit_type": "ambulance", "status": "available", "location": "Victoria Island", "eta_minutes": 8},
+    {"unit_id": "AMB-002", "unit_type": "ambulance", "status": "available", "location": "Ikeja", "eta_minutes": 12},
+    {"unit_id": "AMB-003", "unit_type": "ambulance", "status": "busy", "location": "Lekki", "eta_minutes": 25},
+    {"unit_id": "FIRE-001", "unit_type": "fire_engine", "status": "available", "location": "Surulere", "eta_minutes": 10},
+    {"unit_id": "FIRE-002", "unit_type": "fire_engine", "status": "available", "location": "Yaba", "eta_minutes": 7},
+    {"unit_id": "FIRE-003", "unit_type": "fire_engine", "status": "busy", "location": "Apapa", "eta_minutes": 30},
+    {"unit_id": "RESC-001", "unit_type": "rescue", "status": "available", "location": "Lagos Island", "eta_minutes": 15},
+    {"unit_id": "ALS-001", "unit_type": "advanced_life_support", "status": "available", "location": "Gbagada", "eta_minutes": 11},
+    {"unit_id": "POL-001", "unit_type": "police", "status": "available", "location": "Oshodi", "eta_minutes": 6},
+    {"unit_id": "HAZ-001", "unit_type": "hazmat", "status": "available", "location": "Ikorodu", "eta_minutes": 20}
+  ]
+}
