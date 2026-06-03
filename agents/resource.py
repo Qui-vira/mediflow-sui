@@ -1,4 +1,4 @@
-"""Resource Agent — checks stock, beds, slots, and availability."""
+"""Resource Agent - checks stock, beds, slots, and availability."""
 import json
 import sys
 from pathlib import Path
@@ -36,4 +36,4 @@ def run(case_id: str, requested_service: str, intake_result: dict = None) -> dic
 
 
 if __name__ == "__main__":
-    print("Resource agent module loaded — no errors")
+    print("Resource agent module loaded - no errors")

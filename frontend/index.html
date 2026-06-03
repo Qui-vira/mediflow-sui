@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedBand — Case Intake</title>
+  <title>MedBand - Case Intake</title>
   <style>
     :root {
       --bg: #0f1419;
@@ -92,16 +92,36 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      font-family: "Cascadia Code", "Consolas", monospace;
-      font-size: 0.75rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 320px;
-      overflow-y: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
       display: none;
     }
     #result.visible { display: block; }
-    #result.error { border-color: var(--danger); color: var(--danger); }
+    #result.error { border-color: var(--danger); }
+    #result h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent);
+    }
+    #result .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    #result .row:last-child { border-bottom: none; }
+    #result .label { color: var(--muted); font-size: 0.8rem; }
+    #result .value { font-weight: 500; text-align: right; max-width: 60%; }
+    #result .status-ready { color: var(--accent); }
+    #result .status-escalated { color: var(--danger); }
+    #result .note {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: var(--surface);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
     .badge {
       display: inline-block;
       background: var(--accent);
@@ -117,7 +137,7 @@
 <body>
   <div class="container">
     <h1>MedBand <span class="badge">Phase 1</span></h1>
-    <p class="subtitle">The Billionaire Republic — Healthcare Workflow Intake</p>
+    <p class="subtitle">The Billionaire Republic - Healthcare Workflow Intake</p>
 
     <form id="caseForm">
       <label for="sector">Healthcare Sector</label>
@@ -150,7 +170,7 @@
       <button type="submit" id="submitBtn">Submit Case</button>
     </form>
 
-    <pre id="result"></pre>
+    <div id="result"></div>
   </div>
 
   <script>
@@ -158,11 +178,54 @@
     const result = document.getElementById('result');
     const submitBtn = document.getElementById('submitBtn');
 
+    function labelize(key) {
+      return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function renderSummary(data) {
+      if (data.error) {
+        return '<h3>Submission Failed</h3><p>' + data.error + '</p>';
+      }
+
+      const intake = data.intake || {};
+      const verification = data.verification || {};
+      const resource = data.resource || {};
+      const statusClass = data.status === 'ESCALATED' ? 'status-escalated' : 'status-ready';
+
+      let html = '<h3>Case Submitted</h3>';
+      html += row('Case ID', data.case_id);
+      html += row('Status', data.status.replace(/_/g, ' '), statusClass);
+      html += row('Approver', data.human_role);
+      html += row('Patient', intake.requester_name || intake.caller_name);
+      html += row('Service', intake.requested_service);
+      html += row('Issue', intake.presenting_issue || intake.chief_complaint || intake.presenting_concern);
+
+      if (verification.reason) {
+        html += '<div class="note"><strong>Verification:</strong> ' + verification.reason + '</div>';
+      }
+      if (resource.in_stock !== undefined) {
+        html += row('In Stock', resource.in_stock ? 'Yes (' + resource.quantity_available + ' units)' : 'No');
+      }
+      if (resource.unit_price_ngn) {
+        html += row('Price', '₦' + resource.unit_price_ngn);
+      }
+
+      const auditCount = (data.audit_trail || []).length;
+      html += '<div class="note">Workflow complete. ' + auditCount + ' audit entries recorded. Open the Streamlit dashboard to review and approve.</div>';
+      return html;
+    }
+
+    function row(label, value, extraClass) {
+      if (!value) return '';
+      return '<div class="row"><span class="label">' + label + '</span><span class="value ' + (extraClass || '') + '">' + value + '</span></div>';
+    }
+
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       submitBtn.disabled = true;
       submitBtn.textContent = 'Processing...';
       result.classList.remove('error', 'visible');
+      result.innerHTML = '';
 
       const formData = new FormData(form);
 
@@ -172,11 +235,11 @@
           body: formData
         });
         const data = await response.json();
-        result.textContent = JSON.stringify(data, null, 2);
+        result.innerHTML = renderSummary(data);
         result.classList.add('visible');
         if (!response.ok) result.classList.add('error');
       } catch (err) {
-        result.textContent = 'Error: ' + err.message;
+        result.innerHTML = '<h3>Error</h3><p>' + err.message + '</p>';
         result.classList.add('visible', 'error');
       } finally {
         submitBtn.disabled = false;

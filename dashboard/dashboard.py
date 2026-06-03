@@ -1,5 +1,4 @@
 """Streamlit human approval dashboard for MedBand."""
-import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -19,9 +18,51 @@ from core.workflow import list_cases, load_case
 
 st.set_page_config(page_title="MedBand Dashboard", page_icon="🏥", layout="wide")
 
-st.title("MedBand — Human Approval Dashboard")
+SKIP_KEYS = {"case_id", "status", "parse_error", "raw"}
+
+
+def labelize(key: str) -> str:
+    return key.replace("_", " ").strip().title()
+
+
+def render_fields(data: dict, skip: set | None = None):
+    skip = skip or SKIP_KEYS
+    if not data:
+        st.write("No data available.")
+        return
+    for key, value in data.items():
+        if key in skip or value in (None, "", []):
+            continue
+        if isinstance(value, list):
+            if not value:
+                continue
+            if isinstance(value[0], dict):
+                st.markdown(f"**{labelize(key)}**")
+                for item in value:
+                    parts = [f"{labelize(k)}: {v}" for k, v in item.items() if v not in (None, "")]
+                    st.markdown(f"- {' | '.join(parts)}")
+            else:
+                st.markdown(f"**{labelize(key)}:** {', '.join(str(v) for v in value)}")
+        elif isinstance(value, dict):
+            st.markdown(f"**{labelize(key)}**")
+            render_fields(value, skip=set())
+        else:
+            st.markdown(f"**{labelize(key)}:** {value}")
+
+
+def status_badge(status: str) -> str:
+    if status in ("READY_FOR_REVIEW", "CASE_CLEAR", "INTAKE_COMPLETE", "RESOURCE_COMPLETE"):
+        return "🟢"
+    if status in ("CASE_CAUTION", "INCOMPLETE"):
+        return "🟡"
+    if status in ("ESCALATED", "CASE_ESCALATE", "HUMAN_ALERT"):
+        return "🔴"
+    return "⚪"
+
+
+st.title("MedBand - Human Approval Dashboard")
 st.caption(
-    f"**The Billionaire Republic (TBR)** | Sector: **{ACTIVE_SECTOR}** | "
+    f"**The Billionaire Republic (TBR)** | Sector: **{ACTIVE_SECTOR.replace('_', ' ').title()}** | "
     f"Approver: **{human_role()}**"
 )
 
@@ -32,12 +73,11 @@ st.info(
 )
 
 case_ids = list_cases()
-selected = st.sidebar.selectbox("Select Case", case_ids if case_ids else ["— none —"])
+selected = st.sidebar.selectbox("Select Case", case_ids if case_ids else ["No cases yet"])
 
 if not case_ids:
     st.warning("No cases yet. Submit a case via the web form first.")
-    st.markdown("```bash\npython frontend/app.py\n```")
-    st.markdown("Open http://localhost:5000")
+    st.markdown("Run `python frontend/app.py` then open http://localhost:5000")
     st.stop()
 
 case = load_case(selected)
@@ -51,8 +91,8 @@ status = case.get("status", "UNKNOWN")
 st.subheader("Case Summary")
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Case ID", case_id)
-col2.metric("Status", status)
-col3.metric("Sector", case.get("sector", ACTIVE_SECTOR))
+col2.metric("Status", f"{status_badge(status)} {status.replace('_', ' ').title()}")
+col3.metric("Sector", case.get("sector", ACTIVE_SECTOR).replace("_", " ").title())
 col4.metric("Human Role", case.get("human_role", human_role()))
 
 st.divider()
@@ -63,7 +103,7 @@ with tab1:
     st.subheader("Intake Result")
     intake = case.get("intake", {})
     if intake:
-        st.json(intake)
+        render_fields(intake)
     else:
         st.write("No intake data.")
 
@@ -77,8 +117,10 @@ with tab2:
         elif vstatus == "CASE_CAUTION":
             st.warning(f"Caution: {verification.get('reason', 'Review recommended')}")
         else:
-            st.success(f"Status: {vstatus}")
-        st.json(verification)
+            st.success(f"Verified: {verification.get('reason', vstatus)}")
+        render_fields(verification, skip={"reason", "recommendation"})
+        if verification.get("recommendation"):
+            st.markdown(f"**Recommendation:** {verification['recommendation']}")
     else:
         st.write("Verification skipped (escalated before resource check).")
 
@@ -86,21 +128,29 @@ with tab3:
     st.subheader("Resource Result")
     resource = case.get("resource", {})
     if resource:
-        st.json(resource)
+        render_fields(resource)
     else:
         st.write("Resource check skipped (case escalated).")
 
 with tab4:
-    st.subheader("Audit Trail (Mock Band Room)")
+    st.subheader("Audit Trail")
     audit_trail = case.get("audit_trail") or get_log(case_id)
-    st.caption(f"{len(audit_trail)} entries from audit_log")
+    st.caption(f"{len(audit_trail)} agent messages recorded")
     if audit_trail:
         for entry in audit_trail:
-            ts = entry.get("timestamp", "")
-            agent = entry.get("agent", "")
-            estatus = entry.get("status", "")
-            with st.expander(f"[{ts}] {agent} → {estatus}", expanded=False):
-                st.json(entry.get("data", {}))
+            ts = entry.get("timestamp", "")[:19].replace("T", " ")
+            agent = entry.get("agent", "").title()
+            estatus = entry.get("status", "").replace("_", " ")
+            data = entry.get("data", {})
+            summary_parts = []
+            for key in ("requester_name", "requested_service", "drug_name", "reason", "human_role"):
+                if data.get(key):
+                    summary_parts.append(f"{labelize(key)}: {data[key]}")
+            summary = " | ".join(summary_parts) if summary_parts else "Details recorded"
+            with st.expander(f"{ts} - {agent}: {estatus}", expanded=False):
+                st.write(summary)
+                if data.get("action"):
+                    st.write(data["action"])
     else:
         st.write("No audit entries.")
 
@@ -111,8 +161,7 @@ decision_key = f"decision_{case_id}"
 if decision_key not in st.session_state:
     st.session_state[decision_key] = None
 
-notes_key = f"notes_{case_id}"
-notes = st.text_area("Decision notes (optional)", key=notes_key)
+notes = st.text_area("Decision notes (optional)", key=f"notes_{case_id}")
 
 col_a, col_b, col_c = st.columns(3)
 
@@ -127,7 +176,7 @@ with col_a:
         }
         st.session_state[decision_key] = decision
         post("human", "APPROVED", case_id, decision)
-        st.success(f"Case {case_id} APPROVED by {human_role()}")
+        st.success(f"Case {case_id} approved by {human_role()}")
 
 with col_b:
     if st.button("Reject", use_container_width=True):
@@ -140,7 +189,7 @@ with col_b:
         }
         st.session_state[decision_key] = decision
         post("human", "REJECTED", case_id, decision)
-        st.error(f"Case {case_id} REJECTED by {human_role()}")
+        st.error(f"Case {case_id} rejected by {human_role()}")
 
 with col_c:
     if st.button("Request More Info", use_container_width=True):
@@ -153,7 +202,12 @@ with col_c:
         }
         st.session_state[decision_key] = decision
         post("human", "MORE_INFO_REQUESTED", case_id, decision)
-        st.warning(f"Case {case_id} — more info requested by {human_role()}")
+        st.warning(f"Case {case_id} - more info requested by {human_role()}")
 
 if st.session_state[decision_key]:
-    st.json(st.session_state[decision_key])
+    d = st.session_state[decision_key]
+    st.markdown(
+        f"**Decision:** {d['decision'].replace('_', ' ').title()} by {d['by']} at {d['at'][:19]}"
+    )
+    if d.get("notes"):
+        st.markdown(f"**Notes:** {d['notes']}")

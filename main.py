@@ -1,4 +1,4 @@
-"""MedBand entry point — run pipeline from CLI."""
+"""MedBand entry point - run pipeline from CLI."""
 import argparse
 import json
 import sys

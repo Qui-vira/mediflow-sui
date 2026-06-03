@@ -1,4 +1,4 @@
-"""Intake Agent — extracts structured case data from raw patient input."""
+"""Intake Agent - extracts structured case data from raw patient input."""
 import json
 import sys
 from pathlib import Path
@@ -22,4 +22,4 @@ def run(case_id: str, raw_input: str) -> dict:
 
 
 if __name__ == "__main__":
-    print("Intake agent module loaded — no errors")
+    print("Intake agent module loaded - no errors")

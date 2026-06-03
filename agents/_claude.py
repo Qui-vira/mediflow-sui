@@ -17,7 +17,7 @@ def _should_mock() -> bool:
         key = os.getenv("ANTHROPIC_API_KEY", "")
         _use_mock = not key or key.startswith("your-") or key == "sk-placeholder"
         if _use_mock:
-            print("[MedBand] No valid ANTHROPIC_API_KEY — using mock agent responses")
+            print("[MedBand] No valid ANTHROPIC_API_KEY - using mock agent responses")
     return _use_mock
 
 

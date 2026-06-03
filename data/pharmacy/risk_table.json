@@ -1,7 +1,7 @@
 {
   "interactions": [
     {"drug_name": "Warfarin", "interacts_with": "Ibuprofen", "severity": "critical", "note": "Increased bleeding risk"},
-    {"drug_name": "Warfarin", "interacts_with": "Aspirin", "severity": "critical", "note": "Severe bleeding risk — avoid combination"},
+    {"drug_name": "Warfarin", "interacts_with": "Aspirin", "severity": "critical", "note": "Severe bleeding risk - avoid combination"},
     {"drug_name": "Metformin", "interacts_with": "Alcohol", "severity": "high", "note": "Lactic acidosis risk"},
     {"drug_name": "Amoxicillin", "interacts_with": "Methotrexate", "severity": "high", "note": "Increased methotrexate toxicity"},
     {"drug_name": "Amlodipine", "interacts_with": "Grapefruit", "severity": "medium", "note": "Increased drug levels"},

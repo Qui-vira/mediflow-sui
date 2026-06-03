@@ -111,7 +111,7 @@ def mock_verification(requested_service: str, intake_result: dict) -> dict:
 
     if ACTIVE_SECTOR == "mental_health":
         if intake_result.get("self_harm_flag") == "yes":
-            return {"status": "CASE_ESCALATE", "risk_level": "critical", "flags_matched": ["self_harm"], "reason": "Self-harm flag — immediate human response"}
+            return {"status": "CASE_ESCALATE", "risk_level": "critical", "flags_matched": ["self_harm"], "reason": "Self-harm flag - immediate human response"}
         concern = (intake_result.get("presenting_concern") or service).lower()
         for rule in data.get("criteria", []):
             if any(kw in concern for kw in rule.get("keyword_flags", [])):

@@ -1,4 +1,4 @@
-"""MedBand Phase 1 validation script — run all checklist checks."""
+"""MedBand Phase 1 validation script - run all checklist checks."""
 import json
 import sys
 from pathlib import Path
@@ -101,7 +101,7 @@ def main():
 
     print("\n" + "=" * 40)
     if all_errors:
-        print(f"FAILED — {len(all_errors)} error(s):")
+        print(f"FAILED - {len(all_errors)} error(s):")
         for e in all_errors:
             print(f"  - {e}")
         sys.exit(1)

@@ -1,6 +1,6 @@
 # MedBand
 
-**MedBand** is a sector-configurable, multi-agent healthcare workflow engine built by **The Billionaire Republic (TBR)** for the Band of Agents Hackathon 2026 — **Track 3: Regulated and High-Stakes Workflows**.
+**MedBand** is a sector-configurable, multi-agent healthcare workflow engine built by **The Billionaire Republic (TBR)** for the Band of Agents Hackathon 2026 - **Track 3: Regulated and High-Stakes Workflows**.
 
 Four AI agents process healthcare requests from intake through verification and resource checking to a structured case summary. A human professional makes the final approval decision.
 
@@ -24,7 +24,7 @@ Four AI agents process healthcare requests from intake through verification and 
 
 Switch sectors via the web form dropdown or `ACTIVE_SECTOR` in `.env`.
 
-## Phase 1 (Current — Band-Free)
+## Phase 1 (Current - Band-Free)
 
 Agents call each other as direct Python functions. `core/audit_log.py` mocks the Band room. Every agent appends structured JSON to `audit_log`. The dashboard reads and displays the audit trail.
 
@@ -42,17 +42,17 @@ pip install -r requirements.txt
 
 # Configure environment
 copy .env.example .env
-# Edit .env — set ANTHROPIC_API_KEY and ACTIVE_SECTOR=pharmacy
+# Edit .env - set ANTHROPIC_API_KEY and ACTIVE_SECTOR=pharmacy
 ```
 
 ## Run Commands
 
 ```powershell
-# Terminal 1 — Web form (Flask)
+# Terminal 1 - Web form (Flask)
 .\venv\Scripts\python frontend\app.py
 # → http://127.0.0.1:5000
 
-# Terminal 2 — Human approval dashboard (Streamlit)
+# Terminal 2 - Human approval dashboard (Streamlit)
 .\venv\Scripts\streamlit run dashboard\dashboard.py
 # → http://localhost:8501
 
@@ -80,10 +80,10 @@ copy .env.example .env
 # Direct pipeline test (requires ANTHROPIC_API_KEY)
 .\venv\Scripts\python -c "from core.workflow import run_case; import json; print(json.dumps(run_case('Name: Ada. Issue: fever and headache. Requested service: Amoxicillin. Urgency: high'), indent=2))"
 
-# Escalation test — banned drug (Rohypnol)
+# Escalation test - banned drug (Rohypnol)
 .\venv\Scripts\python main.py "Name: Test. Issue: insomnia. Requested service: Rohypnol. Urgency: high"
 
-# Hospital triage escalation — chest pain
+# Hospital triage escalation - chest pain
 .\venv\Scripts\python main.py "Name: Chidi. Issue: chest pain radiating to arm. Requested service: Emergency triage. Urgency: critical" --sector hospital_triage
 ```
 
@@ -122,4 +122,4 @@ Replace `audit_log` with Band SDK room calls. See Phase 2 Band Wiring Guide.
 
 ## Team
 
-The Billionaire Republic (TBR) — Band of Agents Hackathon 2026
+The Billionaire Republic (TBR) - Band of Agents Hackathon 2026

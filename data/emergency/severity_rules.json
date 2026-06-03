@@ -1,14 +1,14 @@
 {
   "rules": [
-    {"emergency_type": "cardiac arrest", "keywords": ["not breathing", "no pulse", "CPR"], "severity_level": "P1", "protocol": "Full cardiac arrest response — ALS unit + ambulance"},
+    {"emergency_type": "cardiac arrest", "keywords": ["not breathing", "no pulse", "CPR"], "severity_level": "P1", "protocol": "Full cardiac arrest response - ALS unit + ambulance"},
     {"emergency_type": "fire", "keywords": ["building on fire", "smoke", "trapped"], "severity_level": "P1", "protocol": "Multi-unit fire response + ambulance standby"},
     {"emergency_type": "road accident", "keywords": ["multiple vehicles", "trapped", "unconscious"], "severity_level": "P1", "protocol": "Jaws of life + 2 ambulances + police"},
-    {"emergency_type": "medical", "keywords": ["chest pain", "stroke symptoms", "seizure"], "severity_level": "P1", "protocol": "Priority ambulance — nearest available unit"},
-    {"emergency_type": "medical", "keywords": ["broken bone", "moderate bleeding", "fall"], "severity_level": "P2", "protocol": "Single ambulance — priority response"},
+    {"emergency_type": "medical", "keywords": ["chest pain", "stroke symptoms", "seizure"], "severity_level": "P1", "protocol": "Priority ambulance - nearest available unit"},
+    {"emergency_type": "medical", "keywords": ["broken bone", "moderate bleeding", "fall"], "severity_level": "P2", "protocol": "Single ambulance - priority response"},
     {"emergency_type": "fire", "keywords": ["small fire", "kitchen fire", "contained"], "severity_level": "P2", "protocol": "Single fire unit response"},
-    {"emergency_type": "road accident", "keywords": ["minor collision", "no injuries"], "severity_level": "P3", "protocol": "Traffic management — no ambulance unless requested"},
+    {"emergency_type": "road accident", "keywords": ["minor collision", "no injuries"], "severity_level": "P3", "protocol": "Traffic management - no ambulance unless requested"},
     {"emergency_type": "medical", "keywords": ["minor cut", "sprain", "mild illness"], "severity_level": "P3", "protocol": "Advise clinic visit or non-emergency transport"},
     {"emergency_type": "flood", "keywords": ["water rising", "evacuation needed"], "severity_level": "P2", "protocol": "Rescue unit + evacuation support"},
-    {"emergency_type": "gas leak", "keywords": ["smell gas", "LPG leak"], "severity_level": "P1", "protocol": "Evacuate area — fire unit + hazmat"}
+    {"emergency_type": "gas leak", "keywords": ["smell gas", "LPG leak"], "severity_level": "P1", "protocol": "Evacuate area - fire unit + hazmat"}
   ]
 }

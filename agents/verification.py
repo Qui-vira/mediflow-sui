@@ -1,4 +1,4 @@
-"""Verification Agent — checks registry, eligibility, and risk rules."""
+"""Verification Agent - checks registry, eligibility, and risk rules."""
 import json
 import sys
 from pathlib import Path
@@ -36,4 +36,4 @@ def run(case_id: str, requested_service: str, intake_result: dict = None) -> dic
 
 
 if __name__ == "__main__":
-    print("Verification agent module loaded — no errors")
+    print("Verification agent module loaded - no errors")
