@@ -6,14 +6,16 @@
   <title>MedBand - Case Intake</title>
   <style>
     :root {
-      --bg: #0f1419;
-      --surface: #1a2332;
+      --bg: #0a0e14;
+      --surface: #141b26;
+      --surface2: #1a2332;
       --border: #2d3a4f;
       --text: #e8edf4;
       --muted: #8b9cb3;
       --accent: #00c896;
       --accent-dim: #00a67d;
-      --danger: #ff6b6b;
+      --accent-glow: rgba(0, 200, 150, 0.15);
+      --danger: #ef4444;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -21,37 +23,76 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      padding: 1.5rem;
     }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at top, var(--accent-glow), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .topbar a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .topbar a:hover { text-decoration: underline; }
     .container {
-      width: 100%;
-      max-width: 520px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
     }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
+    .sector-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      transition: all 0.3s ease;
     }
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.875rem;
-      margin-bottom: 1.5rem;
+    .sector-icon { font-size: 1.5rem; }
+    .sector-label { font-weight: 600; font-size: 0.95rem; }
+    .sector-role { font-size: 0.75rem; color: var(--muted); }
+    h1 { font-size: 1.4rem; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; margin: 0.25rem 0 1rem; }
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #0a0e14;
+      font-size: 0.65rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      margin-left: 0.4rem;
+      font-weight: 700;
+      vertical-align: middle;
     }
     label {
       display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.75rem;
+      font-weight: 600;
       color: var(--muted);
-      margin-bottom: 0.35rem;
-      margin-top: 1rem;
+      margin: 0.85rem 0 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     label:first-of-type { margin-top: 0; }
     input, select, textarea {
@@ -62,182 +103,421 @@
       border-radius: 8px;
       color: var(--text);
       font-size: 0.95rem;
+      transition: border-color 0.2s;
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--accent);
     }
-    textarea { min-height: 90px; resize: vertical; }
-    button {
-      width: 100%;
-      margin-top: 1.5rem;
+    textarea { min-height: 80px; resize: vertical; }
+    .demo-section {
+      margin: 1rem 0;
       padding: 0.85rem;
-      background: var(--accent);
-      color: #0f1419;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      background: var(--surface2);
+      border-radius: 10px;
+      border: 1px dashed var(--border);
+    }
+    .demo-section p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .demo-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .demo-btn {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.72rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
       cursor: pointer;
-      transition: background 0.15s;
+      transition: all 0.15s;
     }
-    button:hover { background: var(--accent-dim); }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .demo-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
-    #result {
-      margin-top: 1.5rem;
+    .submit-btn {
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 0.9rem;
+      background: var(--accent);
+      color: #0a0e14;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    #liveAgents {
+      display: none;
+      margin-top: 1.25rem;
       padding: 1rem;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.9rem;
-      line-height: 1.5;
+      border-radius: 12px;
+    }
+    #liveAgents.visible { display: block; }
+    #liveAgents h4 {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+    .agent-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0;
+      opacity: 0.35;
+      transition: opacity 0.3s;
+    }
+    .agent-row.active { opacity: 1; }
+    .agent-row.done { opacity: 0.85; }
+    .agent-row.escalated .agent-icon { background: var(--danger); }
+    .agent-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .agent-row.active .agent-icon {
+      background: var(--accent);
+      animation: pulse 1.2s infinite;
+    }
+    .agent-row.done .agent-icon { background: var(--accent-dim); }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+      50% { box-shadow: 0 0 0 8px transparent; }
+    }
+    .agent-info { flex: 1; }
+    .agent-name { font-weight: 600; font-size: 0.85rem; text-transform: capitalize; }
+    .agent-msg { font-size: 0.78rem; color: var(--muted); }
+    .agent-state {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: var(--surface2);
+      color: var(--muted);
+    }
+    .agent-row.active .agent-state { background: var(--accent-glow); color: var(--accent); }
+    .agent-row.done .agent-state { color: var(--accent); }
+
+    #result {
       display: none;
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
     }
     #result.visible { display: block; }
     #result.error { border-color: var(--danger); }
-    #result h3 {
-      font-size: 1rem;
-      margin-bottom: 0.75rem;
-      color: var(--accent);
-    }
-    #result .row {
+    #result h3 { color: var(--accent); margin-bottom: 0.75rem; font-size: 1.05rem; }
+    .row {
       display: flex;
       justify-content: space-between;
-      padding: 0.35rem 0;
+      padding: 0.4rem 0;
       border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
     }
-    #result .row:last-child { border-bottom: none; }
-    #result .label { color: var(--muted); font-size: 0.8rem; }
-    #result .value { font-weight: 500; text-align: right; max-width: 60%; }
-    #result .status-ready { color: var(--accent); }
-    #result .status-escalated { color: var(--danger); }
-    #result .note {
-      margin-top: 0.75rem;
-      padding: 0.75rem;
-      background: var(--surface);
-      border-radius: 6px;
-      color: var(--muted);
+    .row:last-child { border-bottom: none; }
+    .row .lbl { color: var(--muted); font-size: 0.8rem; }
+    .row .val { font-weight: 500; text-align: right; max-width: 58%; }
+    .report-box {
+      margin-top: 0.85rem;
+      padding: 0.85rem;
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
       font-size: 0.85rem;
+      line-height: 1.55;
     }
-    .badge {
+    .report-box.escalated { border-left-color: var(--danger); }
+    .case-link {
       display: inline-block;
-      background: var(--accent);
-      color: #0f1419;
-      font-size: 0.7rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      margin-left: 0.5rem;
-      font-weight: 600;
+      margin-top: 0.75rem;
+      color: var(--accent);
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>MedBand <span class="badge">Phase 1</span></h1>
-    <p class="subtitle">The Billionaire Republic - Healthcare Workflow Intake</p>
+  <div class="wrap">
+    <div class="topbar">
+      <span style="font-size:0.8rem;color:var(--muted)">TBR Hackathon 2026</span>
+      <a href="/status">Check Case Status</a>
+    </div>
 
-    <form id="caseForm">
-      <label for="sector">Healthcare Sector</label>
-      <select id="sector" name="sector" required>
-        <option value="pharmacy">Pharmacy</option>
-        <option value="hospital_triage">Hospital Triage</option>
-        <option value="lab">Lab / Diagnostics</option>
-        <option value="mental_health">Mental Health</option>
-        <option value="hmo_claims">HMO / Insurance Claims</option>
-        <option value="emergency">Emergency Dispatch</option>
-      </select>
+    <div class="container">
+      <div class="sector-banner" id="sectorBanner">
+        <span class="sector-icon" id="sectorIcon">💊</span>
+        <div>
+          <div class="sector-label" id="sectorLabel">Pharmacy</div>
+          <div class="sector-role" id="sectorRole">Human approver: Pharmacist</div>
+        </div>
+      </div>
 
-      <label for="name">Patient / Caller Name</label>
-      <input type="text" id="name" name="name" placeholder="e.g. Ada Okonkwo" required>
+      <h1>MedBand <span class="badge">Phase 1</span></h1>
+      <p class="subtitle">Four AI agents process your request. A human professional approves.</p>
 
-      <label for="issue">Issue / Complaint</label>
-      <textarea id="issue" name="issue" placeholder="Describe symptoms, concern, or emergency..." required></textarea>
+      <div class="demo-section">
+        <p>Demo mode - click to pre-fill:</p>
+        <div class="demo-btns">
+          <button type="button" class="demo-btn" data-demo="pharmacy_clear">Pharmacy: Amoxicillin</button>
+          <button type="button" class="demo-btn" data-demo="pharmacy_escalate">Banned drug escalation</button>
+          <button type="button" class="demo-btn" data-demo="triage_escalate">Chest pain triage</button>
+          <button type="button" class="demo-btn" data-demo="mental_health">Mental health intake</button>
+          <button type="button" class="demo-btn" data-demo="emergency">Emergency P1</button>
+        </div>
+      </div>
 
-      <label for="service">Requested Service</label>
-      <input type="text" id="service" name="service" placeholder="Drug name, test, procedure code, etc." required>
+      <form id="caseForm">
+        <label for="sector">Healthcare Sector</label>
+        <select id="sector" name="sector" required>
+          <option value="pharmacy">Pharmacy</option>
+          <option value="hospital_triage">Hospital Triage</option>
+          <option value="lab">Lab / Diagnostics</option>
+          <option value="mental_health">Mental Health</option>
+          <option value="hmo_claims">HMO / Insurance Claims</option>
+          <option value="emergency">Emergency Dispatch</option>
+        </select>
 
-      <label for="urgency">Urgency</label>
-      <select id="urgency" name="urgency" required>
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-        <option value="critical">Critical</option>
-      </select>
+        <label for="name">Patient / Caller Name</label>
+        <input type="text" id="name" name="name" placeholder="e.g. Ada Okonkwo" required>
 
-      <button type="submit" id="submitBtn">Submit Case</button>
-    </form>
+        <label for="issue">Issue / Complaint</label>
+        <textarea id="issue" name="issue" placeholder="Describe symptoms, concern, or emergency..." required></textarea>
 
-    <div id="result"></div>
+        <label for="service">Requested Service</label>
+        <input type="text" id="service" name="service" placeholder="Drug name, test, procedure code..." required>
+
+        <label for="urgency">Urgency</label>
+        <select id="urgency" name="urgency" required>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high" selected>High</option>
+          <option value="critical">Critical</option>
+        </select>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Case</button>
+      </form>
+
+      <div id="liveAgents">
+        <h4>Agents Working</h4>
+        <div class="agent-row" data-agent="coordinator">
+          <div class="agent-icon">🎯</div>
+          <div class="agent-info">
+            <div class="agent-name">Coordinator</div>
+            <div class="agent-msg">Waiting...</div>
+          </div>
+          <span class="agent-state">Pending</span>
+        </div>
+        <div class="agent-row" data-agent="intake">
+          <div class="agent-icon">📋</div>
+          <div class="agent-info">
+            <div class="agent-name">Intake</div>
+            <div class="agent-msg">Waiting...</div>
+          </div>
+          <span class="agent-state">Pending</span>
+        </div>
+        <div class="agent-row" data-agent="verification">
+          <div class="agent-icon">🔍</div>
+          <div class="agent-info">
+            <div class="agent-name">Verification</div>
+            <div class="agent-msg">Waiting...</div>
+          </div>
+          <span class="agent-state">Pending</span>
+        </div>
+        <div class="agent-row" data-agent="resource">
+          <div class="agent-icon">📦</div>
+          <div class="agent-info">
+            <div class="agent-name">Resource</div>
+            <div class="agent-msg">Waiting...</div>
+          </div>
+          <span class="agent-state">Pending</span>
+        </div>
+      </div>
+
+      <div id="result"></div>
+    </div>
   </div>
 
   <script>
+    const SECTORS = {
+      pharmacy: { label: 'Pharmacy', color: '#00c896', icon: '💊', role: 'Pharmacist' },
+      hospital_triage: { label: 'Hospital Triage', color: '#4da6ff', icon: '🏥', role: 'Doctor / Nurse' },
+      lab: { label: 'Lab / Diagnostics', color: '#a78bfa', icon: '🔬', role: 'Lab Officer' },
+      mental_health: { label: 'Mental Health', color: '#2dd4bf', icon: '🧠', role: 'Clinical Coordinator' },
+      hmo_claims: { label: 'HMO / Insurance', color: '#fbbf24', icon: '📋', role: 'Claims Officer' },
+      emergency: { label: 'Emergency Dispatch', color: '#ef4444', icon: '🚨', role: 'Dispatcher' }
+    };
+
+    const DEMOS = {
+      pharmacy_clear: { sector: 'pharmacy', name: 'Ada Okonkwo', issue: 'fever and sore throat for 3 days', service: 'Amoxicillin', urgency: 'high' },
+      pharmacy_escalate: { sector: 'pharmacy', name: 'Test User', issue: 'severe insomnia', service: 'Rohypnol', urgency: 'high' },
+      triage_escalate: { sector: 'hospital_triage', name: 'Chidi Eze', issue: 'crushing chest pain radiating to left arm', service: 'Emergency triage', urgency: 'critical' },
+      mental_health: { sector: 'mental_health', name: 'Fatima Yusuf', issue: 'persistent low mood and anxiety for 6 weeks', service: 'Therapy intake', urgency: 'medium' },
+      emergency: { sector: 'emergency', name: 'Caller on Lekki Road', issue: 'person collapsed, not breathing', service: 'cardiac arrest', urgency: 'critical' }
+    };
+
     const form = document.getElementById('caseForm');
     const result = document.getElementById('result');
+    const liveAgents = document.getElementById('liveAgents');
     const submitBtn = document.getElementById('submitBtn');
+    const sectorSelect = document.getElementById('sector');
 
-    function labelize(key) {
-      return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    function applySectorTheme(sector) {
+      const meta = SECTORS[sector] || SECTORS.pharmacy;
+      document.documentElement.style.setProperty('--accent', meta.color);
+      document.documentElement.style.setProperty('--accent-dim', meta.color);
+      document.documentElement.style.setProperty('--accent-glow', meta.color + '26');
+      document.getElementById('sectorIcon').textContent = meta.icon;
+      document.getElementById('sectorLabel').textContent = meta.label;
+      document.getElementById('sectorRole').textContent = 'Human approver: ' + meta.role;
     }
 
-    function renderSummary(data) {
-      if (data.error) {
-        return '<h3>Submission Failed</h3><p>' + data.error + '</p>';
-      }
+    sectorSelect.addEventListener('change', () => applySectorTheme(sectorSelect.value));
+    applySectorTheme(sectorSelect.value);
 
+    document.querySelectorAll('.demo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const demo = DEMOS[btn.dataset.demo];
+        if (!demo) return;
+        sectorSelect.value = demo.sector;
+        applySectorTheme(demo.sector);
+        document.getElementById('name').value = demo.name;
+        document.getElementById('issue').value = demo.issue;
+        document.getElementById('service').value = demo.service;
+        document.getElementById('urgency').value = demo.urgency;
+      });
+    });
+
+    function resetAgents() {
+      liveAgents.querySelectorAll('.agent-row').forEach(row => {
+        row.classList.remove('active', 'done', 'escalated');
+        row.querySelector('.agent-msg').textContent = 'Waiting...';
+        row.querySelector('.agent-state').textContent = 'Pending';
+      });
+    }
+
+    function setAgentActive(agent, message) {
+      liveAgents.querySelectorAll('.agent-row').forEach(row => {
+        if (row.dataset.agent === agent) {
+          row.classList.add('active');
+          row.classList.remove('done');
+          row.querySelector('.agent-msg').textContent = message;
+          row.querySelector('.agent-state').textContent = 'Running...';
+        } else if (!row.classList.contains('done')) {
+          row.classList.remove('active');
+        }
+      });
+    }
+
+    function setAgentDone(agent, status, escalated) {
+      const row = liveAgents.querySelector('[data-agent="' + agent + '"]');
+      if (!row) return;
+      row.classList.remove('active');
+      row.classList.add('done');
+      if (escalated) row.classList.add('escalated');
+      row.querySelector('.agent-msg').textContent = status.replace(/_/g, ' ');
+      row.querySelector('.agent-state').textContent = 'Done';
+    }
+
+    function row(label, value) {
+      if (!value) return '';
+      return '<div class="row"><span class="lbl">' + label + '</span><span class="val">' + value + '</span></div>';
+    }
+
+    function renderResult(data, report) {
       const intake = data.intake || {};
       const verification = data.verification || {};
       const resource = data.resource || {};
-      const statusClass = data.status === 'ESCALATED' ? 'status-escalated' : 'status-ready';
+      const escalated = data.status === 'ESCALATED';
 
-      let html = '<h3>Case Submitted</h3>';
+      let html = '<h3>' + (report ? report.headline : 'Case Submitted') + '</h3>';
       html += row('Case ID', data.case_id);
-      html += row('Status', data.status.replace(/_/g, ' '), statusClass);
-      html += row('Approver', data.human_role);
+      html += row('Status', data.status.replace(/_/g, ' '));
+      html += row('Awaiting', data.human_role);
       html += row('Patient', intake.requester_name || intake.caller_name);
       html += row('Service', intake.requested_service);
-      html += row('Issue', intake.presenting_issue || intake.chief_complaint || intake.presenting_concern);
 
-      if (verification.reason) {
-        html += '<div class="note"><strong>Verification:</strong> ' + verification.reason + '</div>';
-      }
-      if (resource.in_stock !== undefined) {
-        html += row('In Stock', resource.in_stock ? 'Yes (' + resource.quantity_available + ' units)' : 'No');
-      }
-      if (resource.unit_price_ngn) {
-        html += row('Price', '₦' + resource.unit_price_ngn);
+      if (report && report.summary_lines) {
+        html += '<div class="report-box' + (escalated ? ' escalated' : '') + '">';
+        report.summary_lines.forEach(line => { html += '<div>' + line + '</div>'; });
+        html += '</div>';
       }
 
-      const auditCount = (data.audit_trail || []).length;
-      html += '<div class="note">Workflow complete. ' + auditCount + ' audit entries recorded. Open the Streamlit dashboard to review and approve.</div>';
+      html += '<a class="case-link" href="/status?id=' + data.case_id + '">View full report and track status &rarr;</a>';
       return html;
-    }
-
-    function row(label, value, extraClass) {
-      if (!value) return '';
-      return '<div class="row"><span class="label">' + label + '</span><span class="value ' + (extraClass || '') + '">' + value + '</span></div>';
     }
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Processing...';
-      result.classList.remove('error', 'visible');
+      submitBtn.textContent = 'Agents processing...';
+      result.classList.remove('visible', 'error');
       result.innerHTML = '';
+      liveAgents.classList.add('visible');
+      resetAgents();
 
       const formData = new FormData(form);
 
       try {
-        const response = await fetch('/submit', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await response.json();
-        result.innerHTML = renderSummary(data);
-        result.classList.add('visible');
-        if (!response.ok) result.classList.add('error');
+        const response = await fetch('/submit/stream', { method: 'POST', body: formData });
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let finalCase = null;
+        let finalReport = null;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            const event = JSON.parse(line);
+
+            if (event.type === 'agent_active') {
+              setAgentActive(event.agent, event.message);
+            } else if (event.type === 'agent_done') {
+              const esc = (event.status || '').includes('ESCALATE') || event.status === 'HUMAN_ALERT';
+              setAgentDone(event.agent, event.status || 'complete', esc);
+              if (event.status === 'HUMAN_ALERT') {
+                setAgentDone('resource', 'Skipped', true);
+              }
+            } else if (event.type === 'complete') {
+              finalCase = event.case;
+              finalReport = event.report;
+            } else if (event.type === 'error') {
+              throw new Error(event.error);
+            }
+          }
+        }
+
+        if (finalCase) {
+          result.innerHTML = renderResult(finalCase, finalReport);
+          result.classList.add('visible');
+        }
       } catch (err) {
         result.innerHTML = '<h3>Error</h3><p>' + err.message + '</p>';
         result.classList.add('visible', 'error');

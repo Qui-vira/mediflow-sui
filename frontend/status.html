@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedBand - Case Status</title>
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --surface: #141b26;
+      --border: #2d3a4f;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #00c896;
+      --danger: #ef4444;
+      --warn: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; }
+    a { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+    a:hover { text-decoration: underline; }
+    h1 { font-size: 1.4rem; margin: 1rem 0 0.25rem; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; }
+    .lookup-row { display: flex; gap: 0.5rem; }
+    input {
+      flex: 1;
+      padding: 0.7rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    button {
+      padding: 0.7rem 1.2rem;
+      background: var(--accent);
+      color: #0a0e14;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #report { display: none; }
+    #report.visible { display: block; }
+    .headline {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .headline.approved { color: var(--accent); }
+    .headline.rejected { color: var(--danger); }
+    .headline.pending { color: var(--warn); }
+    .headline.escalated { color: var(--danger); }
+    .line { padding: 0.35rem 0; font-size: 0.9rem; line-height: 1.5; }
+    .timeline { margin-top: 1.25rem; }
+    .timeline h3 { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.75rem; }
+    .tl-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.6rem 0;
+      border-left: 2px solid var(--border);
+      margin-left: 0.5rem;
+      padding-left: 1rem;
+      position: relative;
+    }
+    .tl-item::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: absolute;
+      left: -5px;
+      top: 0.85rem;
+    }
+    .tl-time { font-size: 0.72rem; color: var(--muted); }
+    .tl-agent { font-weight: 600; font-size: 0.85rem; text-transform: capitalize; }
+    .tl-status { font-size: 0.8rem; color: var(--muted); }
+    .error-msg { color: var(--danger); margin-top: 1rem; display: none; }
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="/">&larr; Back to intake form</a>
+    <h1>Case Status & Report</h1>
+    <p class="subtitle">Enter your Case ID to view processing results and final decision.</p>
+
+    <div class="card">
+      <label for="caseId">Case ID</label>
+      <div class="lookup-row">
+        <input type="text" id="caseId" placeholder="e.g. ABC12345" maxlength="8">
+        <button id="lookupBtn">Look Up</button>
+      </div>
+      <p class="error-msg" id="errorMsg">Case not found.</p>
+    </div>
+
+    <div id="report" class="card"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const caseInput = document.getElementById('caseId');
+    const reportEl = document.getElementById('report');
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (params.get('id')) {
+      caseInput.value = params.get('id');
+      lookup();
+    }
+
+    document.getElementById('lookupBtn').addEventListener('click', lookup);
+    caseInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+    async function lookup() {
+      const id = caseInput.value.trim().toUpperCase();
+      if (!id) return;
+      errorMsg.classList.remove('visible');
+      reportEl.classList.remove('visible');
+
+      try {
+        const res = await fetch('/api/lookup/' + id);
+        if (!res.ok) throw new Error('not found');
+        const data = await res.json();
+        renderReport(data);
+        history.replaceState(null, '', '/status?id=' + id);
+      } catch {
+        errorMsg.classList.add('visible');
+      }
+    }
+
+    function renderReport(data) {
+      const report = data.report;
+      const caseData = data.case;
+      const decision = caseData.decision;
+      const sector = data.sector || {};
+
+      if (sector.color) {
+        document.documentElement.style.setProperty('--accent', sector.color);
+      }
+
+      let headlineClass = 'pending';
+      if (decision) {
+        headlineClass = decision.decision === 'APPROVED' ? 'approved' : decision.decision === 'REJECTED' ? 'rejected' : 'pending';
+      } else if (caseData.status === 'ESCALATED') {
+        headlineClass = 'escalated';
+      }
+
+      let html = '<div class="headline ' + headlineClass + '">' + report.headline + '</div>';
+      report.summary_lines.forEach(line => {
+        html += '<div class="line">' + line + '</div>';
+      });
+
+      const trail = caseData.audit_trail || [];
+      if (trail.length) {
+        html += '<div class="timeline"><h3>Agent Timeline</h3>';
+        trail.forEach(entry => {
+          const ts = (entry.timestamp || '').slice(0, 19).replace('T', ' ');
+          html += '<div class="tl-item">';
+          html += '<div><div class="tl-time">' + ts + '</div>';
+          html += '<div class="tl-agent">' + entry.agent + ' Agent</div>';
+          html += '<div class="tl-status">' + (entry.status || '').replace(/_/g, ' ') + '</div></div></div>';
+        });
+        html += '</div>';
+      }
+
+      reportEl.innerHTML = html;
+      reportEl.classList.add('visible');
+    }
+  </script>
+</body>
+</html>

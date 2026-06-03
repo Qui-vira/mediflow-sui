@@ -25,6 +25,19 @@ HUMAN_ROLES = {
     "emergency": "Dispatcher",
 }
 
+SECTOR_META = {
+    "pharmacy": {"label": "Pharmacy", "color": "#00c896", "icon": "💊"},
+    "hospital_triage": {"label": "Hospital Triage", "color": "#4da6ff", "icon": "🏥"},
+    "lab": {"label": "Lab / Diagnostics", "color": "#a78bfa", "icon": "🔬"},
+    "mental_health": {"label": "Mental Health", "color": "#2dd4bf", "icon": "🧠"},
+    "hmo_claims": {"label": "HMO / Insurance", "color": "#fbbf24", "icon": "📋"},
+    "emergency": {"label": "Emergency Dispatch", "color": "#ef4444", "icon": "🚨"},
+}
+
+
+def sector_meta(sector: str = None) -> dict:
+    return SECTOR_META.get(sector or ACTIVE_SECTOR, {"label": sector, "color": "#00c896", "icon": "🏥"})
+
 VERIFICATION_DATA_FILES = {
     "pharmacy": ["registry.json", "risk_table.json"],
     "hospital_triage": ["triage_criteria.json"],
