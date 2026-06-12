@@ -1,0 +1,3 @@
+[console_scripts]
+band-acp = band.integrations.acp.cli:entry_point
+band-trigger = band.cli.trigger:main

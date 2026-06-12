@@ -1,0 +1,3 @@
+[console_scripts]
+thenvoi-acp = thenvoi.integrations.acp.cli:entry_point
+thenvoi-trigger = thenvoi.cli.trigger:main
