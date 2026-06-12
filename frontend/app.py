@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
 
 from core.reports import build_patient_report
-from core.sector_loader import SECTOR_META, sector_meta
+from core.sector_loader import SECTOR_META, sector_meta, set_sector
 from core.workflow import load_case, run_case, run_case_stream
 
 app = Flask(__name__, template_folder=".")
@@ -21,15 +21,70 @@ app = Flask(__name__, template_folder=".")
 
 def _form_raw(data) -> tuple[str, str]:
     sector = data.get("sector", os.getenv("ACTIVE_SECTOR", "pharmacy"))
+    set_sector(sector)
     os.environ["ACTIVE_SECTOR"] = sector
-    raw = f"""
-Name: {data.get('name', '')}
-Issue: {data.get('issue', '')}
-Requested service: {data.get('service', '')}
-Urgency: {data.get('urgency', '')}
-Sector: {sector}
-""".strip()
-    return raw, sector
+
+    lines = [f"Sector: {sector}"]
+
+    name = data.get("name", "")
+    issue = data.get("issue", "")
+    service = data.get("service", "")
+
+    if sector == "emergency":
+        service = data.get("emergency_type", service)
+        lines.extend([
+            f"Caller name: {name}",
+            f"Emergency type: {service}",
+            f"Location: {data.get('location', '')}",
+            f"Additional details: {issue}",
+        ])
+    elif sector == "mental_health":
+        self_harm = data.get("self_harm_flag") in ("true", "on", "1", True)
+        lines.extend([
+            f"Name: {name}",
+            f"Presenting concern: {issue}",
+            f"Duration: {data.get('duration', '')}",
+            f"Self harm flag: {self_harm}",
+            f"Requested service: {service or issue}",
+            f"Urgency: {data.get('urgency', 'medium')}",
+        ])
+    elif sector == "hospital_triage":
+        lines.extend([
+            f"Name: {name}",
+            f"Chief complaint: {issue}",
+            f"Vitals description: {data.get('vitals_description', '')}",
+            f"Requested service: {service or issue}",
+            f"Urgency: {data.get('urgency', 'high')}",
+        ])
+    elif sector == "lab":
+        lines.extend([
+            f"Name: {name}",
+            f"Test requested: {service}",
+            f"Referral number: {data.get('referral_number', '')}",
+            f"Patient ID: {data.get('patient_id', '')}",
+            f"Clinical notes: {issue}",
+            f"Urgency: {data.get('urgency', 'medium')}",
+        ])
+    elif sector == "hmo_claims":
+        lines.extend([
+            f"Requester name: {name}",
+            f"Procedure code: {service}",
+            f"Policy number: {data.get('policy_number', '')}",
+            f"Provider name: {data.get('provider_name', '')}",
+            f"Claim notes: {issue}",
+            f"Urgency: {data.get('urgency', 'low')}",
+        ])
+    else:
+        lines.extend([
+            f"Name: {name}",
+            f"Issue: {issue}",
+            f"Requested service: {service}",
+            f"Urgency: {data.get('urgency', 'high')}",
+        ])
+        if data.get("prescription_code"):
+            lines.append(f"Prescription code: {data.get('prescription_code')}")
+
+    return "\n".join(lines), sector
 
 
 @app.route("/")

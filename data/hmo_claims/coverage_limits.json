@@ -1,14 +1,10 @@
 {
   "limits": [
-    {"procedure_code": "CONS-GP", "covered_percentage": 100, "annual_limit_ngn": 500000},
-    {"procedure_code": "LAB-FBC", "covered_percentage": 90, "annual_limit_ngn": 200000},
-    {"procedure_code": "LAB-LFT", "covered_percentage": 80, "annual_limit_ngn": 150000},
-    {"procedure_code": "SURG-APP", "covered_percentage": 70, "annual_limit_ngn": 2000000},
-    {"procedure_code": "MAT-DEL", "covered_percentage": 85, "annual_limit_ngn": 1500000},
-    {"procedure_code": "DENT-EXTR", "covered_percentage": 60, "annual_limit_ngn": 100000},
-    {"procedure_code": "OPT-EXAM", "covered_percentage": 50, "annual_limit_ngn": 80000},
-    {"procedure_code": "MH-THER", "covered_percentage": 75, "annual_limit_ngn": 300000},
-    {"procedure_code": "EMER-ADM", "covered_percentage": 90, "annual_limit_ngn": 3000000},
-    {"procedure_code": "COSM-RHINO", "covered_percentage": 0, "annual_limit_ngn": 0}
+    {"policy_number": "HMO-2024-001", "annual_limit_ngn": 5000000, "amount_used_ngn": 850000, "limit_remaining_ngn": 4150000},
+    {"policy_number": "HMO-2024-002", "annual_limit_ngn": 2000000, "amount_used_ngn": 1200000, "limit_remaining_ngn": 800000},
+    {"policy_number": "HMO-2024-003", "annual_limit_ngn": 500000, "amount_used_ngn": 500000, "limit_remaining_ngn": 0},
+    {"policy_number": "HMO-2024-004", "annual_limit_ngn": 8000000, "amount_used_ngn": 2100000, "limit_remaining_ngn": 5900000},
+    {"policy_number": "HMO-2024-005", "annual_limit_ngn": 6000000, "amount_used_ngn": 450000, "limit_remaining_ngn": 5550000},
+    {"policy_number": "HMO-2023-099", "annual_limit_ngn": 0, "amount_used_ngn": 0, "limit_remaining_ngn": 0}
   ]
 }

@@ -1,11 +1,11 @@
 {
   "wards": [
-    {"ward_name": "Emergency", "bed_type": "acute", "beds_available": 3, "next_available": "immediate"},
-    {"ward_name": "ICU", "bed_type": "critical", "beds_available": 1, "next_available": "2 hours"},
-    {"ward_name": "General Medicine", "bed_type": "standard", "beds_available": 8, "next_available": "4 hours"},
-    {"ward_name": "Pediatrics", "bed_type": "standard", "beds_available": 5, "next_available": "6 hours"},
-    {"ward_name": "Maternity", "bed_type": "specialty", "beds_available": 2, "next_available": "1 hour"},
-    {"ward_name": "Surgical", "bed_type": "standard", "beds_available": 4, "next_available": "8 hours"},
-    {"ward_name": "Isolation", "bed_type": "infectious", "beds_available": 2, "next_available": "immediate"}
+    {"ward_name": "Emergency", "bed_type": "acute", "beds_available": 3, "next_available": "immediate", "floor": "Ground"},
+    {"ward_name": "ICU", "bed_type": "critical", "beds_available": 1, "next_available": "2 hours", "floor": "2nd"},
+    {"ward_name": "General Medicine", "bed_type": "standard", "beds_available": 8, "next_available": "4 hours", "floor": "3rd"},
+    {"ward_name": "Pediatrics", "bed_type": "standard", "beds_available": 5, "next_available": "6 hours", "floor": "4th"},
+    {"ward_name": "Maternity", "bed_type": "specialty", "beds_available": 2, "next_available": "1 hour", "floor": "5th"},
+    {"ward_name": "Surgical", "bed_type": "standard", "beds_available": 4, "next_available": "8 hours", "floor": "3rd"},
+    {"ward_name": "Isolation", "bed_type": "infectious", "beds_available": 2, "next_available": "immediate", "floor": "1st"}
   ]
 }

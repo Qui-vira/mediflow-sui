@@ -1,10 +1,58 @@
 {
   "policies": [
-    {"policy_number": "HMO-2024-001", "status": "active", "plan_type": "Premium", "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Maternity"], "exclusions": ["Cosmetic Surgery", "Experimental Treatments"]},
-    {"policy_number": "HMO-2024-002", "status": "active", "plan_type": "Standard", "covered_procedures": ["GP Consultation", "Lab Tests", "Emergency"], "exclusions": ["Dental", "Optical", "Maternity"]},
-    {"policy_number": "HMO-2024-003", "status": "expired", "plan_type": "Basic", "covered_procedures": ["GP Consultation"], "exclusions": ["Surgery", "Specialist Care", "Lab Tests"]},
-    {"policy_number": "HMO-2024-004", "status": "active", "plan_type": "Corporate", "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Dental", "Optical"], "exclusions": ["Cosmetic Surgery"]},
-    {"policy_number": "HMO-2024-005", "status": "active", "plan_type": "Premium", "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Maternity", "Mental Health"], "exclusions": ["Weight Loss Surgery"]},
-    {"policy_number": "HMO-2023-099", "status": "suspended", "plan_type": "Standard", "covered_procedures": [], "exclusions": ["All procedures - payment overdue"]}
+    {
+      "policy_number": "HMO-2024-001",
+      "holder_name": "Ada Okonkwo",
+      "plan_type": "Premium",
+      "status": "active",
+      "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Maternity"],
+      "exclusions": ["Cosmetic Surgery", "Experimental Treatments"],
+      "annual_limit_ngn": 5000000
+    },
+    {
+      "policy_number": "HMO-2024-002",
+      "holder_name": "Chidi Eze",
+      "plan_type": "Standard",
+      "status": "active",
+      "covered_procedures": ["GP Consultation", "Lab Tests", "Emergency"],
+      "exclusions": ["Dental", "Optical", "Maternity"],
+      "annual_limit_ngn": 2000000
+    },
+    {
+      "policy_number": "HMO-2024-003",
+      "holder_name": "Fatima Yusuf",
+      "plan_type": "Basic",
+      "status": "expired",
+      "covered_procedures": ["GP Consultation"],
+      "exclusions": ["Surgery", "Specialist Care", "Lab Tests"],
+      "annual_limit_ngn": 500000
+    },
+    {
+      "policy_number": "HMO-2024-004",
+      "holder_name": "Ibrahim Musa",
+      "plan_type": "Corporate",
+      "status": "active",
+      "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Dental", "Optical"],
+      "exclusions": ["Cosmetic Surgery"],
+      "annual_limit_ngn": 8000000
+    },
+    {
+      "policy_number": "HMO-2024-005",
+      "holder_name": "Ngozi Adeyemi",
+      "plan_type": "Premium",
+      "status": "active",
+      "covered_procedures": ["GP Consultation", "Lab Tests", "Surgery", "Maternity", "Mental Health"],
+      "exclusions": ["Weight Loss Surgery"],
+      "annual_limit_ngn": 6000000
+    },
+    {
+      "policy_number": "HMO-2023-099",
+      "holder_name": "Test Corporate Ltd",
+      "plan_type": "Standard",
+      "status": "suspended",
+      "covered_procedures": [],
+      "exclusions": ["All procedures - payment overdue"],
+      "annual_limit_ngn": 0
+    }
   ]
 }

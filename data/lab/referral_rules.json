@@ -1,14 +1,14 @@
 {
   "rules": [
-    {"test_name": "Liver Function Test", "valid_departments": ["Internal Medicine", "Gastroenterology", "General Practice"], "referral_valid_days": 30},
-    {"test_name": "Kidney Function Test", "valid_departments": ["Internal Medicine", "Nephrology", "General Practice"], "referral_valid_days": 30},
-    {"test_name": "Chest X-Ray", "valid_departments": ["Pulmonology", "Emergency", "Internal Medicine"], "referral_valid_days": 14},
-    {"test_name": "Abdominal Ultrasound", "valid_departments": ["Gastroenterology", "Surgery", "Obstetrics"], "referral_valid_days": 21},
-    {"test_name": "ECG", "valid_departments": ["Cardiology", "Emergency", "Internal Medicine"], "referral_valid_days": 7},
-    {"test_name": "HbA1c", "valid_departments": ["Endocrinology", "Internal Medicine", "Diabetes Clinic"], "referral_valid_days": 90},
-    {"test_name": "Thyroid Panel", "valid_departments": ["Endocrinology", "Internal Medicine"], "referral_valid_days": 60},
-    {"test_name": "CT Scan Head", "valid_departments": ["Neurology", "Emergency", "Neurosurgery"], "referral_valid_days": 7},
-    {"test_name": "MRI Spine", "valid_departments": ["Orthopedics", "Neurology", "Neurosurgery"], "referral_valid_days": 14},
-    {"test_name": "Pap Smear", "valid_departments": ["Obstetrics", "Gynecology", "Family Planning"], "referral_valid_days": 180}
+    {"test_name": "Liver Function Test", "valid_referral_sources": ["Internal Medicine", "Gastroenterology", "General Practice"], "expiry_days": 30, "required_specialty": "General Practice"},
+    {"test_name": "Kidney Function Test", "valid_referral_sources": ["Internal Medicine", "Nephrology", "General Practice"], "expiry_days": 30, "required_specialty": "General Practice"},
+    {"test_name": "Chest X-Ray", "valid_referral_sources": ["Pulmonology", "Emergency", "Internal Medicine"], "expiry_days": 14, "required_specialty": "Internal Medicine"},
+    {"test_name": "Abdominal Ultrasound", "valid_referral_sources": ["Gastroenterology", "Surgery", "Obstetrics"], "expiry_days": 21, "required_specialty": "General Practice"},
+    {"test_name": "ECG", "valid_referral_sources": ["Cardiology", "Emergency", "Internal Medicine"], "expiry_days": 7, "required_specialty": "Cardiology"},
+    {"test_name": "HbA1c", "valid_referral_sources": ["Endocrinology", "Internal Medicine", "Diabetes Clinic"], "expiry_days": 90, "required_specialty": "Endocrinology"},
+    {"test_name": "Thyroid Panel", "valid_referral_sources": ["Endocrinology", "Internal Medicine"], "expiry_days": 60, "required_specialty": "Endocrinology"},
+    {"test_name": "CT Scan Head", "valid_referral_sources": ["Neurology", "Emergency", "Neurosurgery"], "expiry_days": 7, "required_specialty": "Neurology"},
+    {"test_name": "MRI Spine", "valid_referral_sources": ["Orthopedics", "Neurology", "Neurosurgery"], "expiry_days": 14, "required_specialty": "Orthopedics"},
+    {"test_name": "Pap Smear", "valid_referral_sources": ["Obstetrics", "Gynecology", "Family Planning"], "expiry_days": 180, "required_specialty": "Gynecology"}
   ]
 }

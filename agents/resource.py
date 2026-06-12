@@ -49,7 +49,6 @@ def _band_prompt() -> str:
 
 
 async def main():
-    """Phase 2 Band persistent agent."""
     await run_band_agent(
         "resource",
         _band_prompt(),

@@ -1,11 +1,11 @@
 {
   "therapists": [
-    {"therapist_name": "Dr. Amaka Okafor", "specialty": "Clinical Psychology", "next_slot": "2026-06-04 10:00", "modality": "in-person"},
-    {"therapist_name": "Dr. Tunde Bakare", "specialty": "Psychiatry", "next_slot": "2026-06-05 14:00", "modality": "in-person"},
-    {"therapist_name": "Dr. Fatima Yusuf", "specialty": "Counselling Psychology", "next_slot": "2026-06-04 15:30", "modality": "virtual"},
-    {"therapist_name": "Dr. Chidi Eze", "specialty": "Addiction Counselling", "next_slot": "2026-06-06 09:00", "modality": "in-person"},
-    {"therapist_name": "Dr. Ngozi Adeyemi", "specialty": "Child & Adolescent", "next_slot": "2026-06-07 11:00", "modality": "in-person"},
-    {"therapist_name": "Dr. Ibrahim Musa", "specialty": "Crisis Intervention", "next_slot": "immediate", "modality": "in-person"},
-    {"therapist_name": "Dr. Grace Okonkwo", "specialty": "Trauma Therapy", "next_slot": "2026-06-04 16:00", "modality": "virtual"}
+    {"therapist_name": "Dr. Amaka Okafor", "specialty": "Clinical Psychology", "next_slot": "2026-06-04 10:00", "modality": "in-person", "languages": ["English", "Igbo"]},
+    {"therapist_name": "Dr. Tunde Bakare", "specialty": "Psychiatry", "next_slot": "2026-06-05 14:00", "modality": "in-person", "languages": ["English", "Yoruba"]},
+    {"therapist_name": "Dr. Fatima Yusuf", "specialty": "Counselling Psychology", "next_slot": "2026-06-04 15:30", "modality": "virtual", "languages": ["English", "Hausa"]},
+    {"therapist_name": "Dr. Chidi Eze", "specialty": "Addiction Counselling", "next_slot": "2026-06-06 09:00", "modality": "in-person", "languages": ["English", "Igbo"]},
+    {"therapist_name": "Dr. Ngozi Adeyemi", "specialty": "Child & Adolescent", "next_slot": "2026-06-07 11:00", "modality": "in-person", "languages": ["English"]},
+    {"therapist_name": "Dr. Ibrahim Musa", "specialty": "Crisis Intervention", "next_slot": "immediate", "modality": "in-person", "languages": ["English", "Hausa", "Arabic"]},
+    {"therapist_name": "Dr. Grace Okonkwo", "specialty": "Trauma Therapy", "next_slot": "2026-06-04 16:00", "modality": "virtual", "languages": ["English", "Igbo"]}
   ]
 }

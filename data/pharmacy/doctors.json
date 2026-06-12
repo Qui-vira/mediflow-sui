@@ -1,0 +1,139 @@
+{
+  "doctors": [
+    {
+      "doctor_code": "TBR-DOC-0001",
+      "doctor_name": "Dr. Amaka Okafor",
+      "hospital_code": "TBR-HSP-0001",
+      "specialty": "General Practitioner",
+      "status": "active",
+      "license_number": "MDCN-LG-2018-4421",
+      "registered_date": "2018-03-15"
+    },
+    {
+      "doctor_code": "TBR-DOC-0002",
+      "doctor_name": "Dr. Chidi Eze",
+      "hospital_code": "TBR-HSP-0002",
+      "specialty": "Cardiologist",
+      "status": "active",
+      "license_number": "MDCN-LG-2015-3310",
+      "registered_date": "2015-07-22"
+    },
+    {
+      "doctor_code": "TBR-DOC-0003",
+      "doctor_name": "Dr. Fatima Yusuf",
+      "hospital_code": "TBR-HSP-0003",
+      "specialty": "Psychiatrist",
+      "status": "active",
+      "license_number": "MDCN-LG-2019-5588",
+      "registered_date": "2019-01-10"
+    },
+    {
+      "doctor_code": "TBR-DOC-0004",
+      "doctor_name": "Dr. Ibrahim Musa",
+      "hospital_code": "TBR-HSP-0004",
+      "specialty": "General Practitioner",
+      "status": "active",
+      "license_number": "MDCN-LG-2012-2290",
+      "registered_date": "2012-11-05"
+    },
+    {
+      "doctor_code": "TBR-DOC-0005",
+      "doctor_name": "Dr. Ngozi Adeyemi",
+      "hospital_code": "TBR-HSP-0005",
+      "specialty": "Pediatrician",
+      "status": "active",
+      "license_number": "MDCN-LG-2020-6612",
+      "registered_date": "2020-06-18"
+    },
+    {
+      "doctor_code": "TBR-DOC-0006",
+      "doctor_name": "Dr. Tunde Bakare",
+      "hospital_code": "TBR-HSP-0006",
+      "specialty": "Internal Medicine",
+      "status": "active",
+      "license_number": "MDCN-LG-2014-1187",
+      "registered_date": "2014-09-30"
+    },
+    {
+      "doctor_code": "TBR-DOC-0007",
+      "doctor_name": "Dr. Grace Okonkwo",
+      "hospital_code": "TBR-HSP-0002",
+      "specialty": "Obstetrician",
+      "status": "active",
+      "license_number": "MDCN-LG-2017-3904",
+      "registered_date": "2017-04-12"
+    },
+    {
+      "doctor_code": "TBR-DOC-0008",
+      "doctor_name": "Dr. Emeka Nwankwo",
+      "hospital_code": "TBR-HSP-0008",
+      "specialty": "General Practitioner",
+      "status": "suspended",
+      "license_number": "MDCN-LG-2010-0876",
+      "registered_date": "2010-02-28"
+    },
+    {
+      "doctor_code": "TBR-DOC-0009",
+      "doctor_name": "Dr. Aisha Bello",
+      "hospital_code": "TBR-HSP-0003",
+      "specialty": "Dermatologist",
+      "status": "active",
+      "license_number": "MDCN-LG-2016-2745",
+      "registered_date": "2016-08-07"
+    },
+    {
+      "doctor_code": "TBR-DOC-0010",
+      "doctor_name": "Dr. James Oladipo",
+      "hospital_code": "TBR-HSP-0001",
+      "specialty": "Orthopedic Surgeon",
+      "status": "active",
+      "license_number": "MDCN-LG-2013-1523",
+      "registered_date": "2013-12-01"
+    },
+    {
+      "doctor_code": "TBR-DOC-0011",
+      "doctor_name": "Dr. Blessing Etim",
+      "hospital_code": "TBR-HSP-0005",
+      "specialty": "General Practitioner",
+      "status": "revoked",
+      "license_number": "MDCN-LG-2008-0041",
+      "registered_date": "2008-05-20"
+    },
+    {
+      "doctor_code": "TBR-DOC-0012",
+      "doctor_name": "Dr. Kunle Ajayi",
+      "hospital_code": "TBR-HSP-0004",
+      "specialty": "Neurologist",
+      "status": "active",
+      "license_number": "MDCN-LG-2018-5019",
+      "registered_date": "2018-10-14"
+    },
+    {
+      "doctor_code": "TBR-DOC-0013",
+      "doctor_name": "Dr. Zainab Mohammed",
+      "hospital_code": "TBR-HSP-0006",
+      "specialty": "General Practitioner",
+      "status": "active",
+      "license_number": "MDCN-LG-2021-7120",
+      "registered_date": "2021-03-25"
+    },
+    {
+      "doctor_code": "TBR-DOC-0014",
+      "doctor_name": "Dr. Peter Ogundipe",
+      "hospital_code": "TBR-HSP-0007",
+      "specialty": "General Practitioner",
+      "status": "suspended",
+      "license_number": "MDCN-LG-2011-0933",
+      "registered_date": "2011-07-09"
+    },
+    {
+      "doctor_code": "TBR-DOC-0042",
+      "doctor_name": "Dr. Ada Okonkwo",
+      "hospital_code": "TBR-HSP-0002",
+      "specialty": "General Practitioner",
+      "status": "active",
+      "license_number": "MDCN-LG-2019-4800",
+      "registered_date": "2019-11-18"
+    }
+  ]
+}

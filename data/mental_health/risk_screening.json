@@ -1,12 +1,47 @@
 {
   "criteria": [
-    {"keyword_flags": ["suicide", "kill myself", "end my life", "self-harm"], "risk_level": "critical", "action": "Immediate crisis intervention"},
-    {"keyword_flags": ["hurt someone", "harm others", "violent thoughts"], "risk_level": "critical", "action": "Immediate safety assessment"},
-    {"keyword_flags": ["hearing voices", "paranoid", "psychosis"], "risk_level": "high", "action": "Urgent psychiatric review within 24h"},
-    {"keyword_flags": ["cannot sleep", "panic attacks", "severe anxiety"], "risk_level": "medium", "action": "Priority intake within 48h"},
-    {"keyword_flags": ["feeling sad", "low mood", "loss of interest"], "risk_level": "medium", "action": "PHQ-9 screening recommended"},
-    {"keyword_flags": ["stress at work", "relationship issues"], "risk_level": "low", "action": "Standard intake pathway"},
-    {"keyword_flags": ["mild anxiety", "worried"], "risk_level": "low", "action": "Standard intake pathway"}
+    {
+      "keyword_flags": ["suicide", "kill myself", "end my life", "self-harm"],
+      "risk_level": "critical",
+      "protocol": "Immediate crisis intervention",
+      "immediate_action_required": true
+    },
+    {
+      "keyword_flags": ["hurt someone", "harm others", "violent thoughts"],
+      "risk_level": "critical",
+      "protocol": "Immediate safety assessment",
+      "immediate_action_required": true
+    },
+    {
+      "keyword_flags": ["hearing voices", "paranoid", "psychosis"],
+      "risk_level": "high",
+      "protocol": "Urgent psychiatric review within 24h",
+      "immediate_action_required": false
+    },
+    {
+      "keyword_flags": ["cannot sleep", "panic attacks", "severe anxiety"],
+      "risk_level": "medium",
+      "protocol": "Priority intake within 48h",
+      "immediate_action_required": false
+    },
+    {
+      "keyword_flags": ["feeling sad", "low mood", "loss of interest"],
+      "risk_level": "medium",
+      "protocol": "PHQ-9 screening recommended",
+      "immediate_action_required": false
+    },
+    {
+      "keyword_flags": ["stress at work", "relationship issues"],
+      "risk_level": "low",
+      "protocol": "Standard intake pathway",
+      "immediate_action_required": false
+    },
+    {
+      "keyword_flags": ["mild anxiety", "worried"],
+      "risk_level": "low",
+      "protocol": "Standard intake pathway",
+      "immediate_action_required": false
+    }
   ],
   "phq9_thresholds": {
     "minimal": {"min": 0, "max": 4, "risk_level": "low"},

@@ -1,0 +1,60 @@
+{
+  "hospitals": [
+    {
+      "hospital_code": "TBR-HSP-0001",
+      "hospital_name": "Lagos University Teaching Hospital",
+      "location": "Idi-Araba, Surulere, Lagos",
+      "status": "active",
+      "tier": "tertiary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0002",
+      "hospital_name": "Reddington Hospital Victoria Island",
+      "location": "Victoria Island, Lagos",
+      "status": "active",
+      "tier": "secondary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0003",
+      "hospital_name": "Eko Hospital Ikeja",
+      "location": "Ikeja, Lagos",
+      "status": "active",
+      "tier": "secondary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0004",
+      "hospital_name": "St. Nicholas Hospital Lagos Island",
+      "location": "Lagos Island, Lagos",
+      "status": "active",
+      "tier": "secondary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0005",
+      "hospital_name": "Gbagada General Hospital",
+      "location": "Gbagada, Lagos",
+      "status": "active",
+      "tier": "primary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0006",
+      "hospital_name": "Lagos State University Teaching Hospital",
+      "location": "Ikeja, Lagos",
+      "status": "active",
+      "tier": "tertiary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0007",
+      "hospital_name": "First Consultant Hospital Obalende",
+      "location": "Obalende, Lagos Island",
+      "status": "suspended",
+      "tier": "primary"
+    },
+    {
+      "hospital_code": "TBR-HSP-0008",
+      "hospital_name": "Island Maternity Hospital",
+      "location": "Lagos Island, Lagos",
+      "status": "active",
+      "tier": "secondary"
+    }
+  ]
+}

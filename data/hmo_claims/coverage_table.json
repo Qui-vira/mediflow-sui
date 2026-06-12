@@ -1,14 +1,14 @@
 {
   "coverage": [
-    {"procedure_code": "CONS-GP", "covered_amount_ngn": 15000, "limit_remaining_ngn": 485000, "co_pay_ngn": 0},
-    {"procedure_code": "LAB-FBC", "covered_amount_ngn": 4500, "limit_remaining_ngn": 195500, "co_pay_ngn": 500},
-    {"procedure_code": "LAB-LFT", "covered_amount_ngn": 12000, "limit_remaining_ngn": 138000, "co_pay_ngn": 3000},
-    {"procedure_code": "SURG-APP", "covered_amount_ngn": 350000, "limit_remaining_ngn": 1650000, "co_pay_ngn": 150000},
-    {"procedure_code": "MAT-DEL", "covered_amount_ngn": 450000, "limit_remaining_ngn": 1050000, "co_pay_ngn": 67500},
-    {"procedure_code": "DENT-EXTR", "covered_amount_ngn": 8000, "limit_remaining_ngn": 92000, "co_pay_ngn": 3200},
-    {"procedure_code": "OPT-EXAM", "covered_amount_ngn": 5000, "limit_remaining_ngn": 75000, "co_pay_ngn": 2500},
-    {"procedure_code": "MH-THER", "covered_amount_ngn": 25000, "limit_remaining_ngn": 275000, "co_pay_ngn": 6250},
-    {"procedure_code": "EMER-ADM", "covered_amount_ngn": 500000, "limit_remaining_ngn": 2500000, "co_pay_ngn": 50000},
-    {"procedure_code": "COSM-RHINO", "covered_amount_ngn": 0, "limit_remaining_ngn": 0, "co_pay_ngn": 0}
+    {"procedure_code": "CONS-GP", "procedure_name": "GP Consultation", "covered_percentage": 100, "max_covered_ngn": 15000, "co_pay_ngn": 0},
+    {"procedure_code": "LAB-FBC", "procedure_name": "Full Blood Count", "covered_percentage": 90, "max_covered_ngn": 4500, "co_pay_ngn": 500},
+    {"procedure_code": "LAB-LFT", "procedure_name": "Liver Function Test", "covered_percentage": 80, "max_covered_ngn": 12000, "co_pay_ngn": 3000},
+    {"procedure_code": "SURG-APP", "procedure_name": "Appendectomy", "covered_percentage": 70, "max_covered_ngn": 350000, "co_pay_ngn": 150000},
+    {"procedure_code": "MAT-DEL", "procedure_name": "Normal Delivery", "covered_percentage": 85, "max_covered_ngn": 450000, "co_pay_ngn": 67500},
+    {"procedure_code": "DENT-EXTR", "procedure_name": "Dental Extraction", "covered_percentage": 60, "max_covered_ngn": 8000, "co_pay_ngn": 3200},
+    {"procedure_code": "OPT-EXAM", "procedure_name": "Optical Exam", "covered_percentage": 50, "max_covered_ngn": 5000, "co_pay_ngn": 2500},
+    {"procedure_code": "MH-THER", "procedure_name": "Mental Health Therapy Session", "covered_percentage": 75, "max_covered_ngn": 25000, "co_pay_ngn": 6250},
+    {"procedure_code": "EMER-ADM", "procedure_name": "Emergency Admission", "covered_percentage": 90, "max_covered_ngn": 500000, "co_pay_ngn": 50000},
+    {"procedure_code": "COSM-RHINO", "procedure_name": "Cosmetic Rhinoplasty", "covered_percentage": 0, "max_covered_ngn": 0, "co_pay_ngn": 0}
   ]
 }

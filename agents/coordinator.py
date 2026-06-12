@@ -16,10 +16,9 @@ from core.sector_loader import load_prompt
 
 
 async def main():
-    system_prompt = load_prompt("coordinator")
     await run_band_agent(
         "coordinator",
-        system_prompt,
+        load_prompt("coordinator"),
         "MedBand Coordinator connected to Band",
     )
 

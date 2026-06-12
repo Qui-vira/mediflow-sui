@@ -1,19 +1,19 @@
 {
   "tests": [
-    {"test_name": "Full Blood Count", "requires_referral": false, "sample_type": "blood"},
-    {"test_name": "Malaria Parasite", "requires_referral": false, "sample_type": "blood"},
-    {"test_name": "HIV Screening", "requires_referral": false, "sample_type": "blood"},
-    {"test_name": "Urinalysis", "requires_referral": false, "sample_type": "urine"},
-    {"test_name": "Liver Function Test", "requires_referral": true, "sample_type": "blood"},
-    {"test_name": "Kidney Function Test", "requires_referral": true, "sample_type": "blood"},
-    {"test_name": "Chest X-Ray", "requires_referral": true, "sample_type": "imaging"},
-    {"test_name": "Abdominal Ultrasound", "requires_referral": true, "sample_type": "imaging"},
-    {"test_name": "ECG", "requires_referral": true, "sample_type": "cardiac"},
-    {"test_name": "HbA1c", "requires_referral": true, "sample_type": "blood"},
-    {"test_name": "Thyroid Panel", "requires_referral": true, "sample_type": "blood"},
-    {"test_name": "CT Scan Head", "requires_referral": true, "sample_type": "imaging"},
-    {"test_name": "MRI Spine", "requires_referral": true, "sample_type": "imaging"},
-    {"test_name": "Pap Smear", "requires_referral": true, "sample_type": "cervical"},
-    {"test_name": "COVID-19 PCR", "requires_referral": false, "sample_type": "swab"}
+    {"test_name": "Full Blood Count", "requires_referral": false, "sample_type": "blood", "turnaround_hours": 4, "price_ngn": 4500},
+    {"test_name": "Malaria Parasite", "requires_referral": false, "sample_type": "blood", "turnaround_hours": 2, "price_ngn": 2500},
+    {"test_name": "HIV Screening", "requires_referral": false, "sample_type": "blood", "turnaround_hours": 24, "price_ngn": 3000},
+    {"test_name": "Urinalysis", "requires_referral": false, "sample_type": "urine", "turnaround_hours": 3, "price_ngn": 2000},
+    {"test_name": "Liver Function Test", "requires_referral": true, "sample_type": "blood", "turnaround_hours": 24, "price_ngn": 12000},
+    {"test_name": "Kidney Function Test", "requires_referral": true, "sample_type": "blood", "turnaround_hours": 24, "price_ngn": 11000},
+    {"test_name": "Chest X-Ray", "requires_referral": true, "sample_type": "imaging", "turnaround_hours": 6, "price_ngn": 15000},
+    {"test_name": "Abdominal Ultrasound", "requires_referral": true, "sample_type": "imaging", "turnaround_hours": 24, "price_ngn": 18000},
+    {"test_name": "ECG", "requires_referral": true, "sample_type": "cardiac", "turnaround_hours": 1, "price_ngn": 8000},
+    {"test_name": "HbA1c", "requires_referral": true, "sample_type": "blood", "turnaround_hours": 48, "price_ngn": 9500},
+    {"test_name": "Thyroid Panel", "requires_referral": true, "sample_type": "blood", "turnaround_hours": 48, "price_ngn": 14000},
+    {"test_name": "CT Scan Head", "requires_referral": true, "sample_type": "imaging", "turnaround_hours": 72, "price_ngn": 85000},
+    {"test_name": "MRI Spine", "requires_referral": true, "sample_type": "imaging", "turnaround_hours": 96, "price_ngn": 120000},
+    {"test_name": "Pap Smear", "requires_referral": true, "sample_type": "cervical", "turnaround_hours": 168, "price_ngn": 16000},
+    {"test_name": "COVID-19 PCR", "requires_referral": false, "sample_type": "swab", "turnaround_hours": 24, "price_ngn": 35000}
   ]
 }

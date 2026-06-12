@@ -14,7 +14,7 @@ load_dotenv(ROOT / ".env")
 
 from core.audit_log import get_log
 from core.reports import build_patient_report
-from core.sector_loader import ACTIVE_SECTOR, SECTOR_META, human_role, sector_meta
+from core.sector_loader import ACTIVE_SECTOR, HUMAN_ROLES, SECTOR_META, human_role, sector_meta
 from core.workflow import list_cases, load_case, save_decision
 
 st.set_page_config(page_title="MedBand Dashboard", page_icon="🏥", layout="wide")
@@ -29,12 +29,61 @@ AGENT_ICONS = {
 
 SKIP_KEYS = {"case_id", "status", "parse_error", "raw"}
 
+INTAKE_LABELS = {
+    "pharmacy": {
+        "requester_name": "Patient Name",
+        "requested_service": "Requested Drug",
+        "presenting_issue": "Presenting Issue",
+        "prescription_code": "Prescription Code",
+        "urgency": "Urgency",
+    },
+    "hospital_triage": {
+        "requester_name": "Patient Name",
+        "chief_complaint": "Chief Complaint",
+        "vitals_description": "Vitals",
+        "requested_service": "Service",
+        "urgency": "Urgency",
+    },
+    "lab": {
+        "requester_name": "Patient Name",
+        "test_requested": "Test Requested",
+        "referral_number": "Referral Number",
+        "patient_id": "Patient ID",
+        "requested_service": "Test",
+    },
+    "mental_health": {
+        "requester_name": "Patient Name",
+        "presenting_concern": "Presenting Concern",
+        "duration": "Duration",
+        "self_harm_flag": "Self-Harm Flag",
+        "requested_service": "Service",
+    },
+    "hmo_claims": {
+        "requester_name": "Requester Name",
+        "procedure_code": "Procedure Code",
+        "policy_number": "Policy Number",
+        "provider_name": "Provider",
+        "requested_service": "Procedure",
+    },
+    "emergency": {
+        "caller_name": "Caller Name",
+        "requester_name": "Caller",
+        "emergency_type": "Emergency Type",
+        "location": "Location",
+        "additional_details": "Details",
+        "requested_service": "Emergency Type",
+    },
+}
 
-def labelize(key: str) -> str:
+
+def labelize(key: str, sector: str = None) -> str:
+    sector = sector or ACTIVE_SECTOR
+    if sector in INTAKE_LABELS and key in INTAKE_LABELS[sector]:
+        return INTAKE_LABELS[sector][key]
     return key.replace("_", " ").strip().title()
 
 
-def render_fields(data: dict, skip: set | None = None):
+def render_fields(data: dict, skip: set | None = None, sector: str = None):
     skip = skip or SKIP_KEYS
     if not data:
         st.write("No data available.")
@@ -46,17 +95,17 @@ def render_fields(data: dict, skip: set | None = None):
             if not value:
                 continue
             if isinstance(value[0], dict):
-                st.markdown(f"**{labelize(key)}**")
+                st.markdown(f"**{labelize(key, sector)}**")
                 for item in value:
-                    parts = [f"{labelize(k)}: {v}" for k, v in item.items() if v not in (None, "")]
+                    parts = [f"{labelize(k, sector)}: {v}" for k, v in item.items() if v not in (None, "")]
                     st.markdown(f"- {' | '.join(parts)}")
             else:
-                st.markdown(f"**{labelize(key)}:** {', '.join(str(v) for v in value)}")
+                st.markdown(f"**{labelize(key, sector)}:** {', '.join(str(v) for v in value)}")
         elif isinstance(value, dict):
-            st.markdown(f"**{labelize(key)}**")
-            render_fields(value, skip=set())
+            st.markdown(f"**{labelize(key, sector)}**")
+            render_fields(value, skip=set(), sector=sector)
         else:
-            st.markdown(f"**{labelize(key)}:** {value}")
+            st.markdown(f"**{labelize(key, sector)}:** {value}")
 
 
 def status_color(status: str) -> str:
@@ -69,7 +118,7 @@ def status_color(status: str) -> str:
     return "#8b9cb3"
 
 
-def render_timeline(audit_trail: list):
+def render_timeline(audit_trail: list, sector: str):
     st.markdown(
         """
         <style>
@@ -111,7 +160,7 @@ def render_timeline(audit_trail: list):
         summary_parts = []
         for key in ("requester_name", "requested_service", "drug_name", "reason", "action", "human_role", "decision"):
             if data.get(key):
-                summary_parts.append(f"{labelize(key)}: {data[key]}")
+                summary_parts.append(f"{labelize(key, sector)}: {data[key]}")
         if data.get("notes"):
             summary_parts.append(f"Notes: {data['notes']}")
         body = " · ".join(summary_parts) if summary_parts else "Step recorded in audit log."
@@ -126,11 +175,25 @@ def render_timeline(audit_trail: list):
         )
 
 
+def _self_harm_flagged(intake: dict) -> bool:
+    flag = intake.get("self_harm_flag")
+    if flag is True:
+        return True
+    if isinstance(flag, str) and flag.lower() in ("true", "yes", "1"):
+        return True
+    return False
+
+
+def _role_for_case(case: dict) -> str:
+    sector = case.get("sector", ACTIVE_SECTOR)
+    return case.get("human_role") or HUMAN_ROLES.get(sector, human_role())
+
+
 meta = sector_meta(ACTIVE_SECTOR)
 st.markdown(
     f'<div style="padding:0.75rem 1rem;background:{meta["color"]}18;border-left:4px solid {meta["color"]};'
     f'border-radius:8px;margin-bottom:1rem">'
-    f'<strong>{meta["icon"]} {meta["label"]}</strong> · Approver: <strong>{human_role()}</strong></div>',
+    f'<strong>{meta["icon"]} {meta["label"]}</strong> · Default approver: <strong>{human_role()}</strong></div>',
     unsafe_allow_html=True,
 )
 
@@ -157,13 +220,42 @@ if not case:
 
 case_id = case.get("case_id", "UNKNOWN")
 status = case.get("status", "UNKNOWN")
-case_meta = sector_meta(case.get("sector", ACTIVE_SECTOR))
+case_sector = case.get("sector", ACTIVE_SECTOR)
+case_meta = sector_meta(case_sector)
+case_role = _role_for_case(case)
+intake = case.get("intake", {})
+verification = case.get("verification", {})
+resource = case.get("resource", {})
+
+if case_sector == "mental_health" and _self_harm_flagged(intake):
+    st.markdown(
+        '<div style="padding:1rem;background:#ef444422;border:2px solid #ef4444;border-radius:8px;'
+        'margin-bottom:1rem;font-weight:700;color:#ef4444;">'
+        "SELF-HARM RISK FLAGGED - Immediate human review required</div>",
+        unsafe_allow_html=True,
+    )
+
+if case_sector == "emergency" and resource:
+    unit_type = resource.get("unit_type", "")
+    eta = resource.get("eta_minutes", "")
+    contact = resource.get("contact_number", "")
+    nearest = resource.get("nearest_unit", "")
+    if unit_type or nearest:
+        st.markdown(
+            f'<div style="padding:1rem;background:#ef444418;border-left:4px solid #ef4444;'
+            f'border-radius:8px;margin-bottom:1rem">'
+            f"<strong>🚨 Dispatch Unit Assigned</strong><br>"
+            f"Unit: <strong>{nearest or 'Pending'}</strong> ({unit_type}) · "
+            f"ETA: <strong>{eta} min</strong> · Contact: <strong>{contact or 'N/A'}</strong>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
 
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Case ID", case_id)
 col2.metric("Status", status.replace("_", " ").title())
 col3.metric("Sector", case_meta["label"])
-col4.metric("Human Role", case.get("human_role", human_role()))
+col4.metric("Human Role", case_role)
 
 st.divider()
 
@@ -173,17 +265,13 @@ with left:
     st.subheader("Agent Timeline")
     audit_trail = case.get("audit_trail") or get_log(case_id)
     st.caption(f"{len(audit_trail)} messages · mock Band room")
-    render_timeline(audit_trail)
+    render_timeline(audit_trail, case_sector)
 
 with right:
     st.subheader("Case Details")
 
-    intake = case.get("intake", {})
-    verification = case.get("verification", {})
-    resource = case.get("resource", {})
-
     with st.expander("Intake", expanded=True):
-        render_fields(intake)
+        render_fields(intake, sector=case_sector)
 
     with st.expander("Verification", expanded=bool(verification)):
         if verification:
@@ -194,13 +282,13 @@ with right:
                 st.warning(verification.get("reason", "Review recommended"))
             else:
                 st.success(verification.get("reason", vstatus))
-            render_fields(verification, skip={"reason", "recommendation"})
+            render_fields(verification, skip={"reason", "recommendation"}, sector=case_sector)
         else:
             st.write("Skipped (escalated).")
 
     with st.expander("Resource", expanded=bool(resource)):
         if resource:
-            render_fields(resource)
+            render_fields(resource, sector=case_sector)
         else:
             st.write("Skipped (escalated).")
 
@@ -211,7 +299,7 @@ with right:
         st.markdown(f"- {line}")
 
 st.divider()
-st.subheader("Human Decision")
+st.subheader(f"Human Decision ({case_role})")
 
 notes = st.text_area("Decision notes (optional)", key=f"notes_{case_id}")
 col_a, col_b, col_c = st.columns(3)
@@ -221,7 +309,7 @@ decision = case.get("decision")
 if col_a.button("Approve", type="primary", use_container_width=True):
     decision = {
         "decision": "APPROVED",
-        "by": human_role(),
+        "by": case_role,
         "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "case_id": case_id,
         "notes": notes,
@@ -233,7 +321,7 @@ if col_a.button("Approve", type="primary", use_container_width=True):
 if col_b.button("Reject", use_container_width=True):
     decision = {
         "decision": "REJECTED",
-        "by": human_role(),
+        "by": case_role,
         "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "case_id": case_id,
         "notes": notes,
@@ -245,7 +333,7 @@ if col_b.button("Reject", use_container_width=True):
 if col_c.button("Request More Info", use_container_width=True):
     decision = {
         "decision": "MORE_INFO_REQUESTED",
-        "by": human_role(),
+        "by": case_role,
         "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "case_id": case_id,
         "notes": notes or "Additional information required.",

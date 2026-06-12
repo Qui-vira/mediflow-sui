@@ -33,11 +33,9 @@ def run(case_id: str, raw_input: str) -> dict:
 
 
 async def main():
-    """Phase 2 Band persistent agent."""
-    system_prompt = load_prompt("intake")
     await run_band_agent(
         "intake",
-        system_prompt,
+        load_prompt("intake"),
         "MedBand Intake Agent connected to Band",
     )
 
