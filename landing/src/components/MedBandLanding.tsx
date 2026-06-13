@@ -48,13 +48,16 @@ function TopBar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 pt-6 px-6 md:px-10 transition-all duration-300 ${
-        scrolled ? "backdrop-blur-md bg-black/40 border-b border-white/10" : ""
+      className={`fixed top-0 left-0 right-0 z-50 isolate border-b transition-all duration-300 ${
+        scrolled
+          ? "border-white/10 bg-black/70 backdrop-blur-md"
+          : "border-white/5 bg-black/55 backdrop-blur-md"
       }`}
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 md:px-10">
         <m.a
           href="#"
+          className="flex shrink-0 items-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: INTRO_DELAY - 0.2, ease: EASE }}
@@ -63,7 +66,7 @@ function TopBar() {
         </m.a>
 
         <m.nav
-          className="hidden md:flex items-center gap-1"
+          className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: INTRO_DELAY, ease: EASE }}
@@ -75,7 +78,7 @@ function TopBar() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-white/60 hover:text-white transition px-4 py-2"
+                className="whitespace-nowrap px-3 py-2 text-sm text-white/60 transition hover:text-white xl:px-4"
               >
                 {link.label}
               </a>
@@ -84,7 +87,7 @@ function TopBar() {
                 key={link.label}
                 type="button"
                 onClick={link.action}
-                className="text-sm text-white/60 hover:text-white transition px-4 py-2"
+                className="whitespace-nowrap px-3 py-2 text-sm text-white/60 transition hover:text-white xl:px-4"
               >
                 {link.label}
               </button>
@@ -93,7 +96,7 @@ function TopBar() {
         </m.nav>
 
         <m.div
-          className="flex items-center gap-3"
+          className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: INTRO_DELAY, ease: EASE }}
@@ -102,7 +105,7 @@ function TopBar() {
             href={LINKS.register}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex rounded-full border border-teal/40 text-teal px-3 py-1 text-sm hover:bg-teal/10 transition"
+            className="hidden items-center whitespace-nowrap rounded-full border border-teal/40 px-3 py-1.5 text-sm text-teal transition hover:bg-teal/10 sm:inline-flex"
           >
             For Institutions
           </a>
@@ -110,23 +113,23 @@ function TopBar() {
             href={LINKS.live}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex rounded-full bg-teal text-white px-4 py-2 text-sm hover:bg-teal/80 transition"
+            className="inline-flex items-center whitespace-nowrap rounded-full bg-teal px-3.5 py-2 text-sm text-white transition hover:bg-teal/80 sm:px-4"
           >
             Submit a Case
           </a>
           <button
             type="button"
-            className="md:hidden text-white/80 hover:text-white p-2"
+            className="inline-flex p-2 text-white/80 transition hover:text-white lg:hidden"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close menu" : "Open menu"}
           >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </m.div>
       </div>
 
       {open && (
-        <div className="md:hidden mt-4 rounded-xl border border-white/10 bg-black/80 backdrop-blur-md overflow-hidden">
+        <div className="mx-4 mb-3 overflow-hidden rounded-xl border border-white/10 bg-black/90 backdrop-blur-md sm:mx-6 md:mx-10 lg:hidden">
           <a
             href={LINKS.register}
             target="_blank"
@@ -182,7 +185,7 @@ const HERO_CARDS = [
   {
     src: ASSETS.bandRoom,
     alt: "Band room agents",
-    position: "top-[5%] right-[2%]",
+    position: "top-[16%] right-[2%]",
     size: "w-[280px] aspect-[16/10]",
     depth: 22,
     badge: "band" as const,
@@ -190,7 +193,7 @@ const HERO_CARDS = [
   {
     src: ASSETS.form,
     alt: "Patient form",
-    position: "top-[8%] left-[2%]",
+    position: "top-[18%] left-[2%]",
     size: "w-[200px] aspect-[4/3]",
     depth: 18,
   },
@@ -205,7 +208,7 @@ const HERO_CARDS = [
   {
     src: ASSETS.sectorPharmacy,
     alt: "Pharmacy sector",
-    position: "top-[15%] left-[5%]",
+    position: "top-[22%] left-[5%]",
     size: "w-[140px] aspect-square",
     depth: 20,
     fallbackIcon: Pill,
@@ -244,7 +247,7 @@ function HeroSection() {
 
   return (
     <section
-      className={`${MATTE} relative min-h-[110vh] pt-32 pb-24 overflow-hidden`}
+      className={`${MATTE} relative min-h-[110vh] overflow-hidden pb-24 pt-28 md:pt-32`}
       style={style}
     >
       <StarField count={300} />
