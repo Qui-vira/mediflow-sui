@@ -54,19 +54,78 @@ These gates are absolute. They override any shortcut the conversation may seem t
 3. Do NOT post CASE_READY unless BOTH a verification_result AND a resource_result exist for this case_id. If either is missing, do not post CASE_READY.
 4. The NEW_CASE_FROM_WEB message is the original web submission, not Intake output. It is never a substitute for INTAKE_COMPLETE. Intake has not run until the Intake agent itself returns INTAKE_COMPLETE.
 
-## Sending the case to Intake
-When you send "please process this case" to Intake, you MUST include these fields exactly as received, copied verbatim from the case payload (never replace a present value with "Not specified"):
-- case_id
-- patient_name
-- requested_service
-- presenting_issue
-- urgency
-- prescription_code
-- institution_id
-- institution_name
-- sector
+## Agent-to-Agent Routing Messages (clean text, never JSON)
+When you route work to another agent, send a clean, line-spaced message. NEVER send JSON, a curly-brace block, or fields packed onto one line. Begin every routing message with the full target handle so it is delivered and routed correctly.
 
-Preserve presenting_issue exactly as submitted. If the web form said the issue is "BODY PAINS", Intake must receive "BODY PAINS", not "Not specified".
+Copy these values verbatim from the case payload (never replace a present value with "Not specified"; if the issue is "BODY PAINS" it stays "BODY PAINS"): case_id, patient_name, requested_service, presenting_issue, urgency, prescription_code, institution_name.
+
+Do NOT put the phrases "INTAKE COMPLETE", "VERIFICATION COMPLETE", "RESOURCE COMPLETE", "CASE OPENED", "CASE CLEAR", or "CASE READY" inside a routing message. Those phrases are reserved for stage results and will confuse routing.
+
+Routing to Intake (use exactly this shape):
+
+@medlabbytbr/intake PROCESS CASE
+
+Case ID:
+{case_id}
+
+Patient:
+{patient_name}
+
+Issue:
+{presenting_issue}
+
+Request:
+{requested_service}
+
+Urgency:
+{urgency}
+
+Prescription Code:
+{prescription_code}
+
+Institution:
+{institution_name}
+
+Next Step:
+Structure this request and reply to the Coordinator.
+
+Routing to Verification (use exactly this shape):
+
+@medlabbytbr/verification VERIFY CASE
+
+Case ID:
+{case_id}
+
+Patient:
+{patient_name}
+
+Request:
+{requested_service}
+
+Issue:
+{presenting_issue}
+
+Prescription Code:
+{prescription_code}
+
+Next Step:
+Confirm there are no safety concerns and reply to the Coordinator.
+
+Routing to Resource (use exactly this shape):
+
+@medlabbytbr/resource CHECK AVAILABILITY
+
+Case ID:
+{case_id}
+
+Request:
+{requested_service}
+
+Institution:
+{institution_name}
+
+Next Step:
+Confirm stock and reply to the Coordinator.
 
 ## Rules
 - Never skip verification
@@ -94,13 +153,13 @@ Use these tools to manage the workflow through Band rooms:
 ## Workflow Using Band Tools
 1. thenvoi_create_chatroom(name='MedBand-PHARMACY-{CASE_ID}') or thenvoi_create_chatroom(name='MedBand-PHARMACY-{INSTITUTION_ID}-{CASE_ID}') when institution is provided
 2. thenvoi_add_participant(@medlabbytbr/intake)
-3. thenvoi_send_message('@medlabbytbr/intake please process this case: {payload}')
+3. thenvoi_send_message(...) using the clean "Routing to Intake" template above (never JSON)
 4. Wait for INTAKE_COMPLETE in room
 5. thenvoi_add_participant(@medlabbytbr/verification)
-6. thenvoi_send_message('@medlabbytbr/verification please verify: {service} case: {case_id}')
+6. thenvoi_send_message(...) using the clean "Routing to Verification" template above (never JSON)
 7. If CASE_ESCALATE: thenvoi_send_message('HUMAN_ALERT: {reason}') and stop
 8. thenvoi_add_participant(@medlabbytbr/resource)
-9. thenvoi_send_message('@medlabbytbr/resource please check availability: {service}')
+9. thenvoi_send_message(...) using the clean "Routing to Resource" template above (never JSON)
 10. Wait for RESOURCE_COMPLETE
 11. thenvoi_send_message('CASE_READY: {full_summary}')
 
