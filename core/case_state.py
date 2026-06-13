@@ -258,21 +258,24 @@ def build_coordinator_workflow_context(case_id: str) -> str:
     # Evaluate latest stage first so a completed stage never shadows a later one.
     # Once RESOURCE_COMPLETE exists, the only valid next action is CASE_READY -
     # never route back to Intake and never send PROCESS CASE again.
+    # required_action hints must use plain visible wording, never internal stage
+    # IDs (no "CASE_OPENED:", "VERIFY_REQUEST:", "RESOURCE_REQUEST:", "CASE_READY:"),
+    # because the model echoes this wording into the visible Band message.
     if stage_completed(case_id, "RESOURCE_COMPLETE"):
         if not stage_completed(case_id, "CASE_READY"):
             lines.append(
-                "required_action: Resource complete. Post exactly one CASE READY FOR HUMAN REVIEW summary to the human approver. Do NOT route back to Intake, Verification, or Resource. Do NOT send PROCESS CASE."
+                "required_action: Resource step complete. Post exactly one clean CASE READY FOR HUMAN REVIEW message to the human approver @medlabbytbr. Do NOT route back to Intake, Verification, or Resource. Do NOT send another routing message."
             )
     elif stage_completed(case_id, "CASE_ESCALATE"):
         if not stage_completed(case_id, "HUMAN_ALERT"):
-            lines.append("required_action: Verification escalated. Send HUMAN_ALERT and stop.")
+            lines.append("required_action: Verification escalated. Send a HUMAN ALERT to the human approver and stop.")
     elif stage_completed(case_id, "CASE_CLEAR") or stage_completed(case_id, "CASE_CAUTION"):
         if not stage_completed(case_id, "RESOURCE_REQUEST"):
             lines.append(
-                "required_action: Verification complete. Send exactly one RESOURCE_REQUEST to @medlabbytbr/resource."
+                "required_action: Verification step complete. Send exactly one CHECK AVAILABILITY message to @medlabbytbr/resource using the clean routing template."
             )
     elif stage_completed(case_id, "INTAKE_COMPLETE") and not stage_completed(case_id, "VERIFY_REQUEST"):
         lines.append(
-            "required_action: INTAKE_COMPLETE received. Send exactly one VERIFY_REQUEST to @medlabbytbr/verification with intake_result."
+            "required_action: Intake step complete. Send exactly one VERIFY CASE message to @medlabbytbr/verification using the clean routing template."
         )
     return "\n".join(lines)

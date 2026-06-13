@@ -732,22 +732,19 @@ def evaluate_outbound(
         return OutboundDecision(skip=True, reason="invalid_routing", stage=stage, case_id=case_id)
 
     if stage and case_id and stage in TRACKED_STAGES:
-        from core.case_state import try_claim_outbound
-
-        if not try_claim_outbound(
-            case_id,
-            stage,
-            agent_role,
-            recipient,
-            room_id=room_id,
-            payload=payload,
-        ):
+        # De-dupe on the PERSISTED stage only. The stage is recorded after a
+        # confirmed successful send (see record_outbound_success), never here.
+        # Claim-before-send previously marked a stage complete before delivery,
+        # so a failed send (e.g. CASE_READY) was hidden permanently and could
+        # never retry. A single Railway replica processes each room
+        # sequentially, so this read check blocks duplicates on its own; on a
+        # failed send nothing is recorded, so the stage simply retries.
+        if stage_completed(case_id, stage):
             logger.info(
-                "SKIP outbound: duplicate_stage agent=%s stage=%s case_id=%s sender=%s recipient=%s room=%s",
+                "SKIP outbound: duplicate_stage agent=%s stage=%s case_id=%s recipient=%s room=%s",
                 agent_role,
                 stage,
                 case_id,
-                agent_role,
                 recipient,
                 room_id,
             )
@@ -757,7 +754,6 @@ def evaluate_outbound(
                 stage=stage,
                 case_id=case_id,
             )
-        record_stage(case_id, stage, payload=payload, room_id=room_id)
 
     if payload and stage and stage not in ROUTING_ONLY_STAGES:
         enriched = enrich_payload_from_case_state(payload, case_id or "")
@@ -826,5 +822,14 @@ def extract_recipient(tool_input: dict[str, Any]) -> str:
 
 
 def record_outbound_success(decision: OutboundDecision, payload: dict[str, Any] | None, room_id: str) -> None:
-    """Legacy hook; stage recording now happens at claim time in evaluate_outbound."""
-    return
+    """Persist the workflow stage AFTER the Band send actually succeeded.
+
+    The adapter calls this only when execute_tool_call returns without error, so a
+    failed send never records the stage and the Coordinator can retry it on the
+    next turn. This replaces the old claim-before-send that permanently hid failed
+    messages such as CASE_READY.
+    """
+    if decision is None or decision.skip:
+        return
+    if decision.stage and decision.case_id and decision.stage in TRACKED_STAGES:
+        record_stage(decision.case_id, decision.stage, payload=payload, room_id=room_id)
