@@ -185,7 +185,7 @@ const HERO_CARDS = [
   {
     src: ASSETS.bandRoom,
     alt: "Band room agents",
-    position: "top-[16%] right-[2%]",
+    position: "top-[28%] right-[3%]",
     size: "w-[280px] aspect-[16/10]",
     depth: 22,
     badge: "band" as const,
