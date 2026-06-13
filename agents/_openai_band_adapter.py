@@ -18,6 +18,90 @@ logger = logging.getLogger(__name__)
 OpenAIMessages = list[dict[str, Any]]
 
 
+def _patch_orphaned_tool_calls(messages: OpenAIMessages) -> None:
+    """Inject synthetic tool results for assistant tool_calls missing responses."""
+    i = 0
+    while i < len(messages):
+        msg = messages[i]
+        if msg.get("role") != "assistant":
+            i += 1
+            continue
+
+        tool_calls = msg.get("tool_calls") or []
+        if not tool_calls:
+            if msg.get("content") is None:
+                msg["content"] = ""
+            i += 1
+            continue
+
+        call_ids = {tc["id"] for tc in tool_calls if tc.get("id")}
+        j = i + 1
+        matched_ids: set[str] = set()
+        while j < len(messages) and messages[j].get("role") == "tool":
+            tool_call_id = messages[j].get("tool_call_id")
+            if tool_call_id in call_ids:
+                matched_ids.add(tool_call_id)
+            j += 1
+
+        orphaned_ids = call_ids - matched_ids
+        if orphaned_ids:
+            logger.warning(
+                "Patching %d orphaned OpenAI tool_call(s): %s",
+                len(orphaned_ids),
+                sorted(orphaned_ids),
+            )
+            synthetic = [
+                {
+                    "role": "tool",
+                    "tool_call_id": tool_id,
+                    "content": "Error: tool execution was interrupted",
+                }
+                for tool_id in sorted(orphaned_ids)
+            ]
+            messages[i + 1 : i + 1] = synthetic
+            i += len(synthetic)
+
+        i += 1
+
+
+def _sanitize_openai_messages(messages: OpenAIMessages) -> OpenAIMessages:
+    """Remove or repair message sequences AIML rejects."""
+    sanitized: OpenAIMessages = []
+
+    for msg in messages:
+        role = msg.get("role")
+        if role == "tool":
+            if sanitized and sanitized[-1].get("role") == "assistant":
+                prior_calls = sanitized[-1].get("tool_calls") or []
+                tool_call_id = msg.get("tool_call_id")
+                if any(tc.get("id") == tool_call_id for tc in prior_calls):
+                    sanitized.append(msg)
+                    continue
+            logger.warning(
+                "Dropping orphaned tool message (tool_call_id=%s)",
+                msg.get("tool_call_id"),
+            )
+            sanitized.append(
+                {
+                    "role": "user",
+                    "content": f"[Tool result]: {msg.get('content', '')}",
+                }
+            )
+            continue
+
+        if role == "assistant":
+            tool_calls = msg.get("tool_calls") or []
+            content = msg.get("content")
+            if not tool_calls and content is None:
+                logger.warning("Repairing assistant message with null content")
+                msg = {**msg, "content": ""}
+
+        sanitized.append(msg)
+
+    _patch_orphaned_tool_calls(sanitized)
+    return sanitized
+
+
 class OpenAIHistoryConverter(HistoryConverter[OpenAIMessages]):
     """Convert Band platform history to OpenAI chat message format."""
 
@@ -101,7 +185,7 @@ class OpenAIHistoryConverter(HistoryConverter[OpenAIMessages]):
 
         flush_tool_calls()
         flush_tool_results()
-        return messages
+        return _sanitize_openai_messages(messages)
 
 
 class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
@@ -154,7 +238,9 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
         room_id: str,
     ) -> None:
         if is_session_bootstrap:
-            self._message_history[room_id] = list(history) if history else []
+            self._message_history[room_id] = (
+                _sanitize_openai_messages(list(history)) if history else []
+            )
         elif room_id not in self._message_history:
             self._message_history[room_id] = []
 
@@ -178,18 +264,22 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
             include_contacts=include_contacts,
         )
 
+        api_messages = _sanitize_openai_messages(self._message_history[room_id])
+
         while True:
             try:
-                response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
+                request_kwargs: dict[str, Any] = {
+                    "model": self.model,
+                    "messages": [
                         {"role": "system", "content": self._system_prompt},
-                        *self._message_history[room_id],
+                        *api_messages,
                     ],
-                    tools=tool_schemas or None,
-                    max_tokens=self.max_tokens,
-                    temperature=0.3,
-                )
+                    "max_tokens": self.max_tokens,
+                    "temperature": 0.3,
+                }
+                if tool_schemas:
+                    request_kwargs["tools"] = tool_schemas
+                response = await self.client.chat.completions.create(**request_kwargs)
             except Exception as exc:
                 logger.error("Error calling AIML API: %s", exc, exc_info=True)
                 await self._report_error(tools, str(exc))
@@ -205,6 +295,7 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                     self._message_history[room_id].append(
                         {"role": "assistant", "content": content}
                     )
+                    api_messages.append({"role": "assistant", "content": content})
                 break
 
             serialized_calls = []
@@ -220,13 +311,13 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                     }
                 )
 
-            self._message_history[room_id].append(
-                {
-                    "role": "assistant",
-                    "content": assistant_message.content,
-                    "tool_calls": serialized_calls,
-                }
-            )
+            assistant_entry = {
+                "role": "assistant",
+                "content": assistant_message.content or "",
+                "tool_calls": serialized_calls,
+            }
+            self._message_history[room_id].append(assistant_entry)
+            api_messages.append(assistant_entry)
 
             for tool_call in tool_calls:
                 tool_name = tool_call.function.name
@@ -277,13 +368,13 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                     except Exception as exc:
                         logger.warning("Failed to send tool_result event: %s", exc)
 
-                self._message_history[room_id].append(
-                    {
-                        "role": "tool",
-                        "tool_call_id": tool_call_id,
-                        "content": result_str,
-                    }
-                )
+                tool_entry = {
+                    "role": "tool",
+                    "tool_call_id": tool_call_id,
+                    "content": result_str,
+                }
+                self._message_history[room_id].append(tool_entry)
+                api_messages.append(tool_entry)
 
     async def on_cleanup(self, room_id: str) -> None:
         self._message_history.pop(room_id, None)
