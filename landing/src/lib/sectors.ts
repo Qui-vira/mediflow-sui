@@ -79,15 +79,15 @@ export const SECTORS: SectorItem[] = [
 export const FEATURED_INSTITUTIONS = [
   {
     id: "PHM001",
-    name: "Ladibe Pharmacy",
-    location: "Victoria Island, Lagos",
+    name: "Peaceway Pharmacy",
+    location: "Ikeja, Lagos",
     sector: "Pharmacy",
-    logo_initial: "L",
-    logo_color: "#0E7C7B",
-    rating: 4.8,
-    cases_processed: 1240,
-    plan: "enterprise",
-    turnaround: "5-10 mins",
+    logo_initial: "P",
+    logo_color: "#276749",
+    rating: 4.6,
+    cases_processed: 890,
+    plan: "professional",
+    turnaround: "10-15 mins",
   },
   {
     id: "HSP001",

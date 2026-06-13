@@ -2,18 +2,18 @@
   "institutions": [
     {
       "institution_id": "PHM001",
-      "institution_name": "Ladibe Pharmacy",
+      "institution_name": "Peaceway Pharmacy",
       "sector": "pharmacy",
-      "approver_name": "Dr. Chidi Okeke",
+      "approver_name": "Pharm. Ada Okonkwo",
       "approver_role": "Pharmacist",
       "band_handle": "@medlabbytbr",
       "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
     },
     {
       "institution_id": "PHM002",
-      "institution_name": "Peaceway Pharmacy",
+      "institution_name": "Ladibe Pharmacy",
       "sector": "pharmacy",
-      "approver_name": "Pharm. Ada Okonkwo",
+      "approver_name": "Dr. Chidi Okeke",
       "approver_role": "Pharmacist",
       "band_handle": "@medlabbytbr",
       "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"

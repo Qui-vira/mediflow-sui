@@ -2,23 +2,6 @@
   "pharmacy": [
     {
       "id": "PHM001",
-      "name": "Ladibe Pharmacy",
-      "location": "Victoria Island, Lagos",
-      "address": "12 Adeola Odeku Street, VI, Lagos",
-      "phone": "+234 801 234 5678",
-      "email": "info@ladibepharmacy.com",
-      "logo_initial": "L",
-      "logo_color": "#0E7C7B",
-      "rating": 4.8,
-      "cases_processed": 1240,
-      "status": "active",
-      "plan": "enterprise",
-      "turnaround": "5-10 mins",
-      "specialties": ["General", "Pediatrics", "Oncology"],
-      "band_handle": "@medlabbytbr/coordinator"
-    },
-    {
-      "id": "PHM002",
       "name": "Peaceway Pharmacy",
       "location": "Ikeja, Lagos",
       "address": "45 Allen Avenue, Ikeja, Lagos",
@@ -32,6 +15,23 @@
       "plan": "professional",
       "turnaround": "10-15 mins",
       "specialties": ["General", "Chronic Disease"],
+      "band_handle": "@medlabbytbr/coordinator"
+    },
+    {
+      "id": "PHM002",
+      "name": "Ladibe Pharmacy",
+      "location": "Victoria Island, Lagos",
+      "address": "12 Adeola Odeku Street, VI, Lagos",
+      "phone": "+234 801 234 5678",
+      "email": "info@ladibepharmacy.com",
+      "logo_initial": "L",
+      "logo_color": "#0E7C7B",
+      "rating": 4.8,
+      "cases_processed": 1240,
+      "status": "active",
+      "plan": "enterprise",
+      "turnaround": "5-10 mins",
+      "specialties": ["General", "Pediatrics", "Oncology"],
       "band_handle": "@medlabbytbr/coordinator"
     },
     {
