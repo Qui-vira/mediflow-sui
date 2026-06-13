@@ -7,9 +7,9 @@ def build_patient_report(case: dict) -> dict:
     intake = case.get("intake", {})
     verification = case.get("verification", {})
     resource = case.get("resource", {})
-    decision = case.get("decision", {})
-    status = case.get("status", "UNKNOWN")
-    name = intake.get("requester_name") or intake.get("caller_name") or "Requester"
+    decision = case.get("decision", {}) or {}
+    human_decision = case.get("human_decision", {})
+    status = case.get("status", "UNKNOWN")    name = intake.get("requester_name") or intake.get("caller_name") or "Requester"
     service = intake.get("requested_service", "")
 
     lines = [
@@ -34,8 +34,12 @@ def build_patient_report(case: dict) -> dict:
         lines.append(f"Final decision: {d} by {decision.get('by', human_role())}")
         if decision.get("notes"):
             lines.append(f"Notes: {decision['notes']}")
-    else:
-        lines.append(f"Awaiting review by {case.get('human_role', human_role())}.")
+    elif human_decision:
+        d = human_decision.get("decision", "").replace("_", " ").title()
+        lines.append(f"Final decision: {d} by {human_decision.get('decided_by', human_role())}")
+        if human_decision.get("reason"):
+            lines.append(f"Notes: {human_decision['reason']}")
+    else:        lines.append(f"Awaiting review by {case.get('human_role', human_role())}.")
 
     lines.append("AI agents do not prescribe or approve. A human professional makes the final decision.")
 
@@ -44,11 +48,11 @@ def build_patient_report(case: dict) -> dict:
         "headline": _headline(case, decision),
         "summary_lines": lines,
         "report_text": "\n".join(lines),
-        "has_decision": bool(decision),
-    }
+        "has_decision": bool(decision or human_decision),    }
 
 
 def _headline(case: dict, decision: dict) -> str:
+    human_decision = case.get("human_decision", {})
     if decision:
         d = decision.get("decision", "")
         if d == "APPROVED":
@@ -57,11 +61,25 @@ def _headline(case: dict, decision: dict) -> str:
             return "Your case was not approved."
         if d == "MORE_INFO_REQUESTED":
             return "More information is needed."
+    if human_decision:
+        d = human_decision.get("decision", "")
+        if d == "approved":
+            return "Your case has been approved."
+        if d == "rejected":
+            return "Your case was not approved."
+        if d == "pending_info":
+            return "More information is needed."
     status = case.get("status", "")
-    if status == "ESCALATED":
+    if status in ("ESCALATED", "escalated"):
         return "Your case requires urgent human review."
-    if status == "READY_FOR_REVIEW":
+    if status in ("READY_FOR_REVIEW", "ready_for_review", "processing", "PROCESSING"):
         return "Your case is being reviewed."
     if status == "INCOMPLETE":
         return "Your case is incomplete."
+    if status == "approved":
+        return "Your case has been approved."
+    if status == "rejected":
+        return "Your case was not approved."
+    if status == "pending_info":
+        return "More information is needed."
     return "Case update available."

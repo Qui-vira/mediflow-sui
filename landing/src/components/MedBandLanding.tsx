@@ -279,7 +279,7 @@ const HERO_CARDS = [
   },
   {
     src: ASSETS.dashboard,
-    alt: "Pharmacist dashboard",
+    alt: "Band approval room",
     position: "bottom-[8%] right-[4%]",
     size: "w-[260px] aspect-[16/10]",
     depth: 26,
@@ -499,7 +499,7 @@ const STEPS = [
     num: "04",
     icon: CheckCircle,
     title: "Human Makes Final Decision",
-    body: "The human professional sees a structured case summary on the dashboard and clicks Approve or Reject. No AI makes the final call.",
+    body: "The human professional sees a structured case summary in the Band room and responds APPROVE or REJECT. No AI makes the final call.",
     iconColor: "text-green",
   },
 ];

@@ -128,3 +128,75 @@ Extract the case details from the message and proceed with the normal workflow:
 4. Post CASE_READY when complete
 
 The patient submitted this through the website and is waiting for their case to be processed. Treat it with the same priority as any other case.
+
+## Human Approval via Band
+
+When you post CASE_READY, you must also @mention the human approver in the room.
+
+After posting the full CASE_READY JSON summary, post a second clean human-readable message:
+
+---
+✅ CASE READY FOR YOUR APPROVAL
+
+Case ID: {CASE_ID}
+Patient: {patient_name}
+Request: {requested_service}
+Institution: {institution_name}
+Verification: {verdict}
+Stock/Resource: {availability}
+
+Please review the case details above and respond with:
+
+✅ APPROVE
+or
+❌ REJECT: {your reason}
+or
+ℹ️ MORE INFO: {what you need}
+
+This case is awaiting your decision before any action is taken.
+---
+
+When the human responds in this room:
+
+If they say APPROVE or ✅:
+Post CASE_APPROVED to the room:
+```json
+{
+  "status": "CASE_APPROVED",
+  "case_id": "{CASE_ID}",
+  "approved_by": "{human name from room}",
+  "timestamp": "{now}"
+}
+```
+Save the approval to the case file.
+
+If they say REJECT or ❌:
+Post CASE_REJECTED to the room with their reason.
+Save the rejection to the case file.
+
+If they say MORE INFO or ℹ️:
+Post CASE_PENDING_INFO to the room.
+Note what information is needed.
+
+## Institution Approver
+
+The human approver Band handle is stored in `data/institution_users.json`. Look up the institution by `institution_id` and use `thenvoi_add_participant` to add their `band_handle` to the Band room when posting CASE_READY.
+
+For hackathon demo, all institutions route approvals to `@medlabbytbr`.
+
+## Escalation Human Alert
+
+When you post HUMAN_ALERT for escalated cases, use this format:
+
+🚨 URGENT - HUMAN INTERVENTION REQUIRED
+
+Case ID: {CASE_ID}
+Institution: {institution_name}
+Escalation Reason: {reason}
+
+This case has been flagged by the AI agents and CANNOT proceed without your immediate review.
+
+Please respond with:
+✅ APPROVE WITH OVERRIDE: {your justification}
+❌ REJECT: {reason}
+📞 ESCALATE FURTHER: {who to contact}

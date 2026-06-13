@@ -3,107 +3,242 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedBand - Case Status</title>
+  <title>MedBand — Case Status</title>
+  <meta name="theme-color" content="#0A0F1A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0e14;
-      --surface: #141b26;
-      --border: #2d3a4f;
-      --text: #e8edf4;
-      --muted: #8b9cb3;
-      --accent: #00c896;
-      --danger: #ef4444;
-      --warn: #fbbf24;
+      --bg: #0A0F1A;
+      --surface: #111827;
+      --border: rgba(255, 255, 255, 0.08);
+      --teal: #0E7C7B;
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --danger: #E53E3E;
+      --warn: #F4A261;
+      --success: #38B2AC;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: "Segoe UI", system-ui, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 520px; margin: 0 auto; }
-    a { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at top, rgba(14, 124, 123, 0.06), transparent 55%);
+      pointer-events: none;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+
     a:hover { text-decoration: underline; }
-    h1 { font-size: 1.4rem; margin: 1rem 0 0.25rem; }
-    .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      margin: 1rem 0 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.5rem;
+      border-radius: 16px;
+      padding: 1.25rem;
       margin-bottom: 1rem;
     }
-    label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; }
-    .lookup-row { display: flex; gap: 0.5rem; }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .lookup-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
     input {
       flex: 1;
-      padding: 0.7rem;
+      padding: 0.75rem 0.9rem;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       color: var(--text);
-      font-size: 1rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-family: ui-monospace, monospace;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
     }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(14, 124, 123, 0.5);
+    }
+
     button {
-      padding: 0.7rem 1.2rem;
-      background: var(--accent);
-      color: #0a0e14;
+      padding: 0.75rem 1.1rem;
+      background: var(--teal);
+      color: #fff;
       border: none;
-      border-radius: 8px;
-      font-weight: 700;
+      border-radius: 10px;
+      font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
     }
+
+    button:hover { opacity: 0.92; }
+
     #report { display: none; }
     #report.visible { display: block; }
-    .headline {
-      font-size: 1.1rem;
+
+    .case-id-display {
+      font-family: ui-monospace, monospace;
+      font-size: 1.2rem;
       font-weight: 700;
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
+      color: var(--teal);
+      word-break: break-all;
+      margin: 0.5rem 0 1rem;
     }
-    .headline.approved { color: var(--accent); }
-    .headline.rejected { color: var(--danger); }
-    .headline.pending { color: var(--warn); }
-    .headline.escalated { color: var(--danger); }
-    .line { padding: 0.35rem 0; font-size: 0.9rem; line-height: 1.5; }
-    .timeline { margin-top: 1.25rem; }
-    .timeline h3 { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.75rem; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+
+    .status-badge.processing { background: rgba(244, 162, 97, 0.15); color: var(--warn); }
+    .status-badge.ready { background: rgba(244, 162, 97, 0.15); color: var(--warn); }
+    .status-badge.approved { background: rgba(56, 178, 172, 0.15); color: var(--success); }
+    .status-badge.rejected { background: rgba(229, 62, 62, 0.15); color: var(--danger); }
+    .status-badge.escalated { background: rgba(229, 62, 62, 0.15); color: var(--danger); }
+    .status-badge.pending_info { background: rgba(244, 162, 97, 0.15); color: var(--warn); }
+
+    .meta-grid {
+      display: grid;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+
+    .meta-row .lbl { color: var(--text-muted); }
+    .meta-row .val { text-align: right; }
+
+    .decision-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .decision-box h3 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline h3 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
     .tl-item {
       display: flex;
       gap: 0.75rem;
-      padding: 0.6rem 0;
+      padding: 0.65rem 0 0.65rem 1rem;
       border-left: 2px solid var(--border);
-      margin-left: 0.5rem;
-      padding-left: 1rem;
+      margin-left: 0.35rem;
       position: relative;
     }
+
     .tl-item::before {
       content: "";
       width: 8px;
       height: 8px;
-      background: var(--accent);
+      background: var(--teal);
       border-radius: 50%;
       position: absolute;
       left: -5px;
-      top: 0.85rem;
+      top: 0.95rem;
     }
-    .tl-time { font-size: 0.72rem; color: var(--muted); }
+
+    .tl-time { font-size: 0.72rem; color: var(--text-muted); }
     .tl-agent { font-weight: 600; font-size: 0.85rem; text-transform: capitalize; }
-    .tl-status { font-size: 0.8rem; color: var(--muted); }
-    .error-msg { color: var(--danger); margin-top: 1rem; display: none; }
+    .tl-status { font-size: 0.8rem; color: var(--text-muted); }
+
+    .error-msg {
+      color: var(--danger);
+      margin-top: 1rem;
+      display: none;
+      font-size: 0.875rem;
+    }
+
     .error-msg.visible { display: block; }
+
+    .band-link {
+      display: inline-block;
+      margin-top: 0.75rem;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <a href="/">&larr; Back to intake form</a>
-    <h1>Case Status & Report</h1>
-    <p class="subtitle">Enter your Case ID to view processing results and final decision.</p>
+    <h1>Case Status</h1>
+    <p class="subtitle">Enter your Case ID to see processing status, agent timeline, and final decision.</p>
 
     <div class="card">
       <label for="caseId">Case ID</label>
@@ -132,6 +267,20 @@
     document.getElementById('lookupBtn').addEventListener('click', lookup);
     caseInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
 
+    function statusClass(status) {
+      const s = (status || '').toLowerCase();
+      if (['approved', 'case_approved'].includes(s)) return 'approved';
+      if (['rejected', 'case_rejected', 'escalated'].includes(s)) return 'rejected';
+      if (['pending_info', 'more_info_requested'].includes(s)) return 'pending_info';
+      if (['processing'].includes(s)) return 'processing';
+      if (['ready_for_review'].includes(s)) return 'ready';
+      return 'processing';
+    }
+
+    function formatStatus(status) {
+      return (status || 'unknown').replace(/_/g, ' ');
+    }
+
     async function lookup() {
       const id = caseInput.value.trim().toUpperCase();
       if (!id) return;
@@ -139,7 +288,7 @@
       reportEl.classList.remove('visible');
 
       try {
-        const res = await fetch('/api/lookup/' + id);
+        const res = await fetch('/api/lookup/' + encodeURIComponent(id));
         if (!res.ok) throw new Error('not found');
         const data = await res.json();
         renderReport(data);
@@ -150,42 +299,65 @@
     }
 
     function renderReport(data) {
-      const report = data.report;
-      const caseData = data.case;
-      const decision = caseData.decision;
+      const caseData = data.case || {};
       const sector = data.sector || {};
+      const decision = caseData.decision || {};
+      const humanDecision = caseData.human_decision || {};
+      const status = caseData.status || 'PROCESSING';
+      const badgeClass = statusClass(status);
 
       if (sector.color) {
-        document.documentElement.style.setProperty('--accent', sector.color);
+        document.documentElement.style.setProperty('--teal', sector.color);
       }
 
-      let headlineClass = 'pending';
-      if (decision) {
-        headlineClass = decision.decision === 'APPROVED' ? 'approved' : decision.decision === 'REJECTED' ? 'rejected' : 'pending';
-      } else if (caseData.status === 'ESCALATED') {
-        headlineClass = 'escalated';
-      }
+      let html = '<div class="case-id-display">' + (caseData.case_id || '') + '</div>';
+      html += '<span class="status-badge ' + badgeClass + '">' + formatStatus(status) + '</span>';
 
-      let html = '<div class="headline ' + headlineClass + '">' + report.headline + '</div>';
-      report.summary_lines.forEach(line => {
-        html += '<div class="line">' + line + '</div>';
-      });
+      html += '<div class="meta-grid">';
+      html += metaRow('Institution', caseData.institution_name || (caseData.institution && caseData.institution.name));
+      html += metaRow('Sector', sector.label || caseData.sector);
+      html += metaRow('Submitted', formatTime(caseData.timestamp));
+      html += metaRow('Band room', caseData.band_room);
+      html += '</div>';
+
+      if (decision.decision || humanDecision.decision) {
+        html += '<div class="decision-box">';
+        html += '<h3>Decision</h3>';
+        const d = decision.decision || humanDecision.decision;
+        html += '<div><strong>' + formatStatus(d) + '</strong></div>';
+        const by = decision.by || humanDecision.decided_by;
+        const notes = decision.notes || humanDecision.reason;
+        if (by) html += '<div class="tl-status">By ' + by + '</div>';
+        if (notes) html += '<div class="tl-status">' + notes + '</div>';
+        html += '</div>';
+      }
 
       const trail = caseData.audit_trail || [];
       if (trail.length) {
         html += '<div class="timeline"><h3>Agent Timeline</h3>';
         trail.forEach(entry => {
-          const ts = (entry.timestamp || '').slice(0, 19).replace('T', ' ');
           html += '<div class="tl-item">';
-          html += '<div><div class="tl-time">' + ts + '</div>';
-          html += '<div class="tl-agent">' + entry.agent + ' Agent</div>';
-          html += '<div class="tl-status">' + (entry.status || '').replace(/_/g, ' ') + '</div></div></div>';
+          html += '<div><div class="tl-time">' + formatTime(entry.timestamp) + '</div>';
+          html += '<div class="tl-agent">' + (entry.agent || 'system') + ' Agent</div>';
+          html += '<div class="tl-status">' + formatStatus(entry.status) + '</div></div></div>';
         });
         html += '</div>';
       }
 
+      html += '<a class="band-link" href="https://app.band.ai" target="_blank" rel="noopener">View agent activity on Band →</a>';
+
       reportEl.innerHTML = html;
       reportEl.classList.add('visible');
+    }
+
+    function metaRow(label, value) {
+      if (!value) return '';
+      return '<div class="meta-row"><span class="lbl">' + label + '</span><span class="val">' + value + '</span></div>';
+    }
+
+    function formatTime(ts) {
+      if (!ts) return '—';
+      return ts.slice(0, 19).replace('T', ' ');
     }
   </script>
 </body>

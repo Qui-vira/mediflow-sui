@@ -1,8 +1,8 @@
 """Orchestrates the 4-agent MedBand pipeline (Phase 1: direct function calls)."""
 import json
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
-
 from agents import intake, resource, verification
 from core.audit_log import clear, get_log, post
 from core.reports import build_patient_report
@@ -165,18 +165,69 @@ def build_summary(
 
 
 def save_decision(case_id: str, decision: dict) -> dict | None:
-    case = load_case(case_id)
-    if not case:
+    """Persist a human decision (legacy dashboard format or Band handler)."""
+    raw = (decision.get("decision") or "").upper()
+    mapping = {
+        "APPROVED": "approved",
+        "REJECTED": "rejected",
+        "MORE_INFO_REQUESTED": "pending_info",
+    }
+    normalized = mapping.get(raw, raw.lower())
+    result = process_human_decision(
+        case_id,
+        normalized,
+        reason=decision.get("notes") or decision.get("reason"),
+        decided_by=decision.get("by") or decision.get("decided_by"),
+    )
+    if result.get("error"):
         return None
-    case["decision"] = decision
+    return result
+
+
+def process_human_decision(
+    case_id: str,
+    decision: str,
+    reason: str | None = None,
+    decided_by: str | None = None,
+) -> dict:
+    """
+    Called when a human responds in a Band room.
+    decision: 'approved', 'rejected', or 'pending_info'
+    """
+    case = load_case(case_id.upper())
+    if not case:
+        return {"error": "Case not found"}
+
+    status_map = {
+        "approved": "APPROVED",
+        "rejected": "REJECTED",
+        "pending_info": "MORE_INFO_REQUESTED",
+    }
+    decision_key = decision.lower()
+    decision_label = status_map.get(decision_key, decision.upper())
+    timestamp = datetime.now(timezone.utc).isoformat()
+
+    case["human_decision"] = {
+        "decision": decision_key,
+        "reason": reason,
+        "decided_by": decided_by,
+        "timestamp": timestamp,
+    }
+    case["status"] = decision_key
+    case["decision"] = {
+        "decision": decision_label,
+        "by": decided_by or case.get("human_role", human_role(case.get("sector"))),
+        "at": timestamp,
+        "case_id": case["case_id"],
+        "notes": reason,
+    }
     case["patient_report"] = build_patient_report(case)
     _save_case(case)
-    post("human", decision.get("decision", "DECISION"), case_id, decision)
+    post("human", decision_label, case["case_id"], case["decision"])
     return case
 
 
-def _save_case(summary: dict):
-    CASES_DIR.mkdir(exist_ok=True)
+def _save_case(summary: dict):    CASES_DIR.mkdir(exist_ok=True)
     path = CASES_DIR / f"{summary['case_id']}.json"
     if path.exists():
         existing = json.load(open(path, encoding="utf-8"))

@@ -1,0 +1,130 @@
+{
+  "institutions": [
+    {
+      "institution_id": "PHM001",
+      "institution_name": "Ladibe Pharmacy",
+      "sector": "pharmacy",
+      "approver_name": "Dr. Chidi Okeke",
+      "approver_role": "Pharmacist",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "PHM002",
+      "institution_name": "Peaceway Pharmacy",
+      "sector": "pharmacy",
+      "approver_name": "Pharm. Ada Okonkwo",
+      "approver_role": "Pharmacist",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "PHM003",
+      "institution_name": "HealthPlus Pharmacy",
+      "sector": "pharmacy",
+      "approver_name": "Pharm. Emeka Nwosu",
+      "approver_role": "Pharmacist",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "HSP001",
+      "institution_name": "Reddington Hospital",
+      "sector": "hospital_triage",
+      "approver_name": "Dr. Funke Adeyemi",
+      "approver_role": "Doctor / Nurse",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "HSP002",
+      "institution_name": "Lagos Island General Hospital",
+      "sector": "hospital_triage",
+      "approver_name": "Dr. Ibrahim Musa",
+      "approver_role": "Doctor / Nurse",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "HSP003",
+      "institution_name": "Eko Hospital",
+      "sector": "hospital_triage",
+      "approver_name": "Dr. Ngozi Eze",
+      "approver_role": "Doctor / Nurse",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "LAB001",
+      "institution_name": "Synlab Nigeria",
+      "sector": "lab",
+      "approver_name": "Lab Officer Tunde Bakare",
+      "approver_role": "Lab Officer",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "LAB002",
+      "institution_name": "Clinix Healthcare",
+      "sector": "lab",
+      "approver_name": "Lab Officer Chioma Ibe",
+      "approver_role": "Lab Officer",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "MH001",
+      "institution_name": "Emeka Eze Wellness Centre",
+      "sector": "mental_health",
+      "approver_name": "Clinical Coordinator Emeka Eze",
+      "approver_role": "Clinical Coordinator",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "MH002",
+      "institution_name": "Mentally Aware Nigeria Initiative",
+      "sector": "mental_health",
+      "approver_name": "Clinical Coordinator Amina Yusuf",
+      "approver_role": "Clinical Coordinator",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "HMO001",
+      "institution_name": "Hygeia HMO",
+      "sector": "hmo_claims",
+      "approver_name": "Claims Officer James Okafor",
+      "approver_role": "Claims Officer",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "HMO002",
+      "institution_name": "Reliance HMO",
+      "sector": "hmo_claims",
+      "approver_name": "Claims Officer Blessing Ade",
+      "approver_role": "Claims Officer",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "EMG001",
+      "institution_name": "LASAMBUS",
+      "sector": "emergency",
+      "approver_name": "Dispatcher Lagos Control",
+      "approver_role": "Dispatcher",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    },
+    {
+      "institution_id": "EMG002",
+      "institution_name": "ARM Life Emergency Response",
+      "sector": "emergency",
+      "approver_name": "Dispatcher ARM Control",
+      "approver_role": "Dispatcher",
+      "band_handle": "@medlabbytbr",
+      "band_account_note": "Institution must create a Band account at app.band.ai and share their handle with MedBand admin to be added to case rooms"
+    }
+  ]
+}

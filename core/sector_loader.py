@@ -142,6 +142,21 @@ def get_institution(sector: str, institution_id: str) -> dict | None:
     return None
 
 
+def load_institution_users() -> list:
+    path = ROOT / "data" / "institution_users.json"
+    if not path.exists():
+        return []
+    with open(path, encoding="utf-8") as f:
+        return json.load(f).get("institutions", [])
+
+
+def get_institution_user(sector: str, institution_id: str) -> dict | None:
+    for user in load_institution_users():
+        if user.get("sector") == sector and user.get("institution_id") == institution_id:
+            return user
+    return None
+
+
 def band_room_name(
     case_id: str,
     sector: str | None = None,

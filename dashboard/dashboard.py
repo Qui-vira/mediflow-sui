@@ -1,4 +1,8 @@
-"""Streamlit human approval dashboard for MedBand."""
+"""Deprecated: Streamlit human approval dashboard.
+
+Human approval now happens directly in Band rooms on app.band.ai.
+See demo_flow.md and data/institution_users.json.
+"""
 import os
 import sys
 from datetime import datetime, timezone

@@ -1,7 +1,6 @@
 anthropic>=0.40.0
 python-dotenv>=1.0.0
 flask>=3.0.0
-streamlit>=1.28.0
 band-sdk[anthropic]>=1.0.0
 pyyaml>=6.0
 gunicorn>=22.0.0
