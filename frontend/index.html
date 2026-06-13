@@ -3,192 +3,368 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedBand - Case Intake</title>
+  <title>MedBand — Submit a Case</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0e14;
-      --surface: #141b26;
-      --surface2: #1a2332;
-      --border: #2d3a4f;
-      --text: #e8edf4;
-      --muted: #8b9cb3;
-      --accent: #00c896;
-      --accent-dim: #00a67d;
-      --accent-glow: rgba(0, 200, 150, 0.15);
-      --danger: #ef4444;
+      --bg: #0A0F1A;
+      --surface: #111827;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-input: rgba(255, 255, 255, 0.1);
+      --teal: #0E7C7B;
+      --teal-dim: rgba(14, 124, 123, 0.8);
+      --teal-glow: rgba(14, 124, 123, 0.15);
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --danger: #E53E3E;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: "Segoe UI", system-ui, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 1.5rem;
+      -webkit-font-smoothing: antialiased;
     }
+
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      background: radial-gradient(ellipse at top, var(--accent-glow), transparent 60%);
+      background: radial-gradient(ellipse at top, rgba(14, 124, 123, 0.06), transparent 55%);
       pointer-events: none;
       z-index: 0;
     }
+
+    /* ── Nav ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 15, 26, 0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo .med { color: var(--teal); }
+    .nav-logo .band { color: var(--text); }
+
+    .nav-byline {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-input);
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      border-color: var(--teal);
+    }
+
+    /* ── Layout ── */
     .wrap {
-      max-width: 560px;
+      max-width: 720px;
       margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
       position: relative;
       z-index: 1;
     }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
+
+    .page-header { margin-bottom: 2rem; }
+
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
-    .topbar a {
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 0.85rem;
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+      line-height: 1.6;
     }
-    .topbar a:hover { text-decoration: underline; }
-    .container {
+
+    .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 1.75rem;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
     }
-    .sector-banner {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      background: var(--accent-glow);
-      border: 1px solid var(--accent);
-      border-radius: 10px;
-      margin-bottom: 1.25rem;
-      transition: all 0.3s ease;
-    }
-    .sector-icon { font-size: 1.5rem; }
-    .sector-label { font-weight: 600; font-size: 0.95rem; }
-    .sector-role { font-size: 0.75rem; color: var(--muted); }
-    h1 { font-size: 1.4rem; font-weight: 700; }
-    .subtitle { color: var(--muted); font-size: 0.85rem; margin: 0.25rem 0 1rem; }
-    .badge {
-      display: inline-block;
-      background: var(--accent);
-      color: #0a0e14;
-      font-size: 0.65rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      margin-left: 0.4rem;
-      font-weight: 700;
-      vertical-align: middle;
-    }
-    label {
+
+    /* ── Sector cards ── */
+    .sector-section { margin-bottom: 1.75rem; }
+
+    .sector-section > label.section-label {
       display: block;
       font-size: 0.75rem;
       font-weight: 600;
-      color: var(--muted);
-      margin: 0.85rem 0 0.3rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    label:first-of-type { margin-top: 0; }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.65rem 0.85rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 0.95rem;
-      transition: border-color 0.2s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    textarea { min-height: 80px; resize: vertical; }
-    .demo-section {
-      margin: 1rem 0;
-      padding: 0.85rem;
-      background: var(--surface2);
-      border-radius: 10px;
-      border: 1px dashed var(--border);
-    }
-    .demo-section p {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-    .demo-btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-    .demo-btn {
-      padding: 0.35rem 0.65rem;
-      font-size: 0.72rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .demo-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .submit-btn {
-      width: 100%;
-      margin-top: 1.25rem;
-      padding: 0.9rem;
-      background: var(--accent);
-      color: #0a0e14;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.1s, opacity 0.2s;
-    }
-    .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    #liveAgents {
-      display: none;
-      margin-top: 1.25rem;
-      padding: 1rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-    }
-    #liveAgents.visible { display: block; }
-    #liveAgents h4 {
-      font-size: 0.75rem;
-      color: var(--muted);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
       margin-bottom: 0.75rem;
     }
+
+    .sector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .sector-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .sector-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-input);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .sector-card:hover {
+      border-color: rgba(14, 124, 123, 0.4);
+      background: rgba(14, 124, 123, 0.05);
+    }
+
+    .sector-card.selected {
+      border-color: var(--teal);
+      background: rgba(14, 124, 123, 0.1);
+      box-shadow: 0 0 0 1px var(--teal);
+    }
+
+    .sector-card input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .sector-card-icon { font-size: 1.5rem; line-height: 1; }
+
+    .sector-card-name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .sector-card-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .sector-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: rgba(14, 124, 123, 0.08);
+      border: 1px solid rgba(14, 124, 123, 0.25);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sector-banner-icon { font-size: 1.5rem; }
+    .sector-banner-label { font-weight: 600; font-size: 0.95rem; }
+    .sector-banner-role { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .sector-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+
+    /* ── Demo buttons ── */
+    .demo-section {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px dashed var(--border-input);
+    }
+
+    .demo-section p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+    }
+
+    .demo-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+    .demo-btn {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: var(--font-body);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .demo-btn:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 1rem; }
+
+    .field > label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .field > label.checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    input[type="text"],
+    input:not([type]),
+    select,
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border-input);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-glow);
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+
+    input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--teal);
+    }
+
+    /* ── Submit ── */
+    .submit-btn {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 14px 32px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .submit-btn:hover:not(:disabled) { background: var(--teal-dim); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Live agents ── */
+    #liveAgents {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    #liveAgents.visible { display: block; }
+
+    #liveAgents h4 {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.85rem;
+    }
+
     .agent-row {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.55rem 0;
+      padding: 0.6rem 0;
       opacity: 0.35;
       transition: opacity 0.3s;
     }
+
     .agent-row.active { opacity: 1; }
     .agent-row.done { opacity: 0.85; }
     .agent-row.escalated .agent-icon { background: var(--danger); }
+
     .agent-icon {
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: var(--border);
+      background: rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -196,97 +372,208 @@
       flex-shrink: 0;
       transition: background 0.3s;
     }
+
     .agent-row.active .agent-icon {
-      background: var(--accent);
+      background: var(--teal);
       animation: pulse 1.2s infinite;
     }
-    .agent-row.done .agent-icon { background: var(--accent-dim); }
+
+    .agent-row.done .agent-icon { background: var(--teal-dim); }
+
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+      0%, 100% { box-shadow: 0 0 0 0 var(--teal-glow); }
       50% { box-shadow: 0 0 0 8px transparent; }
     }
+
     .agent-info { flex: 1; }
     .agent-name { font-weight: 600; font-size: 0.85rem; text-transform: capitalize; }
-    .agent-msg { font-size: 0.78rem; color: var(--muted); }
+    .agent-msg { font-size: 0.78rem; color: var(--text-muted); }
+
     .agent-state {
       font-size: 0.7rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      background: var(--surface2);
-      color: var(--muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
     }
-    .agent-row.active .agent-state { background: var(--accent-glow); color: var(--accent); }
-    .agent-row.done .agent-state { color: var(--accent); }
 
+    .agent-row.active .agent-state { background: var(--teal-glow); color: var(--teal); }
+    .agent-row.done .agent-state { color: var(--teal); }
+
+    /* ── Success / result ── */
     #result {
       display: none;
-      margin-top: 1.25rem;
-      padding: 1.25rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      margin-top: 1.5rem;
+    }
+
+    #result.visible { display: block; }
+
+    .success-card {
+      background: var(--surface);
+      border: 1px solid var(--teal);
+      border-radius: 16px;
+      padding: 1.75rem;
+      text-align: center;
+    }
+
+    .success-card.error { border-color: var(--danger); }
+
+    .success-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      background: rgba(14, 124, 123, 0.15);
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .success-card.error .success-icon {
+      background: rgba(229, 62, 62, 0.15);
+      color: var(--danger);
+    }
+
+    .success-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .case-id {
+      font-family: ui-monospace, monospace;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+      word-break: break-all;
+    }
+
+    .result-details {
+      text-align: left;
+      margin: 1.25rem 0;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
       border-radius: 12px;
     }
-    #result.visible { display: block; }
-    #result.error { border-color: var(--danger); }
-    #result h3 { color: var(--accent); margin-bottom: 0.75rem; font-size: 1.05rem; }
+
     .row {
       display: flex;
       justify-content: space-between;
-      padding: 0.4rem 0;
+      padding: 0.45rem 0;
       border-bottom: 1px solid var(--border);
-      font-size: 0.88rem;
+      font-size: 0.875rem;
     }
+
     .row:last-child { border-bottom: none; }
-    .row .lbl { color: var(--muted); font-size: 0.8rem; }
+    .row .lbl { color: var(--text-muted); font-size: 0.8rem; }
     .row .val { font-weight: 500; text-align: right; max-width: 58%; }
+
     .report-box {
       margin-top: 0.85rem;
       padding: 0.85rem;
-      background: var(--surface2);
-      border-left: 3px solid var(--accent);
+      background: rgba(14, 124, 123, 0.06);
+      border-left: 3px solid var(--teal);
       border-radius: 0 8px 8px 0;
       font-size: 0.85rem;
       line-height: 1.55;
+      text-align: left;
     }
+
     .report-box.escalated { border-left-color: var(--danger); }
-    .sector-note {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 0.35rem;
-      line-height: 1.4;
+
+    .result-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1.25rem;
     }
-    .case-link {
-      display: inline-block;
-      margin-top: 0.75rem;
-      color: var(--accent);
-      font-size: 0.85rem;
+
+    .result-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .result-link.primary {
+      background: var(--teal);
+      color: white;
+    }
+
+    .result-link.primary:hover { background: var(--teal-dim); }
+
+    .result-link.secondary {
+      border: 1px solid var(--border-input);
+      color: var(--text-muted);
+    }
+
+    .result-link.secondary:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .footer-brand {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .footer-brand .med { color: var(--teal); }
+
+    .footer-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
     }
   </style>
 </head>
 <body>
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo"><span class="med">Med</span><span class="band">Band</span></div>
+      <span class="nav-byline">by The Billionaire Republic</span>
+    </div>
+    <a class="nav-link" href="https://medband-landing.vercel.app" target="_blank" rel="noopener">View Landing</a>
+  </nav>
+
   <div class="wrap">
-    <div class="topbar">
-      <span style="font-size:0.8rem;color:var(--muted)">TBR Hackathon 2026</span>
-      <a href="/status">Check Case Status</a>
+    <div class="page-header">
+      <h1>Submit a Case</h1>
+      <p>Four AI agents verify, check, and prepare your healthcare request. A human professional makes the final decision.</p>
     </div>
 
-    <div class="container">
+    <div class="card">
       <div class="sector-banner" id="sectorBanner">
-        <span class="sector-icon" id="sectorIcon">💊</span>
+        <span class="sector-banner-icon" id="sectorIcon">💊</span>
         <div>
-          <div class="sector-label" id="sectorLabel">Pharmacy</div>
-          <div class="sector-role" id="sectorRole">Human approver: Pharmacist</div>
+          <div class="sector-banner-label" id="sectorLabel">Pharmacy</div>
+          <div class="sector-banner-role" id="sectorRole">Human approver: Pharmacist</div>
           <div class="sector-note" id="sectorNote" style="display:none">
             Registry data is configurable per country. Demo uses Nigerian NAFDAC records.
           </div>
         </div>
       </div>
 
-      <h1>MedBand <span class="badge">Phase 1</span></h1>
-      <p class="subtitle">Four AI agents process your request. A human professional approves.</p>
-
       <div class="demo-section">
-        <p>Demo mode - click to pre-fill:</p>
+        <p>Demo mode — click to pre-fill:</p>
         <div class="demo-btns">
           <button type="button" class="demo-btn" data-demo="pharmacy_clear">Pharmacy: Amoxicillin</button>
           <button type="button" class="demo-btn" data-demo="pharmacy_escalate">Banned drug escalation</button>
@@ -297,26 +584,64 @@
       </div>
 
       <form id="caseForm">
-        <label for="sector">Healthcare Sector</label>
-        <select id="sector" name="sector" required>
-          <option value="pharmacy">Pharmacy</option>
-          <option value="hospital_triage">Hospital Triage</option>
-          <option value="lab">Lab / Diagnostics</option>
-          <option value="mental_health">Mental Health</option>
-          <option value="hmo_claims">HMO / Insurance Claims</option>
-          <option value="emergency">Emergency Dispatch</option>
-        </select>
+        <div class="sector-section">
+          <span class="section-label">Healthcare Sector</span>
+          <div class="sector-grid" id="sectorGrid">
+            <label class="sector-card selected" data-sector="pharmacy">
+              <input type="radio" name="sector" value="pharmacy" checked>
+              <span class="sector-card-icon">💊</span>
+              <span class="sector-card-name">Pharmacy</span>
+              <span class="sector-card-desc">Drug verification &amp; stock</span>
+            </label>
+            <label class="sector-card" data-sector="hospital_triage">
+              <input type="radio" name="sector" value="hospital_triage">
+              <span class="sector-card-icon">🏥</span>
+              <span class="sector-card-name">Hospital Triage</span>
+              <span class="sector-card-desc">Severity &amp; bed routing</span>
+            </label>
+            <label class="sector-card" data-sector="lab">
+              <input type="radio" name="sector" value="lab">
+              <span class="sector-card-icon">🔬</span>
+              <span class="sector-card-name">Lab / Diagnostics</span>
+              <span class="sector-card-desc">Referrals &amp; test slots</span>
+            </label>
+            <label class="sector-card" data-sector="mental_health">
+              <input type="radio" name="sector" value="mental_health">
+              <span class="sector-card-icon">🧠</span>
+              <span class="sector-card-name">Mental Health</span>
+              <span class="sector-card-desc">Risk screening &amp; matching</span>
+            </label>
+            <label class="sector-card" data-sector="hmo_claims">
+              <input type="radio" name="sector" value="hmo_claims">
+              <span class="sector-card-icon">📋</span>
+              <span class="sector-card-name">HMO / Insurance</span>
+              <span class="sector-card-desc">Policy &amp; claims routing</span>
+            </label>
+            <label class="sector-card" data-sector="emergency">
+              <input type="radio" name="sector" value="emergency">
+              <span class="sector-card-icon">🚨</span>
+              <span class="sector-card-name">Emergency</span>
+              <span class="sector-card-desc">P1/P2/P3 dispatch</span>
+            </label>
+          </div>
+        </div>
 
-        <label for="name" id="label-name">Patient / Caller Name</label>
-        <input type="text" id="name" name="name" placeholder="e.g. Ada Okonkwo" required>
+        <div class="field">
+          <label for="name" id="label-name">Patient / Caller Name</label>
+          <input type="text" id="name" name="name" placeholder="e.g. Ada Okonkwo" required>
+        </div>
 
-        <label for="issue" id="label-issue">Issue / Complaint</label>
-        <textarea id="issue" name="issue" placeholder="Describe symptoms, concern, or emergency..." required></textarea>
+        <div class="field">
+          <label for="issue" id="label-issue">Issue / Complaint</label>
+          <textarea id="issue" name="issue" placeholder="Describe symptoms, concern, or emergency..." required></textarea>
+        </div>
 
-        <label for="service" id="label-service">Requested Service</label>
-        <input type="text" id="service" name="service" placeholder="Drug name, test, procedure code..." required>
+        <div class="field">
+          <label for="service" id="label-service">Requested Service</label>
+          <input type="text" id="service" name="service" placeholder="Drug name, test, procedure code..." required>
+        </div>
 
-        <div id="field-urgency" class="sector-field" data-sectors="pharmacy,hospital_triage,lab,mental_health,hmo_claims">
+        <div id="field-urgency" class="field sector-field" data-sectors="pharmacy,hospital_triage,lab,mental_health,hmo_claims">
           <label for="urgency" id="label-urgency">Urgency</label>
           <select id="urgency" name="urgency">
             <option value="low">Low</option>
@@ -326,54 +651,54 @@
           </select>
         </div>
 
-        <div id="field-prescription_code" class="sector-field" data-sectors="pharmacy">
-          <label for="prescription_code">Prescription Code (if applicable, e.g. TBR-DOC-0042)</label>
+        <div id="field-prescription_code" class="field sector-field" data-sectors="pharmacy">
+          <label for="prescription_code">Prescription Code (if applicable)</label>
           <input type="text" id="prescription_code" name="prescription_code" placeholder="TBR-DOC-0042">
         </div>
 
-        <div id="field-vitals_description" class="sector-field" data-sectors="hospital_triage">
+        <div id="field-vitals_description" class="field sector-field" data-sectors="hospital_triage">
           <label for="vitals_description">Vitals Description (optional)</label>
           <input type="text" id="vitals_description" name="vitals_description" placeholder="e.g. BP 140/90, temp 38.5C">
         </div>
 
-        <div id="field-referral_number" class="sector-field" data-sectors="lab">
+        <div id="field-referral_number" class="field sector-field" data-sectors="lab">
           <label for="referral_number">Referral Number (if applicable)</label>
           <input type="text" id="referral_number" name="referral_number" placeholder="REF-2026-001">
         </div>
 
-        <div id="field-patient_id" class="sector-field" data-sectors="lab">
+        <div id="field-patient_id" class="field sector-field" data-sectors="lab">
           <label for="patient_id">Patient ID (if applicable)</label>
           <input type="text" id="patient_id" name="patient_id" placeholder="PAT-12345">
         </div>
 
-        <div id="field-duration" class="sector-field" data-sectors="mental_health">
+        <div id="field-duration" class="field sector-field" data-sectors="mental_health">
           <label for="duration">Duration of Concern</label>
           <input type="text" id="duration" name="duration" placeholder="e.g. 6 weeks">
         </div>
 
-        <div id="field-self_harm_flag" class="sector-field" data-sectors="mental_health">
-          <label style="display:flex;align-items:center;gap:0.5rem;text-transform:none;letter-spacing:0;">
-            <input type="checkbox" id="self_harm_flag" name="self_harm_flag" value="true" style="width:auto;">
+        <div id="field-self_harm_flag" class="field sector-field" data-sectors="mental_health">
+          <label class="checkbox-label">
+            <input type="checkbox" id="self_harm_flag" name="self_harm_flag" value="true">
             Self-harm or harm-to-others concern flagged
           </label>
         </div>
 
-        <div id="field-policy_number" class="sector-field" data-sectors="hmo_claims">
+        <div id="field-policy_number" class="field sector-field" data-sectors="hmo_claims">
           <label for="policy_number">Policy Number</label>
           <input type="text" id="policy_number" name="policy_number" placeholder="HMO-2024-001">
         </div>
 
-        <div id="field-provider_name" class="sector-field" data-sectors="hmo_claims">
+        <div id="field-provider_name" class="field sector-field" data-sectors="hmo_claims">
           <label for="provider_name">Provider Name</label>
           <input type="text" id="provider_name" name="provider_name" placeholder="Hospital or clinic name">
         </div>
 
-        <div id="field-location" class="sector-field" data-sectors="emergency">
+        <div id="field-location" class="field sector-field" data-sectors="emergency">
           <label for="location">Location</label>
-          <input type="text" id="location" name="location" placeholder="Street, area, landmark" required>
+          <input type="text" id="location" name="location" placeholder="Street, area, landmark">
         </div>
 
-        <div id="field-emergency_type" class="sector-field" data-sectors="emergency">
+        <div id="field-emergency_type" class="field sector-field" data-sectors="emergency">
           <label for="emergency_type">Emergency Type</label>
           <select id="emergency_type" name="emergency_type">
             <option value="medical">Medical</option>
@@ -385,7 +710,9 @@
           </select>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">Submit Case</button>
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span id="submitLabel">Submit Case</span>
+        </button>
       </form>
 
       <div id="liveAgents">
@@ -428,14 +755,19 @@
     </div>
   </div>
 
+  <footer class="footer">
+    <div class="footer-brand"><span class="med">Med</span>Band by The Billionaire Republic</div>
+    <div class="footer-meta">Band of Agents Hackathon 2026 · Track 3</div>
+  </footer>
+
   <script>
     const SECTORS = {
-      pharmacy: { label: 'Pharmacy', color: '#00c896', icon: '💊', role: 'Pharmacist' },
-      hospital_triage: { label: 'Hospital Triage', color: '#4da6ff', icon: '🏥', role: 'Doctor / Nurse' },
-      lab: { label: 'Lab / Diagnostics', color: '#a78bfa', icon: '🔬', role: 'Lab Officer' },
-      mental_health: { label: 'Mental Health', color: '#2dd4bf', icon: '🧠', role: 'Clinical Coordinator' },
-      hmo_claims: { label: 'HMO / Insurance', color: '#fbbf24', icon: '📋', role: 'Claims Officer' },
-      emergency: { label: 'Emergency Dispatch', color: '#ef4444', icon: '🚨', role: 'Dispatcher' }
+      pharmacy: { label: 'Pharmacy', icon: '💊', role: 'Pharmacist' },
+      hospital_triage: { label: 'Hospital Triage', icon: '🏥', role: 'Doctor / Nurse' },
+      lab: { label: 'Lab / Diagnostics', icon: '🔬', role: 'Lab Officer' },
+      mental_health: { label: 'Mental Health', icon: '🧠', role: 'Clinical Coordinator' },
+      hmo_claims: { label: 'HMO / Insurance', icon: '📋', role: 'Claims Officer' },
+      emergency: { label: 'Emergency Dispatch', icon: '🚨', role: 'Dispatcher' }
     };
 
     const SECTOR_LABELS = {
@@ -469,9 +801,7 @@
       pharmacy_clear: { sector: 'pharmacy', name: 'Ada Okonkwo', issue: 'fever and sore throat for 3 days', service: 'Amoxicillin', urgency: 'high', prescription_code: 'TBR-DOC-0042' },
       pharmacy_escalate: { sector: 'pharmacy', name: 'Test User', issue: 'severe insomnia', service: 'Tramadol', urgency: 'high' },
       triage_escalate: { sector: 'hospital_triage', name: 'Chidi Eze', issue: 'crushing chest pain radiating to left arm', service: 'Emergency triage', urgency: 'critical', vitals_description: 'BP 160/100, sweating' },
-      lab_clear: { sector: 'lab', name: 'Ada Okonkwo', issue: 'routine checkup', service: 'Full Blood Count', referral_number: '', patient_id: 'PAT-1001', urgency: 'low' },
       mental_health: { sector: 'mental_health', name: 'Fatima Yusuf', issue: 'persistent low mood and anxiety', service: 'Therapy intake', duration: '6 weeks', urgency: 'medium' },
-      hmo_claims: { sector: 'hmo_claims', name: 'Ada Okonkwo', issue: 'GP visit claim', service: 'CONS-GP', policy_number: 'HMO-2024-001', provider_name: 'Reddington Hospital', urgency: 'low' },
       emergency: { sector: 'emergency', name: 'Caller on Lekki Road', issue: 'person collapsed, not breathing', location: 'Lekki Phase 1, Admiralty Way', emergency_type: 'cardiac arrest' }
     };
 
@@ -479,13 +809,25 @@
     const result = document.getElementById('result');
     const liveAgents = document.getElementById('liveAgents');
     const submitBtn = document.getElementById('submitBtn');
-    const sectorSelect = document.getElementById('sector');
+    const submitLabel = document.getElementById('submitLabel');
+    const sectorGrid = document.getElementById('sectorGrid');
+
+    function getSelectedSector() {
+      const checked = form.querySelector('input[name="sector"]:checked');
+      return checked ? checked.value : 'pharmacy';
+    }
+
+    function setSelectedSector(sector) {
+      form.querySelectorAll('input[name="sector"]').forEach(radio => {
+        radio.checked = radio.value === sector;
+      });
+      sectorGrid.querySelectorAll('.sector-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.sector === sector);
+      });
+    }
 
     function applySectorTheme(sector) {
       const meta = SECTORS[sector] || SECTORS.pharmacy;
-      document.documentElement.style.setProperty('--accent', meta.color);
-      document.documentElement.style.setProperty('--accent-dim', meta.color);
-      document.documentElement.style.setProperty('--accent-glow', meta.color + '26');
       document.getElementById('sectorIcon').textContent = meta.icon;
       document.getElementById('sectorLabel').textContent = meta.label;
       document.getElementById('sectorRole').textContent = 'Human approver: ' + meta.role;
@@ -507,13 +849,13 @@
 
       const serviceField = document.getElementById('service');
       const serviceLabel = document.getElementById('label-service');
+      const serviceWrap = serviceField.closest('.field');
+
       if (sector === 'emergency') {
-        serviceField.style.display = 'none';
-        serviceLabel.style.display = 'none';
+        serviceWrap.style.display = 'none';
         serviceField.removeAttribute('required');
       } else {
-        serviceField.style.display = 'block';
-        serviceLabel.style.display = 'block';
+        serviceWrap.style.display = 'block';
         serviceField.setAttribute('required', 'required');
       }
 
@@ -525,18 +867,23 @@
       }
     }
 
-    sectorSelect.addEventListener('change', () => {
-      applySectorTheme(sectorSelect.value);
-      updateSectorFields(sectorSelect.value);
+    sectorGrid.querySelectorAll('.sector-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const sector = card.dataset.sector;
+        setSelectedSector(sector);
+        applySectorTheme(sector);
+        updateSectorFields(sector);
+      });
     });
-    applySectorTheme(sectorSelect.value);
-    updateSectorFields(sectorSelect.value);
+
+    applySectorTheme(getSelectedSector());
+    updateSectorFields(getSelectedSector());
 
     document.querySelectorAll('.demo-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const demo = DEMOS[btn.dataset.demo];
         if (!demo) return;
-        sectorSelect.value = demo.sector;
+        setSelectedSector(demo.sector);
         applySectorTheme(demo.sector);
         updateSectorFields(demo.sector);
         document.getElementById('name').value = demo.name || '';
@@ -545,11 +892,7 @@
         if (demo.urgency) document.getElementById('urgency').value = demo.urgency;
         if (demo.prescription_code) document.getElementById('prescription_code').value = demo.prescription_code;
         if (demo.vitals_description) document.getElementById('vitals_description').value = demo.vitals_description;
-        if (demo.referral_number !== undefined) document.getElementById('referral_number').value = demo.referral_number;
-        if (demo.patient_id) document.getElementById('patient_id').value = demo.patient_id;
         if (demo.duration) document.getElementById('duration').value = demo.duration;
-        if (demo.policy_number) document.getElementById('policy_number').value = demo.policy_number;
-        if (demo.provider_name) document.getElementById('provider_name').value = demo.provider_name;
         if (demo.location) document.getElementById('location').value = demo.location;
         if (demo.emergency_type) document.getElementById('emergency_type').value = demo.emergency_type;
         document.getElementById('self_harm_flag').checked = !!demo.self_harm_flag;
@@ -594,38 +937,53 @@
 
     function renderResult(data, report) {
       const intake = data.intake || {};
-      const verification = data.verification || {};
-      const resource = data.resource || {};
       const escalated = data.status === 'ESCALATED';
 
-      let html = '<h3>' + (report ? report.headline : 'Case Submitted') + '</h3>';
-      html += row('Case ID', data.case_id);
-      html += row('Status', data.status.replace(/_/g, ' '));
-      html += row('Awaiting', data.human_role);
-      html += row('Patient', intake.requester_name || intake.caller_name);
-      html += row('Service', intake.requested_service);
+      let details = '';
+      details += row('Status', data.status.replace(/_/g, ' '));
+      details += row('Awaiting', data.human_role);
+      details += row('Patient', intake.requester_name || intake.caller_name);
+      details += row('Service', intake.requested_service);
 
+      let reportHtml = '';
       if (report && report.summary_lines) {
-        html += '<div class="report-box' + (escalated ? ' escalated' : '') + '">';
-        report.summary_lines.forEach(line => { html += '<div>' + line + '</div>'; });
-        html += '</div>';
+        reportHtml = '<div class="report-box' + (escalated ? ' escalated' : '') + '">';
+        report.summary_lines.forEach(line => { reportHtml += '<div>' + line + '</div>'; });
+        reportHtml += '</div>';
       }
 
-      html += '<a class="case-link" href="/status?id=' + data.case_id + '">View full report and track status &rarr;</a>';
-      return html;
+      return `
+        <div class="success-card">
+          <div class="success-icon">✓</div>
+          <p class="success-subtitle">Your case is being processed by 4 AI agents</p>
+          <div class="case-id">${data.case_id}</div>
+          <div class="result-details">${details}${reportHtml}</div>
+          <div class="result-links">
+            <a class="result-link primary" href="/status?id=${data.case_id}">Check case status →</a>
+            <a class="result-link secondary" href="https://app.band.ai" target="_blank" rel="noopener">View Band room on app.band.ai →</a>
+          </div>
+        </div>`;
+    }
+
+    function setLoading(loading) {
+      submitBtn.disabled = loading;
+      if (loading) {
+        submitLabel.innerHTML = '<span class="spinner"></span> Agents processing your case...';
+      } else {
+        submitLabel.textContent = 'Submit Case';
+      }
     }
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Agents processing...';
-      result.classList.remove('visible', 'error');
+      setLoading(true);
+      result.classList.remove('visible');
       result.innerHTML = '';
       liveAgents.classList.add('visible');
       resetAgents();
 
       const formData = new FormData(form);
-      const sector = sectorSelect.value;
+      const sector = getSelectedSector();
       if (sector === 'emergency') {
         formData.set('service', document.getElementById('emergency_type').value);
       }
@@ -671,11 +1029,15 @@
           result.classList.add('visible');
         }
       } catch (err) {
-        result.innerHTML = '<h3>Error</h3><p>' + err.message + '</p>';
-        result.classList.add('visible', 'error');
+        result.innerHTML = `
+          <div class="success-card error">
+            <div class="success-icon">✕</div>
+            <p class="success-subtitle">Something went wrong</p>
+            <div class="result-details"><p>${err.message}</p></div>
+          </div>`;
+        result.classList.add('visible');
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Case';
+        setLoading(false);
       }
     });
   </script>
