@@ -40,7 +40,7 @@ def run(case_id: str, requested_service: str, intake_result: dict = None) -> dic
     payload = call_claude(
         system_prompt,
         user_msg,
-        model="claude-sonnet-4-5",
+        model="gpt-4o-mini",
         mock_fn=lambda: mock_verification(requested_service, intake_result or {}),
     )
     payload["case_id"] = case_id

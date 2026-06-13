@@ -32,7 +32,7 @@ def run(case_id: str, raw_input: str, institution: dict | None = None) -> dict:
     payload = call_claude(
         system_prompt,
         user_input,
-        model="claude-haiku-4-5",
+        model="gpt-4o-mini",
         mock_fn=lambda: mock_intake(user_input),
     )
     payload["case_id"] = case_id

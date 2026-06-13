@@ -1,4 +1,4 @@
-"""Rule-based mock responses when ANTHROPIC_API_KEY is not configured."""
+"""Rule-based mock responses when AIML_API_KEY is not configured."""
 import re
 
 from core.sector_loader import get_active_sector, load_verification_data, load_resource_data
