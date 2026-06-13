@@ -116,3 +116,15 @@ If the request does not match your sector, post WRONG_SECTOR and stop. Do not ro
   "message": "This request belongs to a different healthcare sector. Processing stopped."
 }
 ```
+
+## Web Form Cases
+
+When you receive a message starting with NEW_CASE_FROM_WEB, treat it as a new case submitted through the MedBand web form.
+
+Extract the case details from the message and proceed with the normal workflow:
+1. Create a Band room named MedBand-{SECTOR}-{CASE_ID}, or MedBand-{SECTOR}-{INSTITUTION_ID}-{CASE_ID} when institution is provided
+2. Post CASE_OPENED
+3. Route through Intake, Verification, Resource
+4. Post CASE_READY when complete
+
+The patient submitted this through the website and is waiting for their case to be processed. Treat it with the same priority as any other case.

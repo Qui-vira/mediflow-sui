@@ -14,11 +14,14 @@ sys.path.insert(0, str(ROOT))
 
 load_dotenv(ROOT / ".env")
 
+from core.band_client import save_pending_case, send_to_coordinator_sync
 from core.reports import build_patient_report
-from core.sector_loader import SECTOR_META, get_active_sector, human_role, load_institutions, sector_meta, set_active_sector
+from core.sector_loader import SECTOR_META, get_active_sector, get_institution, human_role, load_institutions, sector_meta, set_active_sector
 from core.workflow import load_case, run_case, run_case_stream
 
 app = Flask(__name__, template_folder=".")
+
+BAND_MODE = os.environ.get("BAND_MODE", "true").lower() == "true"
 
 
 def _form_raw(data) -> tuple[str, str]:
@@ -88,6 +91,79 @@ def _form_raw(data) -> tuple[str, str]:
     return "\n".join(lines), sector
 
 
+def _form_patient_name(data) -> str:
+    return (data.get("name") or data.get("caller_name") or "Patient").strip()
+
+
+def _form_urgency(data, sector: str) -> str:
+    defaults = {
+        "hospital_triage": "high",
+        "emergency": "critical",
+        "hmo_claims": "low",
+    }
+    return data.get("urgency") or defaults.get(sector, "medium")
+
+
+def _build_band_case_payload(data, raw_input: str, sector: str) -> dict:
+    institution_id = data.get("institution_id") or None
+    institution = get_institution(sector, institution_id) if institution_id else None
+    case_id = f"MEDBAND-WEB-{str(uuid.uuid4())[:8].upper()}"
+
+    return {
+        "case_id": case_id,
+        "sector": sector,
+        "institution_id": institution_id,
+        "institution_name": (institution or {}).get("name"),
+        "patient_name": _form_patient_name(data),
+        "raw_input": raw_input,
+        "urgency": _form_urgency(data, sector),
+        "source": "web_form",
+        "turnaround": (institution or {}).get("turnaround"),
+    }
+
+
+def _submit_via_band(data, raw_input: str, sector: str) -> dict:
+    case_payload = _build_band_case_payload(data, raw_input, sector)
+    save_pending_case(case_payload)
+    band_result = send_to_coordinator_sync(case_payload)
+    return {
+        "case_id": case_payload["case_id"],
+        "status": "processing",
+        "message": "Your case has been sent to the agents.",
+        "band_room": band_result.get("band_room"),
+        "band_room_id": band_result.get("room_id"),
+        "track_url": f"/status?case_id={case_payload['case_id']}",
+        "human_role": human_role(sector),
+        "turnaround": case_payload.get("turnaround"),
+        "institution_name": case_payload.get("institution_name"),
+    }
+
+
+def _band_stream_events(data, raw_input: str, sector: str):
+    """NDJSON events for Band mode (immediate ack; agents run in background)."""
+    try:
+        result = _submit_via_band(data, raw_input, sector)
+        yield {
+            "type": "band_submitted",
+            **result,
+        }
+        for agent in ("coordinator", "intake", "verification", "resource"):
+            yield {
+                "type": "agent_active",
+                "agent": agent,
+                "message": "Processing on Band…",
+                "case_id": result["case_id"],
+            }
+            yield {
+                "type": "agent_done",
+                "agent": agent,
+                "status": "PROCESSING",
+                "case_id": result["case_id"],
+            }
+    except Exception as exc:
+        yield {"type": "error", "error": str(exc)}
+
+
 @app.route("/")
 def index():
     return render_template("index.html", sectors=SECTOR_META)
@@ -116,6 +192,8 @@ def submit():
     raw, sector = _form_raw(request.form)
     institution_id = request.form.get("institution_id") or None
     try:
+        if BAND_MODE:
+            return jsonify(_submit_via_band(request.form, raw, sector))
         result = run_case(raw, sector=sector, institution_id=institution_id)
         result["patient_report"] = build_patient_report(result)
         return jsonify(result)
@@ -130,6 +208,10 @@ def submit_stream():
 
     def generate():
         try:
+            if BAND_MODE:
+                for event in _band_stream_events(request.form, raw, sector):
+                    yield json.dumps(event) + "\n"
+                return
             for event in run_case_stream(raw, sector=sector, institution_id=institution_id):
                 yield json.dumps(event) + "\n"
         except Exception as exc:
@@ -200,6 +282,7 @@ def health():
     return jsonify({
         "status": "ok",
         "service": "MedBand",
+        "band_mode": BAND_MODE,
         "landing": "https://medband-landing.vercel.app",
         "form": "https://web-production-6d13b.up.railway.app",
     })

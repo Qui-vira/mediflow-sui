@@ -652,13 +652,20 @@
     }
 
     .case-id {
-      font-family: ui-monospace, monospace;
-      font-size: 1.75rem;
+      font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
+      font-size: 1.35rem;
       font-weight: 700;
-      color: var(--teal);
-      letter-spacing: 0.04em;
-      margin-bottom: 1.25rem;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin: 0.75rem 0 1rem;
       word-break: break-all;
+    }
+
+    .success-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
     }
 
     .result-details {
@@ -1337,8 +1344,35 @@
           <div class="case-id">${data.case_id}</div>
           <div class="result-details">${details}${reportHtml}</div>
           <div class="result-links">
-            <a class="result-link primary" href="/status?id=${data.case_id}">Check case status →</a>
-            <a class="result-link secondary" href="https://app.band.ai" target="_blank" rel="noopener">View Band room on app.band.ai →</a>
+            <a class="result-link primary" href="/status?case_id=${encodeURIComponent(data.case_id)}">Track your case →</a>
+            <a class="result-link secondary" href="https://app.band.ai" target="_blank" rel="noopener">Watch it live on Band →</a>
+          </div>
+        </div>`;
+    }
+
+    function renderBandResult(data) {
+      const role = (data.human_role || 'care team').toLowerCase();
+      const turnaround = data.turnaround
+        ? 'The ' + role + ' will review and respond within ' + data.turnaround + '.'
+        : 'Your care team will review and respond as soon as processing completes.';
+      const institutionNote = data.institution_name
+        ? '<p class="success-note">Submitted to <strong>' + escapeHtml(data.institution_name) + '</strong>. ' + escapeHtml(turnaround) + '</p>'
+        : '<p class="success-note">' + escapeHtml(turnaround) + '</p>';
+
+      return `
+        <div class="success-card">
+          <div class="success-icon">✓</div>
+          <p class="success-subtitle">Your case is being processed by 4 AI agents</p>
+          <div class="case-id">${data.case_id}</div>
+          ${institutionNote}
+          <div class="result-details">
+            ${row('Status', 'Processing')}
+            ${row('Band room', data.band_room || 'MedBand')}
+            ${row('Awaiting', data.human_role || 'Care team')}
+          </div>
+          <div class="result-links">
+            <a class="result-link primary" href="${data.track_url || ('/status?case_id=' + encodeURIComponent(data.case_id))}">Track your case →</a>
+            <a class="result-link secondary" href="https://app.band.ai" target="_blank" rel="noopener">Watch it live on Band →</a>
           </div>
         </div>`;
     }
@@ -1396,6 +1430,8 @@
             } else if (event.type === 'complete') {
               finalCase = event.case;
               finalReport = event.report;
+            } else if (event.type === 'band_submitted') {
+              finalCase = event;
             } else if (event.type === 'error') {
               throw new Error(event.error);
             }
@@ -1403,7 +1439,11 @@
         }
 
         if (finalCase) {
-          result.innerHTML = renderResult(finalCase, finalReport);
+          if (finalCase.type === 'band_submitted' || finalCase.status === 'processing') {
+            result.innerHTML = renderBandResult(finalCase);
+          } else {
+            result.innerHTML = renderResult(finalCase, finalReport);
+          }
           result.classList.add('visible');
         }
       } catch (err) {
