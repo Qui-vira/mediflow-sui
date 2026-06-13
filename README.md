@@ -123,3 +123,21 @@ Replace `audit_log` with Band SDK room calls. See Phase 2 Band Wiring Guide.
 ## Team
 
 The Billionaire Republic (TBR) - Band of Agents Hackathon 2026
+
+## Global Configurability
+
+MedBand is designed to work with any country's healthcare infrastructure. The pharmacy sector demo uses Nigerian NAFDAC drug registry data. To deploy for another country:
+
+1. Replace `data/pharmacy/registry.json` with your national drug regulatory database
+2. Update the `registry_body` field to your country's regulatory body name (e.g. FDA, MHRA, PPB)
+3. Update `data/pharmacy/doctors.json` with registered practitioners from your country's medical council
+4. All agent logic, Band workflows, and approval flows remain identical
+
+Supported regulatory body examples:
+
+- Nigeria: NAFDAC (National Agency for Food and Drug Administration and Control)
+- USA: FDA (Food and Drug Administration)
+- UK: MHRA (Medicines and Healthcare products Regulatory Agency)
+- Ghana: FDA Ghana
+- Kenya: PPB (Pharmacy and Poisons Board)
+- South Africa: SAHPRA

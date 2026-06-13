@@ -1,34 +1,214 @@
 {
   "drugs": [
-    {"drug_name": "Amoxicillin", "nafdac_number": "A4-0123", "status": "registered", "category": "antibiotic"},
-    {"drug_name": "Paracetamol", "nafdac_number": "A4-0045", "status": "registered", "category": "analgesic"},
-    {"drug_name": "Ibuprofen", "nafdac_number": "A4-0067", "status": "registered", "category": "NSAID"},
-    {"drug_name": "Metformin", "nafdac_number": "A4-0089", "status": "registered", "category": "antidiabetic"},
-    {"drug_name": "Amlodipine", "nafdac_number": "A4-0111", "status": "registered", "category": "antihypertensive"},
-    {"drug_name": "Artemether-Lumefantrine", "nafdac_number": "A4-0133", "status": "registered", "category": "antimalarial"},
-    {"drug_name": "Ciprofloxacin", "nafdac_number": "A4-0155", "status": "registered", "category": "antibiotic"},
-    {"drug_name": "Omeprazole", "nafdac_number": "A4-0177", "status": "registered", "category": "PPI"},
-    {"drug_name": "Losartan", "nafdac_number": "A4-0199", "status": "registered", "category": "antihypertensive"},
-    {"drug_name": "Azithromycin", "nafdac_number": "A4-0221", "status": "registered", "category": "antibiotic"},
-    {"drug_name": "Cetirizine", "nafdac_number": "A4-0243", "status": "registered", "category": "antihistamine"},
-    {"drug_name": "Salbutamol", "nafdac_number": "A4-0265", "status": "registered", "category": "bronchodilator"},
-    {"drug_name": "Atorvastatin", "nafdac_number": "A4-0287", "status": "registered", "category": "statin"},
-    {"drug_name": "Diclofenac", "nafdac_number": "A4-0309", "status": "registered", "category": "NSAID"},
-    {"drug_name": "Chloroquine", "nafdac_number": "A4-0331", "status": "registered", "category": "antimalarial"},
-    {"drug_name": "Coartem", "nafdac_number": "A4-0353", "status": "registered", "category": "antimalarial"},
-    {"drug_name": "Augmentin", "nafdac_number": "A4-0375", "status": "registered", "category": "antibiotic"},
-    {"drug_name": "Panadol", "nafdac_number": "A4-0397", "status": "registered", "category": "analgesic"},
-    {"drug_name": "Flagyl", "nafdac_number": "A4-0419", "status": "registered", "category": "antiprotozoal"},
-    {"drug_name": "Ventolin", "nafdac_number": "A4-0441", "status": "registered", "category": "bronchodilator"},
-    {"drug_name": "Lisinopril", "nafdac_number": "A4-0463", "status": "registered", "category": "ACE inhibitor"},
-    {"drug_name": "Insulin Glargine", "nafdac_number": "A4-0485", "status": "registered", "category": "antidiabetic"},
-    {"drug_name": "Prednisolone", "nafdac_number": "A4-0507", "status": "registered", "category": "corticosteroid"},
-    {"drug_name": "Furosemide", "nafdac_number": "A4-0529", "status": "registered", "category": "diuretic"},
-    {"drug_name": "Tramadol", "nafdac_number": "A4-0551", "status": "suspended", "category": "opioid analgesic"},
-    {"drug_name": "Codeine Syrup", "nafdac_number": "A4-0573", "status": "suspended", "category": "opioid cough suppressant"},
-    {"drug_name": "Phenobarbitone", "nafdac_number": "A4-0595", "status": "suspended", "category": "anticonvulsant"},
-    {"drug_name": "Rohypnol", "nafdac_number": "A4-0617", "status": "banned", "category": "sedative"},
-    {"drug_name": "Diazepam Injection", "nafdac_number": "A4-0639", "status": "banned", "category": "benzodiazepine"},
-    {"drug_name": "Vitamin C", "nafdac_number": "A4-0661", "status": "registered", "category": "supplement"}
+    {
+      "drug_name": "Amoxicillin",
+      "status": "registered",
+      "category": "antibiotic",
+      "reg_number": "A4-0123",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Paracetamol",
+      "status": "registered",
+      "category": "analgesic",
+      "reg_number": "A4-0045",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Ibuprofen",
+      "status": "registered",
+      "category": "NSAID",
+      "reg_number": "A4-0067",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Metformin",
+      "status": "registered",
+      "category": "antidiabetic",
+      "reg_number": "A4-0089",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Amlodipine",
+      "status": "registered",
+      "category": "antihypertensive",
+      "reg_number": "A4-0111",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Artemether-Lumefantrine",
+      "status": "registered",
+      "category": "antimalarial",
+      "reg_number": "A4-0133",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Ciprofloxacin",
+      "status": "registered",
+      "category": "antibiotic",
+      "reg_number": "A4-0155",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Omeprazole",
+      "status": "registered",
+      "category": "PPI",
+      "reg_number": "A4-0177",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Losartan",
+      "status": "registered",
+      "category": "antihypertensive",
+      "reg_number": "A4-0199",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Azithromycin",
+      "status": "registered",
+      "category": "antibiotic",
+      "reg_number": "A4-0221",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Cetirizine",
+      "status": "registered",
+      "category": "antihistamine",
+      "reg_number": "A4-0243",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Salbutamol",
+      "status": "registered",
+      "category": "bronchodilator",
+      "reg_number": "A4-0265",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Atorvastatin",
+      "status": "registered",
+      "category": "statin",
+      "reg_number": "A4-0287",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Diclofenac",
+      "status": "registered",
+      "category": "NSAID",
+      "reg_number": "A4-0309",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Chloroquine",
+      "status": "registered",
+      "category": "antimalarial",
+      "reg_number": "A4-0331",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Coartem",
+      "status": "registered",
+      "category": "antimalarial",
+      "reg_number": "A4-0353",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Augmentin",
+      "status": "registered",
+      "category": "antibiotic",
+      "reg_number": "A4-0375",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Panadol",
+      "status": "registered",
+      "category": "analgesic",
+      "reg_number": "A4-0397",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Flagyl",
+      "status": "registered",
+      "category": "antiprotozoal",
+      "reg_number": "A4-0419",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Ventolin",
+      "status": "registered",
+      "category": "bronchodilator",
+      "reg_number": "A4-0441",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Lisinopril",
+      "status": "registered",
+      "category": "ACE inhibitor",
+      "reg_number": "A4-0463",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Insulin Glargine",
+      "status": "registered",
+      "category": "antidiabetic",
+      "reg_number": "A4-0485",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Prednisolone",
+      "status": "registered",
+      "category": "corticosteroid",
+      "reg_number": "A4-0507",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Furosemide",
+      "status": "registered",
+      "category": "diuretic",
+      "reg_number": "A4-0529",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Tramadol",
+      "status": "suspended",
+      "category": "opioid analgesic",
+      "reg_number": "A4-0551",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Codeine Syrup",
+      "status": "suspended",
+      "category": "opioid cough suppressant",
+      "reg_number": "A4-0573",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Phenobarbitone",
+      "status": "suspended",
+      "category": "anticonvulsant",
+      "reg_number": "A4-0595",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Rohypnol",
+      "status": "banned",
+      "category": "sedative",
+      "reg_number": "A4-0617",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Diazepam Injection",
+      "status": "banned",
+      "category": "benzodiazepine",
+      "reg_number": "A4-0639",
+      "registry_body": "NAFDAC"
+    },
+    {
+      "drug_name": "Vitamin C",
+      "status": "registered",
+      "category": "supplement",
+      "reg_number": "A4-0661",
+      "registry_body": "NAFDAC"
+    }
   ]
 }

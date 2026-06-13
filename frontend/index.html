@@ -249,7 +249,12 @@
       line-height: 1.55;
     }
     .report-box.escalated { border-left-color: var(--danger); }
-    .sector-field { display: none; }
+    .sector-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      line-height: 1.4;
+    }
     .case-link {
       display: inline-block;
       margin-top: 0.75rem;
@@ -271,6 +276,9 @@
         <div>
           <div class="sector-label" id="sectorLabel">Pharmacy</div>
           <div class="sector-role" id="sectorRole">Human approver: Pharmacist</div>
+          <div class="sector-note" id="sectorNote" style="display:none">
+            Registry data is configurable per country. Demo uses Nigerian NAFDAC records.
+          </div>
         </div>
       </div>
 
@@ -481,6 +489,7 @@
       document.getElementById('sectorIcon').textContent = meta.icon;
       document.getElementById('sectorLabel').textContent = meta.label;
       document.getElementById('sectorRole').textContent = 'Human approver: ' + meta.role;
+      document.getElementById('sectorNote').style.display = sector === 'pharmacy' ? 'block' : 'none';
     }
 
     function updateSectorFields(sector) {
