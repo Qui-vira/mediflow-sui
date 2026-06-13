@@ -24,3 +24,34 @@ Pass through `institution_id` and `institution_name` from the case payload when 
 }
 ```
 Set requested_service to procedure_code.
+
+## Band Room Communication Rule
+
+Every time you complete a step, post **TWO messages** in the Band room:
+
+**Message 1:** Structured JSON data (required for other agents — keep posting this)
+
+**Message 2:** Immediately after Message 1, post a clean plain English summary labeled **SUMMARY FOR HUMAN REVIEW**
+
+Human approvers only read Message 2. Never expose raw field names or JSON to humans in Message 2.
+
+### After INTAKE_COMPLETE — Message 2 template
+
+---
+✅ Patient intake complete
+
+Patient {patient_name} has requested {requested_service} for {presenting_issue}.
+Urgency: {urgency}.
+Include policy number and provider if provided.
+
+Passing to Verification now.
+---
+
+### After INTAKE_INCOMPLETE — Message 2 template
+
+---
+⚠️ Missing information
+
+We need the following before we can proceed:
+{list each missing field in plain English — e.g. "Patient name is missing." / "No prescription code provided."}
+---

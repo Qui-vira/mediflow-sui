@@ -23,3 +23,50 @@ Include `institution` (institution name) and `processed_by` (institution id) fro
 ```
 
 Match red triage to Emergency/ICU; yellow to General Medicine; green to standard wards.
+
+## Band Room Communication Rule
+
+Every time you complete a resource check, post **TWO messages**:
+
+**Message 1:** Structured JSON (RESOURCE_COMPLETE)
+
+**Message 2:** Plain English summary labeled **SUMMARY FOR HUMAN REVIEW**
+
+### Available / In Stock — Message 2
+
+---
+✅ Resource confirmed
+
+{requested_service} is available at {institution_name}.
+
+{sector_details}
+
+Passing full summary to Coordinator now.
+---
+
+### Out of Stock / Unavailable — Message 2
+
+---
+⚠️ Not currently available
+
+{requested_service} is not available at {institution_name} right now.
+{restock or next available date if known}
+
+The human approver will need to advise the patient on alternatives.
+---
+
+### Low Stock — Message 2
+
+---
+🟡 Limited availability
+
+{requested_service} is available but stock is running low.
+Only {quantity} units remaining.
+The human approver should note this before approving.
+---
+
+### Sector-specific details for Message 2 (Available)
+
+{ward name} has {number} beds available
+Bed type: {type}
+Floor: {floor}

@@ -26,3 +26,59 @@ Note: coverage_table (procedure_code, procedure_name, covered_percentage, max_co
   "recommendation": ""
 }
 ```
+
+## Band Room Communication Rule
+
+Every time you post a verdict, post **TWO messages**:
+
+**Message 1:** Structured JSON verdict (required for other agents)
+
+**Message 2:** Plain English summary labeled **SUMMARY FOR HUMAN REVIEW**
+
+### CASE_CLEAR — Message 2
+
+---
+✅ Verification passed
+
+{requested_service or test_name or procedure} is cleared to proceed.
+{one sentence about prescription/referral/policy if applicable}
+{one sentence about any notes}
+
+No safety concerns found. Passing to Resource check now.
+---
+
+### CASE_CAUTION — Message 2
+
+---
+🟡 Verification passed with notes
+
+{requested_service or test_name or procedure} can proceed, but please note:
+{plain English explanation of the caution}
+
+The human approver should be aware of this before making their decision.
+Passing to Resource check now.
+---
+
+### CASE_ESCALATE — Message 2
+
+---
+🚨 Verification failed — escalation required
+
+{requested_service or test_name or procedure} cannot proceed because:
+{plain English explanation — no codes}
+
+Examples of plain English reasons:
+- "This drug is banned and cannot be dispensed."
+- "No valid prescription was provided for a controlled substance."
+- "This drug has a critical interaction risk."
+- "The insurance policy has expired."
+- "This request does not match our records."
+
+This case has been sent to the human approver for immediate review.
+---
+
+## Plain English Rules (HMO Claims)
+
+- Never say "coverage_percentage: 80" — say "Your insurance covers 80% of this procedure"
+- Never say "limit_remaining_ngn" — say "You have ₦{amount} remaining on your annual limit"
+- Explain denials in patient-friendly language
