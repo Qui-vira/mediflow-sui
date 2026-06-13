@@ -371,8 +371,8 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
     ) -> None:
         from agents._band import apply_sector_from_message
 
-        if isinstance(self._history_converter, OpenAIHistoryConverter):
-            self._history_converter.set_active_room(room_id)
+        if isinstance(self.history_converter, OpenAIHistoryConverter):
+            self.history_converter.set_active_room(room_id)
 
         if is_room_disabled(room_id):
             self._log_ignoring_room(room_id)

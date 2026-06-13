@@ -69,6 +69,18 @@ def is_room_disabled(room_id: str) -> bool:
     return case_store.is_room_disabled(room_id)
 
 
+def list_disabled_rooms() -> list[dict[str, Any]]:
+    return case_store.list_disabled_rooms()
+
+
+def enable_room(room_id: str) -> bool:
+    return case_store.enable_room(room_id)
+
+
+def clear_disabled_rooms() -> int:
+    return case_store.clear_disabled_rooms()
+
+
 def get_case_state(case_id: str) -> dict[str, Any]:
     return case_store.get_case_state(case_id)
 

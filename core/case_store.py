@@ -478,6 +478,55 @@ def is_room_disabled(room_id: str) -> bool:
         return cur.fetchone() is not None
 
 
+def list_disabled_rooms() -> list[dict[str, Any]]:
+    with _connection() as conn:
+        if DATABASE_URL:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT room_id, reason, disabled_at FROM disabled_rooms ORDER BY disabled_at DESC"
+                )
+                return [
+                    {"room_id": row[0], "reason": row[1], "disabled_at": str(row[2])}
+                    for row in cur.fetchall()
+                ]
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT room_id, reason, disabled_at FROM disabled_rooms ORDER BY disabled_at DESC"
+        )
+        return [
+            {"room_id": row[0], "reason": row[1], "disabled_at": row[2]}
+            for row in cur.fetchall()
+        ]
+
+
+def enable_room(room_id: str) -> bool:
+    """Remove a room from the disabled list. Returns True if a row was deleted."""
+    if not room_id:
+        return False
+    with _lock:
+        with _connection() as conn:
+            if DATABASE_URL:
+                with conn.cursor() as cur:
+                    cur.execute("DELETE FROM disabled_rooms WHERE room_id = %s", (room_id,))
+                    return cur.rowcount > 0
+            cur = conn.cursor()
+            cur.execute("DELETE FROM disabled_rooms WHERE room_id = ?", (room_id,))
+            return cur.rowcount > 0
+
+
+def clear_disabled_rooms() -> int:
+    """Remove all disabled rooms. Returns count deleted."""
+    with _lock:
+        with _connection() as conn:
+            if DATABASE_URL:
+                with conn.cursor() as cur:
+                    cur.execute("DELETE FROM disabled_rooms")
+                    return cur.rowcount
+            cur = conn.cursor()
+            cur.execute("DELETE FROM disabled_rooms")
+            return cur.rowcount
+
+
 def get_case_state(case_id: str) -> dict[str, Any]:
     stages = completed_stages(case_id)
     state: dict[str, Any] = {"case_id": case_id.upper(), "completed_stages": sorted(stages)}

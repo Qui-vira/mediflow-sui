@@ -47,3 +47,15 @@ def test_init_store_logs_sqlite(caplog):
     caplog.set_level(logging.INFO, logger="core.case_store")
     case_store.init_store()
     assert any("Case store initialized: SQLite" in r.message for r in caplog.records)
+
+
+def test_list_and_clear_disabled_rooms():
+    case_store.disable_room("room-a")
+    case_store.disable_room("room-b")
+    rows = case_store.list_disabled_rooms()
+    assert len(rows) == 2
+    assert case_store.enable_room("room-a") is True
+    assert case_store.is_room_disabled("room-a") is False
+    assert case_store.is_room_disabled("room-b") is True
+    assert case_store.clear_disabled_rooms() == 1
+    assert case_store.list_disabled_rooms() == []
