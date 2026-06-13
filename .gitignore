@@ -9,7 +9,9 @@ venv/
 .venv/
 env/
 cases/*.json
-.streamlit/
+.streamlit/secrets.toml
+!.streamlit/config.toml
+!.streamlit/secrets.toml.example
 .idea/
 .vscode/
 *.egg-info/

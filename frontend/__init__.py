@@ -1,0 +1,1 @@
+"""MedBand Flask frontend package."""
