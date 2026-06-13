@@ -227,7 +227,8 @@ def process_human_decision(
     return case
 
 
-def _save_case(summary: dict):    CASES_DIR.mkdir(exist_ok=True)
+def _save_case(summary: dict):
+    CASES_DIR.mkdir(exist_ok=True)
     path = CASES_DIR / f"{summary['case_id']}.json"
     if path.exists():
         existing = json.load(open(path, encoding="utf-8"))
