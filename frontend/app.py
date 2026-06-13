@@ -222,11 +222,14 @@ def api_case(case_id):
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    raw, sector = _form_raw(request.form)
-    institution_id = request.form.get("institution_id") or None
+    # Copy request data into a plain dict while the request context is active,
+    # so nothing downstream (threads/background work) touches the Flask request.
+    form_data = request.form.to_dict()
+    raw, sector = _form_raw(form_data)
+    institution_id = form_data.get("institution_id") or None
     try:
         if BAND_MODE:
-            return jsonify(_submit_via_band(request.form, raw, sector))
+            return jsonify(_submit_via_band(form_data, raw, sector))
         result = run_case(raw, sector=sector, institution_id=institution_id)
         result["patient_report"] = build_patient_report(result)
         return jsonify(result)
@@ -236,13 +239,17 @@ def submit():
 
 @app.route("/submit/stream", methods=["POST"])
 def submit_stream():
-    raw, sector = _form_raw(request.form)
-    institution_id = request.form.get("institution_id") or None
+    # Copy request data into a plain dict before the streaming generator runs.
+    # Flask iterates `generate()` after the request context is torn down, so any
+    # `request.*` access inside it would raise "Working outside of request context".
+    form_data = request.form.to_dict()
+    raw, sector = _form_raw(form_data)
+    institution_id = form_data.get("institution_id") or None
 
     def generate():
         try:
             if BAND_MODE:
-                for event in _band_stream_events(request.form, raw, sector):
+                for event in _band_stream_events(form_data, raw, sector):
                     yield json.dumps(event) + "\n"
                 return
             for event in run_case_stream(raw, sector=sector, institution_id=institution_id):
