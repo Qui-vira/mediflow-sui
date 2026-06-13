@@ -62,7 +62,7 @@ Requested service: {case_payload.get("requested_service")}
 Urgency: {case_payload.get("urgency", "medium")}
 Prescription code: {prescription_code}
 
-Route this case through Intake, then Verification, then Resource, then post CASE_READY."""
+Coordinator should open this case and follow the standard pharmacy workflow."""
 
 
 def save_pending_case(case_payload: dict) -> dict:
