@@ -1,21 +1,24 @@
 """Tests for Band message guards and formatting."""
 import json
 from datetime import datetime, timezone
+from pathlib import Path
 
 import pytest
 from band.core.types import PlatformMessage
 
 from core.band_messaging import (
+    OutboundDecision,
     evaluate_outbound,
     extract_recipient,
     format_case_approved,
     format_case_opened,
     is_legacy_band_message,
     is_visible_json,
+    record_outbound_success,
     should_skip_inbound,
     strip_em_dash,
 )
-from core.case_state import init_case_state, record_stage
+from core.case_state import init_case_state, record_stage, stage_completed
 
 
 @pytest.fixture(autouse=True)
@@ -65,10 +68,8 @@ def test_format_case_opened():
 
 
 def test_duplicate_stage_blocked():
-    from core.case_state import try_claim_outbound
-
     case_id = "TEST1234"
-    assert try_claim_outbound(case_id, "CASE_OPENED", "coordinator", "room")
+    record_stage(case_id, "CASE_OPENED", payload={"status": "CASE_OPENED", "case_id": case_id})
     raw = json.dumps({"status": "CASE_OPENED", "case_id": case_id})
     decision = evaluate_outbound("coordinator", raw, room_id="room1")
     assert decision.skip is True
@@ -108,6 +109,75 @@ def test_json_replaced_with_formatted_message():
     assert decision.formatted_content is not None
     assert "INTAKE COMPLETE" in decision.formatted_content
     assert is_visible_json(json.dumps(payload)) is True
+
+
+@pytest.mark.parametrize(
+    "stage",
+    ["INTAKE_COMPLETE", "INTAKE_INCOMPLETE", "CASE_CLEAR", "CASE_CAUTION", "CASE_ESCALATE", "RESOURCE_COMPLETE"],
+)
+def test_coordinator_cannot_send_agent_owned_stages(stage):
+    raw = json.dumps({"status": stage, "case_id": f"MB-{stage}"})
+    decision = evaluate_outbound("coordinator", raw, room_id="room1")
+    assert decision.skip is True
+    assert decision.reason == "invalid_stage_owner"
+
+
+def test_intake_can_send_intake_complete():
+    raw = json.dumps(
+        {
+            "status": "INTAKE_COMPLETE",
+            "case_id": "MB-INTAKE1",
+            "requester_name": "Ada Okonkwo",
+            "requested_service": "Amoxicillin 500mg",
+        }
+    )
+    decision = evaluate_outbound("intake", raw, room_id="room1")
+    assert decision.skip is False
+    assert decision.stage == "INTAKE_COMPLETE"
+
+
+@pytest.mark.parametrize("stage", ["CASE_CLEAR", "CASE_CAUTION", "CASE_ESCALATE"])
+def test_verification_can_send_verification_outcomes(stage):
+    raw = json.dumps({"status": stage, "case_id": f"MB-{stage}", "requested_service": "Amoxicillin 500mg"})
+    decision = evaluate_outbound("verification", raw, room_id="room1")
+    assert decision.skip is False
+    assert decision.stage == stage
+
+
+def test_resource_can_send_resource_complete():
+    raw = json.dumps({"status": "RESOURCE_COMPLETE", "case_id": "MB-RESOURCE1", "requested_service": "Amoxicillin"})
+    decision = evaluate_outbound("resource", raw, room_id="room1")
+    assert decision.skip is False
+    assert decision.stage == "RESOURCE_COMPLETE"
+
+
+def test_coordinator_can_send_case_ready():
+    case_id = "MB-READY1"
+    raw = json.dumps({"status": "CASE_READY", "case_id": case_id, "requested_service": "Amoxicillin"})
+    decision = evaluate_outbound("coordinator", raw, room_id="room1")
+    assert decision.skip is False
+    assert decision.stage == "CASE_READY"
+    assert decision.formatted_content is not None
+    assert "CASE READY FOR HUMAN REVIEW" in decision.formatted_content
+
+
+def test_record_outbound_success_does_not_record_unowned_stage():
+    case_id = "MB-OWNER1"
+    decision = OutboundDecision(
+        stage="INTAKE_COMPLETE",
+        case_id=case_id,
+        agent_role="coordinator",
+    )
+    record_outbound_success(decision, {"status": "INTAKE_COMPLETE", "case_id": case_id}, "room1")
+    assert stage_completed(case_id, "INTAKE_COMPLETE") is False
+
+
+def test_coordinator_prompt_no_case_ready_json_only():
+    prompt = (Path(__file__).parents[1] / "prompts" / "pharmacy" / "coordinator.md").read_text(
+        encoding="utf-8"
+    )
+    assert "CASE_READY JSON only" not in prompt
+    assert "@medlabbytbr CASE READY FOR HUMAN REVIEW" in prompt
 
 
 def test_extract_recipient_from_mentions():

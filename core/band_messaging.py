@@ -38,6 +38,23 @@ AGENT_ALIASES = {
 
 ROUTING_ONLY_STAGES = frozenset({"VERIFY_REQUEST", "RESOURCE_REQUEST", "INTAKE_REQUEST"})
 
+STAGE_OWNERS = {
+    "coordinator": frozenset(
+        {
+            "CASE_OPENED",
+            "VERIFY_REQUEST",
+            "RESOURCE_REQUEST",
+            "CASE_READY",
+            "CASE_APPROVED",
+            "CASE_REJECTED",
+            "HUMAN_ALERT",
+        }
+    ),
+    "intake": frozenset({"INTAKE_COMPLETE", "INTAKE_INCOMPLETE"}),
+    "verification": frozenset({"CASE_CLEAR", "CASE_CAUTION", "CASE_ESCALATE"}),
+    "resource": frozenset({"RESOURCE_COMPLETE"}),
+}
+
 AGENT_REPLY_STAGES = frozenset(
     {
         "INTAKE_COMPLETE",
@@ -78,6 +95,7 @@ class OutboundDecision:
     stage: str | None = None
     case_id: str | None = None
     record_on_success: bool = True
+    agent_role: str | None = None
 
 
 def strip_em_dash(text: str) -> str:
@@ -250,6 +268,17 @@ def is_coordinator_sender(sender: str) -> bool:
 def is_agent_sender(sender: str, role: str) -> bool:
     normalized = normalize_sender(sender)
     return normalized in {a.lower().replace("@", "") for a in AGENT_ALIASES.get(role, set())}
+
+
+def owns_stage(agent_role: str | None, stage: str | None) -> bool:
+    if not stage:
+        return True
+    allowed = STAGE_OWNERS.get((agent_role or "").lower())
+    if allowed is None:
+        return True
+    if stage not in TRACKED_STAGES:
+        return True
+    return stage in allowed
 
 
 def _title(value: str) -> str:
@@ -712,24 +741,29 @@ def evaluate_outbound(
             )
             return OutboundDecision(skip=True, reason="false_human_alert", case_id=case_id)
 
-    if agent_role != "coordinator" and stage in {
-        "VERIFY_REQUEST",
-        "RESOURCE_REQUEST",
-        "CASE_OPENED",
-        "CASE_READY",
-        "HUMAN_ALERT",
-        "CASE_APPROVED",
-    }:
+    if not owns_stage(agent_role, stage):
         logger.info(
-            "SKIP outbound: invalid_routing agent=%s stage=%s case_id=%s",
+            "SKIP outbound: invalid_stage_owner agent=%s stage=%s case_id=%s",
             agent_role,
             stage,
             case_id,
         )
-        return OutboundDecision(skip=True, reason="invalid_routing", stage=stage, case_id=case_id)
+        return OutboundDecision(
+            skip=True,
+            reason="invalid_stage_owner",
+            stage=stage,
+            case_id=case_id,
+            agent_role=agent_role,
+        )
 
     if agent_role == "resource" and stage and "VERIFY" in stage:
-        return OutboundDecision(skip=True, reason="invalid_routing", stage=stage, case_id=case_id)
+        return OutboundDecision(
+            skip=True,
+            reason="invalid_routing",
+            stage=stage,
+            case_id=case_id,
+            agent_role=agent_role,
+        )
 
     if stage and case_id and stage in TRACKED_STAGES:
         # De-dupe on the PERSISTED stage only. The stage is recorded after a
@@ -753,6 +787,7 @@ def evaluate_outbound(
                 reason="duplicate_stage",
                 stage=stage,
                 case_id=case_id,
+                agent_role=agent_role,
             )
 
     if payload and stage and stage not in ROUTING_ONLY_STAGES:
@@ -762,13 +797,19 @@ def evaluate_outbound(
             formatted_content=formatted,
             stage=stage,
             case_id=case_id,
+            agent_role=agent_role,
         )
 
     if is_visible_json(content) and stage not in ROUTING_ONLY_STAGES:
         if payload and stage:
             enriched = enrich_payload_from_case_state(payload, case_id or "")
             formatted = format_stage_message(stage, enriched, case_id or "")
-            return OutboundDecision(formatted_content=formatted, stage=stage, case_id=case_id)
+            return OutboundDecision(
+                formatted_content=formatted,
+                stage=stage,
+                case_id=case_id,
+                agent_role=agent_role,
+            )
         logger.info(
             "SKIP outbound: raw_json_blocked agent=%s room=%s",
             agent_role,
@@ -791,6 +832,7 @@ def evaluate_outbound(
         stage=stage,
         case_id=case_id,
         record_on_success=False,
+        agent_role=agent_role,
     )
 
 
@@ -832,4 +874,13 @@ def record_outbound_success(decision: OutboundDecision, payload: dict[str, Any] 
     if decision is None or decision.skip:
         return
     if decision.stage and decision.case_id and decision.stage in TRACKED_STAGES:
+        if not owns_stage(decision.agent_role, decision.stage):
+            logger.info(
+                "SKIP record outbound: invalid_stage_owner agent=%s stage=%s case_id=%s room=%s",
+                decision.agent_role,
+                decision.stage,
+                decision.case_id,
+                room_id,
+            )
+            return
         record_stage(decision.case_id, decision.stage, payload=payload, room_id=room_id)

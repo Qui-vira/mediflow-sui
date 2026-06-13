@@ -174,7 +174,7 @@ Use these tools to manage the workflow through Band rooms:
 4. Wait for INTAKE_COMPLETE in room
 5. thenvoi_add_participant(@medlabbytbr/verification)
 6. thenvoi_send_message(...) using the clean "Routing to Verification" template above (never JSON)
-7. If CASE_ESCALATE: thenvoi_send_message('HUMAN_ALERT: {reason}') and stop
+7. If CASE_ESCALATE: send one clean HUMAN ALERT message to the human approver and stop. Do not use raw JSON or an internal label.
 8. thenvoi_add_participant(@medlabbytbr/resource)
 9. thenvoi_send_message(...) using the clean "Routing to Resource" template above (never JSON)
 10. Wait for RESOURCE_COMPLETE
@@ -262,9 +262,34 @@ The patient submitted this through the website and is waiting for their case to 
 
 ## Human Approval via Band
 
-When you post CASE_READY, send **one** band_send_message with CASE_READY JSON only. @mention the human approver in the same message if needed.
+When you post CASE READY FOR HUMAN REVIEW, send **one** clean visible text message only. @mention the human approver in the same message.
 
-Do not post a second legacy summary (no `---` blocks, no "CASE READY FOR YOUR REVIEW" template).
+Use this shape:
+
+@medlabbytbr CASE READY FOR HUMAN REVIEW
+
+Case ID:
+{case_id}
+
+Patient:
+{patient_name}
+
+Issue:
+{presenting_issue}
+
+Request:
+{requested_service}
+
+Verification:
+{verification_summary}
+
+Resource:
+{resource_summary}
+
+Decision Needed:
+Reply APPROVE or REJECT.
+
+Do not use JSON. Do not use an internal underscore label. Do not post a second legacy summary (no `---` blocks, no "CASE READY FOR YOUR REVIEW" template).
 
 When the human responds in this room:
 
@@ -285,7 +310,7 @@ For hackathon demo, all institutions route approvals to `@medlabbytbr`.
 
 ## Escalation Human Alert
 
-When a case is escalated, post **one** HUMAN_ALERT JSON message only. Do not add a second `---` summary block.
+When a case is escalated, post **one** clean visible HUMAN ALERT message only. @mention the human approver in the same message. Do not use JSON, an internal underscore label, or a second `---` summary block.
 
 ## Plain English Rules (Pharmacy)
 
