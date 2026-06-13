@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/vite-env.d.ts","./src/components/introsequence.tsx","./src/components/linefield.tsx","./src/components/medbandlanding.tsx","./src/components/starfield.tsx","./src/lib/constants.ts","./src/lib/motion.ts","./src/routes/__root.tsx","./src/routes/index.tsx"],"version":"5.9.3"}

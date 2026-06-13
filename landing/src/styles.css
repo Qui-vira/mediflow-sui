@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@source "../src";
+
+@theme inline {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.06 0.008 220);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.09 0.006 220);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.09 0.006 220);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.06 0 0);
+  --secondary: oklch(0.18 0.006 220);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.18 0.006 220);
+  --muted-foreground: oklch(0.55 0 0);
+  --accent: oklch(0.18 0.006 220);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.7 0 0);
+  --teal: oklch(0.55 0.12 185);
+  --teal-lt: oklch(0.92 0.06 185);
+  --navy: oklch(0.13 0.03 240);
+  --amber: oklch(0.78 0.14 60);
+  --green: oklch(0.42 0.12 155);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--teal);
+  color: oklch(0.98 0 0);
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.text-teal {
+  color: var(--teal);
+}
+
+.bg-teal {
+  background-color: var(--teal);
+}
+
+.text-green {
+  color: var(--green);
+}
+
+.bg-green {
+  background-color: var(--green);
+}
+
+html {
+  scroll-behavior: smooth;
+}

@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, Response, jsonify, render_template, request
+from flask import Flask, Response, jsonify, redirect, render_template, request
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -144,9 +144,19 @@ def lookup(case_id):
     return jsonify({"case": case, "report": report, "sector": sector_meta(case.get("sector"))})
 
 
+@app.route("/landing")
+def landing_redirect():
+    return redirect("https://medband-landing.vercel.app")
+
+
 @app.route("/health")
 def health():
-    return jsonify({"status": "ok", "service": "MedBand"})
+    return jsonify({
+        "status": "ok",
+        "service": "MedBand",
+        "landing": "https://medband-landing.vercel.app",
+        "form": "https://web-production-6d13b.up.railway.app",
+    })
 
 
 if __name__ == "__main__":
