@@ -36,52 +36,83 @@ logger = logging.getLogger(__name__)
 OpenAIMessages = list[dict[str, Any]]
 
 
-def _patch_orphaned_tool_calls(messages: OpenAIMessages, *, room_id: str | None = None) -> None:
-    """Inject synthetic tool results for assistant tool_calls missing responses."""
-    if room_id and is_room_disabled(room_id):
-        return
-    i = 0
-    while i < len(messages):
-        msg = messages[i]
-        if msg.get("role") != "assistant":
-            i += 1
+def _reconcile_tool_calls(messages: OpenAIMessages) -> OpenAIMessages:
+    """Pair assistant tool_calls with their tool results by tool_call_id.
+
+    One id-keyed reconciliation that replaces the previous two-pass repair (a
+    strict-adjacency "drop orphaned result" pass plus a separate "patch orphaned
+    call" pass) which could fight each other and loop: a genuine result that was
+    not positioned directly after its assistant message got rewritten to a user
+    line, and then the still-unanswered tool_call got a fabricated "interrupted"
+    result - so the model retried forever.
+
+    Rules:
+    - Match each tool result to its assistant call by tool_call_id, anywhere in
+      the list (tolerant of ordering or intervening messages).
+    - Emit each matched result immediately after its assistant tool_calls block.
+    - Inject a synthetic result ONLY for a call id with no real result anywhere.
+    - Convert to a plain user message ONLY a tool result whose id matches no
+      assistant call (a genuine orphan).
+    - An id is therefore matched, OR patched, OR dropped - never two of these.
+    - Idempotent: reconcile(reconcile(x)) == reconcile(x).
+    """
+    call_ids: set[str] = set()
+    results_by_id: dict[str, dict[str, Any]] = {}
+    for msg in messages:
+        role = msg.get("role")
+        if role == "assistant":
+            for tc in msg.get("tool_calls") or []:
+                if tc.get("id"):
+                    call_ids.add(tc["id"])
+        elif role == "tool":
+            tcid = msg.get("tool_call_id")
+            if tcid and tcid not in results_by_id:
+                results_by_id[tcid] = msg
+
+    out: OpenAIMessages = []
+    for msg in messages:
+        role = msg.get("role")
+
+        if role == "assistant":
+            tool_calls = msg.get("tool_calls") or []
+            if not tool_calls:
+                if msg.get("content") is None:
+                    msg = {**msg, "content": ""}
+                out.append(msg)
+                continue
+            out.append(msg)
+            for tc in tool_calls:
+                tcid = tc.get("id")
+                if not tcid:
+                    continue
+                real = results_by_id.get(tcid)
+                if real is not None:
+                    out.append(real)
+                else:
+                    logger.warning("Patching orphaned OpenAI tool_call: %s", tcid)
+                    out.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tcid,
+                            "content": "Error: tool execution was interrupted",
+                        }
+                    )
             continue
 
-        tool_calls = msg.get("tool_calls") or []
-        if not tool_calls:
-            if msg.get("content") is None:
-                msg["content"] = ""
-            i += 1
-            continue
-
-        call_ids = {tc["id"] for tc in tool_calls if tc.get("id")}
-        j = i + 1
-        matched_ids: set[str] = set()
-        while j < len(messages) and messages[j].get("role") == "tool":
-            tool_call_id = messages[j].get("tool_call_id")
-            if tool_call_id in call_ids:
-                matched_ids.add(tool_call_id)
-            j += 1
-
-        orphaned_ids = call_ids - matched_ids
-        if orphaned_ids:
-            logger.warning(
-                "Patching %d orphaned OpenAI tool_call(s): %s",
-                len(orphaned_ids),
-                sorted(orphaned_ids),
+        if role == "tool":
+            tcid = msg.get("tool_call_id")
+            if tcid in call_ids:
+                # Belongs to an assistant call; already emitted next to it.
+                continue
+            logger.warning("Dropping orphaned tool message (tool_call_id=%s)", tcid)
+            out.append(
+                {"role": "user", "content": f"[Tool result]: {msg.get('content', '')}"}
             )
-            synthetic = [
-                {
-                    "role": "tool",
-                    "tool_call_id": tool_id,
-                    "content": "Error: tool execution was interrupted",
-                }
-                for tool_id in sorted(orphaned_ids)
-            ]
-            messages[i + 1 : i + 1] = synthetic
-            i += len(synthetic)
+            continue
 
-        i += 1
+        out.append(msg)
+
+    return out
 
 
 def _sanitize_openai_messages(
@@ -89,43 +120,10 @@ def _sanitize_openai_messages(
     *,
     room_id: str | None = None,
 ) -> OpenAIMessages:
-    """Remove or repair message sequences AIML rejects."""
+    """Repair tool_call/tool_result pairing into a sequence AIML accepts."""
     if room_id and is_room_disabled(room_id):
         return messages
-    sanitized: OpenAIMessages = []
-
-    for msg in messages:
-        role = msg.get("role")
-        if role == "tool":
-            if sanitized and sanitized[-1].get("role") == "assistant":
-                prior_calls = sanitized[-1].get("tool_calls") or []
-                tool_call_id = msg.get("tool_call_id")
-                if any(tc.get("id") == tool_call_id for tc in prior_calls):
-                    sanitized.append(msg)
-                    continue
-            logger.warning(
-                "Dropping orphaned tool message (tool_call_id=%s)",
-                msg.get("tool_call_id"),
-            )
-            sanitized.append(
-                {
-                    "role": "user",
-                    "content": f"[Tool result]: {msg.get('content', '')}",
-                }
-            )
-            continue
-
-        if role == "assistant":
-            tool_calls = msg.get("tool_calls") or []
-            content = msg.get("content")
-            if not tool_calls and content is None:
-                logger.warning("Repairing assistant message with null content")
-                msg = {**msg, "content": ""}
-
-        sanitized.append(msg)
-
-    _patch_orphaned_tool_calls(sanitized, room_id=room_id)
-    return sanitized
+    return _reconcile_tool_calls(messages)
 
 
 class OpenAIHistoryConverter(HistoryConverter[OpenAIMessages]):
