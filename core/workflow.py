@@ -6,40 +6,73 @@ from pathlib import Path
 from agents import intake, resource, verification
 from core.audit_log import clear, get_log, post
 from core.reports import build_patient_report
-from core.sector_loader import ACTIVE_SECTOR, human_role
+from core.sector_loader import (
+    band_room_name,
+    get_active_sector,
+    get_institution,
+    human_role,
+    set_active_sector,
+)
 
 CASES_DIR = Path(__file__).resolve().parent.parent / "cases"
 
 
-def run_case(raw_input: str, sector: str = None) -> dict:
+def run_case(
+    raw_input: str,
+    sector: str = "pharmacy",
+    institution_id: str | None = None,
+) -> dict:
     summary = None
-    for event in run_case_stream(raw_input, sector=sector):
+    for event in run_case_stream(raw_input, sector=sector, institution_id=institution_id):
         if event.get("type") == "complete":
             summary = event["case"]
     return summary or {"status": "ERROR", "error": "Workflow did not complete"}
 
 
-def run_case_stream(raw_input: str, sector: str = None):
+def run_case_stream(
+    raw_input: str,
+    sector: str = "pharmacy",
+    institution_id: str | None = None,
+):
     """Yield NDJSON events as each agent completes (for live UI updates)."""
-    if sector:
-        from core import sector_loader
-
-        sector_loader.set_sector(sector)
+    set_active_sector(sector)
+    institution = get_institution(sector, institution_id) if institution_id else None
 
     clear()
     case_id = str(uuid.uuid4())[:8].upper()
-    post("coordinator", "CASE_OPENED", case_id, {"raw_input": raw_input})
+    room = band_room_name(case_id, sector=sector, institution_id=institution_id)
+
+    opened_payload = {
+        "raw_input": raw_input,
+        "sector": sector,
+        "band_room": room,
+    }
+    if institution:
+        opened_payload["institution"] = {
+            "id": institution["id"],
+            "name": institution["name"],
+            "location": institution.get("location"),
+        }
+        opened_payload["institution_id"] = institution["id"]
+        opened_payload["institution_name"] = institution["name"]
+        opened_payload["institution_location"] = institution.get("location")
+        opened_payload["human_role"] = human_role(sector)
+
+    post("coordinator", "CASE_OPENED", case_id, opened_payload)
     yield _event("agent_active", agent="coordinator", message="Opening case...", case_id=case_id)
     yield _event("agent_done", agent="coordinator", status="CASE_OPENED", case_id=case_id)
 
     yield _event("agent_active", agent="intake", message="Extracting patient details...", case_id=case_id)
-    intake_result = intake.run(case_id, raw_input)
+    intake_result = intake.run(case_id, raw_input, institution=institution)
     yield _event("agent_done", agent="intake", status=intake_result.get("status"), case_id=case_id, data=intake_result)
 
     if intake_result.get("status") == "INTAKE_INCOMPLETE":
         result = {
             "case_id": case_id,
-            "sector": ACTIVE_SECTOR,
+            "sector": get_active_sector(),
+            "band_room": room,
+            "institution": institution,
+            "institution_id": institution_id,
             "status": "INCOMPLETE",
             "missing": intake_result.get("missing_fields", []),
             "intake": intake_result,
@@ -63,10 +96,14 @@ def run_case_stream(raw_input: str, sector: str = None):
             {
                 "reason": verif_result.get("reason"),
                 "action": "Workflow paused. Human review required immediately.",
+                "band_room": room,
             },
         )
         yield _event("agent_done", agent="coordinator", status="HUMAN_ALERT", case_id=case_id)
-        summary = build_summary(case_id, intake_result, verif_result, None, escalated=True)
+        summary = build_summary(
+            case_id, intake_result, verif_result, None, escalated=True,
+            institution=institution, institution_id=institution_id, band_room=room,
+        )
         summary["audit_trail"] = get_log(case_id)
         _save_case(summary)
         yield _event("complete", case=summary, report=build_patient_report(summary))
@@ -76,12 +113,21 @@ def run_case_stream(raw_input: str, sector: str = None):
     resource_result = resource.run(case_id, requested_service, intake_result)
     yield _event("agent_done", agent="resource", status=resource_result.get("status"), case_id=case_id, data=resource_result)
 
-    summary = build_summary(case_id, intake_result, verif_result, resource_result)
+    summary = build_summary(
+        case_id, intake_result, verif_result, resource_result,
+        institution=institution, institution_id=institution_id, band_room=room,
+    )
     post(
         "coordinator",
         "CASE_READY",
         case_id,
-        {"case_id": case_id, "status": summary["status"], "human_role": summary["human_role"]},
+        {
+            "case_id": case_id,
+            "status": summary["status"],
+            "human_role": summary["human_role"],
+            "band_room": room,
+            "institution_name": institution.get("name") if institution else None,
+        },
     )
     yield _event("agent_done", agent="coordinator", status="CASE_READY", case_id=case_id)
     summary["audit_trail"] = get_log(case_id)
@@ -93,10 +139,22 @@ def _event(event_type: str, **payload):
     return {"type": event_type, **payload}
 
 
-def build_summary(case_id, intake_r, verif_r, resource_r, escalated=False):
+def build_summary(
+    case_id,
+    intake_r,
+    verif_r,
+    resource_r,
+    escalated=False,
+    institution=None,
+    institution_id=None,
+    band_room=None,
+):
     return {
         "case_id": case_id,
-        "sector": ACTIVE_SECTOR,
+        "sector": get_active_sector(),
+        "band_room": band_room,
+        "institution": institution,
+        "institution_id": institution_id,
         "status": "ESCALATED" if escalated else "READY_FOR_REVIEW",
         "human_role": human_role(),
         "intake": intake_r,

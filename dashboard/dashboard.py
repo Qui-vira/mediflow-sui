@@ -14,7 +14,7 @@ load_dotenv(ROOT / ".env")
 
 from core.audit_log import get_log
 from core.reports import build_patient_report
-from core.sector_loader import ACTIVE_SECTOR, HUMAN_ROLES, SECTOR_META, human_role, sector_meta
+from core.sector_loader import get_active_sector, HUMAN_ROLES, SECTOR_META, human_role, sector_meta
 from core.workflow import list_cases, load_case, save_decision
 
 st.set_page_config(page_title="MedBand Dashboard", page_icon="🏥", layout="wide")
@@ -85,7 +85,7 @@ INTAKE_LABELS = {
 
 
 def labelize(key: str, sector: str = None) -> str:
-    sector = sector or ACTIVE_SECTOR
+    sector = sector or get_active_sector()
     if sector in INTAKE_LABELS and key in INTAKE_LABELS[sector]:
         return INTAKE_LABELS[sector][key]
     return key.replace("_", " ").strip().title()
@@ -193,11 +193,11 @@ def _self_harm_flagged(intake: dict) -> bool:
 
 
 def _role_for_case(case: dict) -> str:
-    sector = case.get("sector", ACTIVE_SECTOR)
+    sector = case.get("sector", get_active_sector())
     return case.get("human_role") or HUMAN_ROLES.get(sector, human_role())
 
 
-meta = sector_meta(ACTIVE_SECTOR)
+meta = sector_meta(get_active_sector())
 st.markdown(
     f'<div style="padding:0.75rem 1rem;background:{meta["color"]}18;border-left:4px solid {meta["color"]};'
     f'border-radius:8px;margin-bottom:1rem">'
@@ -228,7 +228,7 @@ if not case:
 
 case_id = case.get("case_id", "UNKNOWN")
 status = case.get("status", "UNKNOWN")
-case_sector = case.get("sector", ACTIVE_SECTOR)
+case_sector = case.get("sector", get_active_sector())
 case_meta = sector_meta(case_sector)
 case_role = _role_for_case(case)
 intake = case.get("intake", {})

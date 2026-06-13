@@ -11,6 +11,27 @@ load_dotenv()
 BAND_MODEL = "claude-sonnet-4-6"
 
 
+def resolve_sector_from_message(message: dict | None = None) -> str:
+    """Read sector from Band message payload; fall back to ACTIVE_SECTOR env."""
+    if message:
+        if isinstance(message.get("sector"), str):
+            return message["sector"]
+        for key in ("payload", "data", "case_payload", "content"):
+            nested = message.get(key)
+            if isinstance(nested, dict) and nested.get("sector"):
+                return nested["sector"]
+    return os.getenv("ACTIVE_SECTOR", "pharmacy")
+
+
+def apply_sector_from_message(message: dict | None = None) -> str:
+    """Set thread-local sector context from an incoming Band message."""
+    from core.sector_loader import set_active_sector
+
+    sector = resolve_sector_from_message(message)
+    set_active_sector(sector)
+    return sector
+
+
 def get_agent_credentials(agent_name: str) -> tuple[str, str]:
     """Load Band credentials from agent_config.yaml (local) or env vars (Railway)."""
     try:

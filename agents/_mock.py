@@ -1,7 +1,7 @@
 """Rule-based mock responses when ANTHROPIC_API_KEY is not configured."""
 import re
 
-from core.sector_loader import ACTIVE_SECTOR, load_verification_data, load_resource_data
+from core.sector_loader import get_active_sector, load_verification_data, load_resource_data
 
 
 def _parse_raw(raw: str) -> dict:
@@ -41,25 +41,25 @@ def mock_intake(raw_input: str) -> dict:
         "urgency": urgency,
     }
 
-    if ACTIVE_SECTOR == "pharmacy":
+    if get_active_sector() == "pharmacy":
         base["presenting_issue"] = issue
-    elif ACTIVE_SECTOR == "hospital_triage":
+    elif get_active_sector() == "hospital_triage":
         base["chief_complaint"] = issue or service
         base["vitals_description"] = ""
-    elif ACTIVE_SECTOR == "lab":
+    elif get_active_sector() == "lab":
         base["test_requested"] = service
         base["referral_number"] = fields.get("referral", "REF-001")
         base["patient_id"] = fields.get("patient id", "PAT-001")
-    elif ACTIVE_SECTOR == "mental_health":
+    elif get_active_sector() == "mental_health":
         base["presenting_concern"] = issue or service
         base["duration"] = "2 weeks"
         harm = "yes" if re.search(r"self.?harm|suicid|kill myself", issue, re.I) else "no"
         base["self_harm_flag"] = harm
-    elif ACTIVE_SECTOR == "hmo_claims":
+    elif get_active_sector() == "hmo_claims":
         base["procedure_code"] = service
         base["policy_number"] = fields.get("policy", "HMO-2024-001")
         base["provider_name"] = fields.get("provider", "General Hospital Lagos")
-    elif ACTIVE_SECTOR == "emergency":
+    elif get_active_sector() == "emergency":
         base["emergency_type"] = service
         base["location"] = fields.get("location", "Lagos")
         base["caller_name"] = name
@@ -72,7 +72,7 @@ def mock_verification(requested_service: str, intake_result: dict) -> dict:
     service = requested_service.lower()
     data = load_verification_data()
 
-    if ACTIVE_SECTOR == "pharmacy":
+    if get_active_sector() == "pharmacy":
         registry = data.get("registry", {})
         drugs = {d["drug_name"].lower(): d for d in registry.get("drugs", [])}
         drug = drugs.get(service)
@@ -97,7 +97,7 @@ def mock_verification(requested_service: str, intake_result: dict) -> dict:
             return {"status": "CASE_CAUTION", "drug_name": drug["drug_name"], "registry_status": "registered", "interactions_found": interactions, "reason": "Medium severity interactions noted"}
         return {"status": "CASE_CLEAR", "drug_name": drug["drug_name"], "registry_status": "registered", "interactions_found": [], "reason": "Registered, no critical interactions"}
 
-    if ACTIVE_SECTOR == "hospital_triage":
+    if get_active_sector() == "hospital_triage":
         complaint = (intake_result.get("chief_complaint") or service).lower()
         criteria = data.get("triage_criteria", {}).get("rules", [])
         for rule in criteria:
@@ -109,7 +109,7 @@ def mock_verification(requested_service: str, intake_result: dict) -> dict:
                     return {"status": "CASE_CAUTION", "triage_level": "yellow", "matched_keywords": rule["symptom_keywords"], "reason": rule["action"]}
         return {"status": "CASE_CLEAR", "triage_level": "green", "matched_keywords": [], "reason": "Non-urgent, standard queue"}
 
-    if ACTIVE_SECTOR == "mental_health":
+    if get_active_sector() == "mental_health":
         if intake_result.get("self_harm_flag") == "yes":
             return {"status": "CASE_ESCALATE", "risk_level": "critical", "flags_matched": ["self_harm"], "reason": "Self-harm flag - immediate human response"}
         concern = (intake_result.get("presenting_concern") or service).lower()
@@ -122,7 +122,7 @@ def mock_verification(requested_service: str, intake_result: dict) -> dict:
                     return {"status": "CASE_CAUTION", "risk_level": level, "flags_matched": rule["keyword_flags"], "reason": rule["action"]}
         return {"status": "CASE_CLEAR", "risk_level": "low", "flags_matched": [], "reason": "Standard intake pathway"}
 
-    if ACTIVE_SECTOR == "emergency":
+    if get_active_sector() == "emergency":
         etype = (intake_result.get("emergency_type") or service).lower()
         for rule in data.get("rules", []):
             if rule["emergency_type"] in etype or any(kw in etype for kw in rule.get("keywords", [])):
@@ -133,14 +133,14 @@ def mock_verification(requested_service: str, intake_result: dict) -> dict:
                     return {"status": "CASE_CAUTION", "severity_level": "P2", "protocol": rule["protocol"], "reason": "Priority response required"}
         return {"status": "CASE_CLEAR", "severity_level": "P3", "protocol": "Standard response", "reason": "Low severity"}
 
-    return {"status": "CASE_CLEAR", "reason": f"Verified for {ACTIVE_SECTOR}"}
+    return {"status": "CASE_CLEAR", "reason": f"Verified for {get_active_sector()}"}
 
 
 def mock_resource(requested_service: str, intake_result: dict) -> dict:
     service = requested_service
     data = load_resource_data()
 
-    if ACTIVE_SECTOR == "pharmacy":
+    if get_active_sector() == "pharmacy":
         inventory = data.get("resources", {}).get("inventory", [])
         for item in inventory:
             if item["drug_name"].lower() == service.lower():
@@ -155,27 +155,27 @@ def mock_resource(requested_service: str, intake_result: dict) -> dict:
                 }
         return {"status": "RESOURCE_COMPLETE", "drug_name": service, "in_stock": False, "quantity_available": 0, "notes": "Not in inventory"}
 
-    if ACTIVE_SECTOR == "hospital_triage":
+    if get_active_sector() == "hospital_triage":
         beds = data.get("beds", {}).get("wards", [])
         best = max(beds, key=lambda w: w["beds_available"]) if beds else {}
         return {"status": "RESOURCE_COMPLETE", "recommended_ward": best.get("ward_name", ""), "beds_available": best.get("beds_available", 0), "next_available": best.get("next_available", "")}
 
-    if ACTIVE_SECTOR == "lab":
+    if get_active_sector() == "lab":
         slots = data.get("lab_slots", {}).get("slots", [])
         for slot in slots:
             if slot["test_name"].lower() == service.lower():
                 return {"status": "RESOURCE_COMPLETE", **slot}
         return {"status": "RESOURCE_COMPLETE", "test_name": service, "slots_today": 0, "next_available_date": "unknown"}
 
-    if ACTIVE_SECTOR == "mental_health":
+    if get_active_sector() == "mental_health":
         therapists = data.get("therapist_availability", {}).get("therapists", [])
         t = therapists[0] if therapists else {}
         return {"status": "RESOURCE_COMPLETE", "matched_therapist": t.get("therapist_name", ""), "specialty": t.get("specialty", ""), "next_slot": t.get("next_slot", ""), "modality": t.get("modality", "")}
 
-    if ACTIVE_SECTOR == "emergency":
+    if get_active_sector() == "emergency":
         units = data.get("units", {}).get("units", [])
         available = [u for u in units if u["status"] == "available"]
         nearest = min(available, key=lambda u: u["eta_minutes"]) if available else {}
         return {"status": "RESOURCE_COMPLETE", "assigned_units": [nearest.get("unit_id", "")], "nearest_unit": nearest.get("unit_id", ""), "eta_minutes": nearest.get("eta_minutes", 0)}
 
-    return {"status": "RESOURCE_COMPLETE", "notes": f"Resource check complete for {ACTIVE_SECTOR}"}
+    return {"status": "RESOURCE_COMPLETE", "notes": f"Resource check complete for {get_active_sector()}"}

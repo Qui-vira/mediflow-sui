@@ -66,6 +66,25 @@ def test_escalation():
     return []
 
 
+def test_sector_isolation():
+    from core.audit_log import clear
+    from core.workflow import run_case
+
+    clear()
+    result1 = run_case("Patient needs Amoxicillin", sector="pharmacy")
+    clear()
+    result2 = run_case("Chest pain emergency", sector="hospital_triage")
+
+    if result1.get("sector") != "pharmacy":
+        return [f"Expected pharmacy sector, got {result1.get('sector')}"]
+    if result2.get("sector") != "hospital_triage":
+        return [f"Expected hospital_triage sector, got {result2.get('sector')}"]
+    if result1.get("case_id") == result2.get("case_id"):
+        return ["case_ids should differ between runs"]
+    print("Sector isolation test passed")
+    return []
+
+
 def main():
     print("MedBand Phase 1 Validation")
     print("=" * 40)
@@ -93,6 +112,15 @@ def main():
     print("\n[4/4] Escalation test (banned drug)...")
     try:
         errs = test_escalation()
+        print(f"  {'PASS' if not errs else 'FAIL'}")
+        all_errors.extend(errs)
+    except Exception as exc:
+        print(f"  FAIL: {exc}")
+        all_errors.append(str(exc))
+
+    print("\n[5/5] Sector isolation test...")
+    try:
+        errs = test_sector_isolation()
         print(f"  {'PASS' if not errs else 'FAIL'}")
         all_errors.extend(errs)
     except Exception as exc:

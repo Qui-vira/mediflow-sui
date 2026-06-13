@@ -18,16 +18,27 @@ from core.audit_log import post
 from core.sector_loader import load_prompt
 
 
-def run(case_id: str, raw_input: str) -> dict:
+def run(case_id: str, raw_input: str, institution: dict | None = None) -> dict:
     """Phase 1 direct-call path (preserved for workflow.py / Flask form)."""
     system_prompt = load_prompt("intake")
+    user_input = raw_input
+    if institution:
+        user_input = (
+            f"Institution ID: {institution.get('id')}\n"
+            f"Institution Name: {institution.get('name')}\n"
+            f"Institution Location: {institution.get('location', '')}\n\n"
+            f"{raw_input}"
+        )
     payload = call_claude(
         system_prompt,
-        raw_input,
+        user_input,
         model="claude-haiku-4-5",
-        mock_fn=lambda: mock_intake(raw_input),
+        mock_fn=lambda: mock_intake(user_input),
     )
     payload["case_id"] = case_id
+    if institution:
+        payload["institution_id"] = institution.get("id")
+        payload["institution_name"] = institution.get("name")
     post("intake", payload.get("status", "INTAKE_COMPLETE"), case_id, payload)
     return payload
 
