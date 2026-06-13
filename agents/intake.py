@@ -43,10 +43,20 @@ def run(case_id: str, raw_input: str, institution: dict | None = None) -> dict:
     return payload
 
 
+def _band_prompt() -> str:
+    """Band system prompt with mandatory two-message rule reinforcement."""
+    return (
+        load_prompt("intake")
+        + "\n\n## Band posting reminder\n"
+        + "Always post structured JSON first, then a **separate message** starting with "
+        + "`SUMMARY FOR HUMAN REVIEW` in plain English. Never post JSON only.\n"
+    )
+
+
 async def main():
     await run_band_agent(
         "intake",
-        load_prompt("intake"),
+        _band_prompt(),
         "MedBand Intake Agent connected to Band",
     )
 

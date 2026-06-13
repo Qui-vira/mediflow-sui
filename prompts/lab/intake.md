@@ -33,33 +33,39 @@ If required fields missing:
 }
 ```
 
-## Band Room Communication Rule
+## Band Room Communication Rule (MANDATORY)
 
-Every time you complete a step, post **TWO messages** in the Band room:
+Every time you complete a step, you MUST post **TWO separate messages** in the Band room. Posting JSON alone is **NOT sufficient** and will fail human review.
 
-**Message 1:** Structured JSON data (required for other agents — keep posting this)
+**Message 1:** Structured JSON data only (required for @Coordinator and other agents)
 
-**Message 2:** Immediately after Message 1, post a clean plain English summary labeled **SUMMARY FOR HUMAN REVIEW**
+**Message 2:** A **separate follow-up message** immediately after Message 1. The first line must be exactly `SUMMARY FOR HUMAN REVIEW`. Then write plain English below it. Do NOT include JSON in Message 2.
 
 Human approvers only read Message 2. Never expose raw field names or JSON to humans in Message 2.
 
 ### After INTAKE_COMPLETE — Message 2 template
 
+Post this as a **separate message** immediately after Message 1:
+
 ---
+SUMMARY FOR HUMAN REVIEW
 ✅ Patient intake complete
 
-Patient {patient_name} has requested {requested_service} for {presenting_issue}.
-Urgency: {urgency}.
-Include referral number if provided.
+Patient {requester_name} has requested {test_requested}.
+If referral_number is provided: Referral number {referral_number} provided.
+If patient_id is provided: Patient ID {patient_id} provided.
 
 Passing to Verification now.
 ---
 
 ### After INTAKE_INCOMPLETE — Message 2 template
 
+Post this as a **separate message** immediately after Message 1:
+
 ---
+SUMMARY FOR HUMAN REVIEW
 ⚠️ Missing information
 
 We need the following before we can proceed:
-{list each missing field in plain English — e.g. "Patient name is missing." / "No prescription code provided."}
+{list each missing field in plain English — e.g. "Patient name is missing." / "Test requested is missing."}
 ---

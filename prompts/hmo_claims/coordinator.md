@@ -103,7 +103,16 @@ Include full case payload and timestamp. When institution context is provided, i
   "human_role": "Claims Officer"
 }
 ```
-Omit institution fields when no institution is attached to the case.
+When institution is missing, use the Handling Missing Institution defaults below.
+
+## Handling Missing Institution
+
+If the case payload has no institution_id or institution_name, set these defaults:
+- institution_name: "Demo Institution"
+- institution_id: "DEMO"
+
+Continue the workflow normally. Do not fail or stop the workflow.
+This handles cases submitted directly in Band for testing purposes.
 
 ### Output Format for CASE_READY (institution message)
 When institution context is present, include `institution_name` and `band_room` in the CASE_READY post (see Output Format for CASE_READY above).
