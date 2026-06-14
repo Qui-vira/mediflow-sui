@@ -36,13 +36,16 @@ logger = logging.getLogger(__name__)
 
 OpenAIMessages = list[dict[str, Any]]
 
-CASE_READY_APPROVAL_DESK_MENTION = {
-    "id": os.getenv("APPROVAL_DESK_BAND_ID", "9799faf8-c045-4bd1-8e65-3e51f52fe73e"),
-    "handle": os.getenv("APPROVAL_DESK_BAND_HANDLE", "medlabbytbr/medband-approval-desk").lstrip("@"),
-    "name": os.getenv("APPROVAL_DESK_BAND_NAME", "MedBand Approval Desk"),
-}
+CASE_READY_APPROVAL_DESK_HANDLE = os.getenv(
+    "APPROVAL_DESK_BAND_HANDLE",
+    "@medlabbytbr/medband-approval-desk",
+).strip()
+if CASE_READY_APPROVAL_DESK_HANDLE and not CASE_READY_APPROVAL_DESK_HANDLE.startswith("@"):
+    CASE_READY_APPROVAL_DESK_HANDLE = f"@{CASE_READY_APPROVAL_DESK_HANDLE}"
 
 SEND_TOOL_FAILURE_PREFIXES = (
+    "Invalid arguments for band_send_message",
+    "Invalid arguments for thenvoi_send_message",
     "Error executing band_send_message",
     "Error executing thenvoi_send_message",
 )
@@ -140,7 +143,7 @@ def _sanitize_openai_messages(
 
 def _force_case_ready_approval_desk_mention(tool_input: dict[str, Any]) -> dict[str, Any]:
     """Make CASE_READY visible to the Approval Desk review target."""
-    return {**tool_input, "mentions": [CASE_READY_APPROVAL_DESK_MENTION]}
+    return {**tool_input, "mentions": [CASE_READY_APPROVAL_DESK_HANDLE]}
 
 
 def _is_send_tool_failure_result(result: Any) -> bool:
