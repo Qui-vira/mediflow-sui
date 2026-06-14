@@ -314,3 +314,76 @@ def test_is_legacy_band_message():
     assert is_legacy_band_message("---\n✅ Verification passed") is True
     assert is_legacy_band_message("Resource confirmed at hospital") is True
     assert is_legacy_band_message("📋 INTAKE COMPLETE\n\nPatient: Ada") is False
+
+
+_VERIFY_CASE_BODY = (
+    "VERIFY CASE\n\n"
+    "Case ID: MEDBAND-WEB-5B75411A\n"
+    "Patient: Band Human Approval Participant Test\n"
+    "Request: PARACETAMOL\n"
+    "Issue: BODY PAINS\n"
+    "Prescription Code: TBR-DOC-0042\n\n"
+    "Next Step: Confirm there are no safety concerns and reply to the Coordinator."
+)
+
+_CHECK_AVAILABILITY_BODY = (
+    "CHECK AVAILABILITY\n\n"
+    "Case ID: MEDBAND-WEB-5B75411A\n"
+    "Request: PARACETAMOL\n"
+    "Institution: Demo Institution\n\n"
+    "Next Step: Confirm stock and reply to the Coordinator."
+)
+
+
+def test_coordinator_verify_case_via_mentions_is_verify_request():
+    # A. Clean header + mention payload, no full @handle in visible content.
+    decision = evaluate_outbound(
+        "coordinator",
+        _VERIFY_CASE_BODY,
+        room_id="room1",
+        recipient="verification",
+    )
+    assert decision.skip is False
+    assert decision.stage == "VERIFY_REQUEST"
+    assert decision.case_id == "MEDBAND-WEB-5B75411A"
+    assert "@MEDLABBYTBR/VERIFICATION" not in _VERIFY_CASE_BODY.upper()
+
+
+def test_coordinator_check_availability_via_mentions_is_resource_request():
+    # B. Clean header + mention payload, no full @handle in visible content.
+    decision = evaluate_outbound(
+        "coordinator",
+        _CHECK_AVAILABILITY_BODY,
+        room_id="room1",
+        recipient="resource",
+    )
+    assert decision.skip is False
+    assert decision.stage == "RESOURCE_REQUEST"
+    assert decision.case_id == "MEDBAND-WEB-5B75411A"
+    assert "@MEDLABBYTBR/RESOURCE" not in _CHECK_AVAILABILITY_BODY.upper()
+
+
+def test_verify_case_without_verification_mention_not_verify_request():
+    # C. No Verification mention -> must not be promoted to VERIFY_REQUEST.
+    decision = evaluate_outbound(
+        "coordinator",
+        _VERIFY_CASE_BODY,
+        room_id="room1",
+        recipient="room",
+    )
+    assert decision.stage != "VERIFY_REQUEST"
+    assert decision.skip is True
+    assert decision.reason == "unformatted_message"
+
+
+def test_non_coordinator_cannot_infer_verify_request_from_mentions():
+    # D. Only the Coordinator may originate VERIFY_REQUEST, even with the mention.
+    for role in ("intake", "verification", "resource"):
+        decision = evaluate_outbound(
+            role,
+            _VERIFY_CASE_BODY,
+            room_id="room1",
+            recipient="verification",
+        )
+        assert decision.stage != "VERIFY_REQUEST"
+        assert decision.skip is True

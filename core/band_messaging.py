@@ -157,6 +157,48 @@ def _is_routing_message(content: str) -> bool:
     return False
 
 
+# Coordinator routing messages use a clean visible header (e.g. "VERIFY CASE")
+# while the target agent handle travels in the Band mentions payload, which the
+# adapter resolves to `recipient` via extract_recipient. detect_stage only sees
+# the visible text, so it cannot recognize these. We infer the routing stage
+# from the header + recipient pair instead, without requiring the full @handle
+# to appear in the visible content.
+COORDINATOR_ROUTING_HEADERS: tuple[tuple[str, str, str], ...] = (
+    # (visible header, target agent role, inferred stage)
+    ("VERIFY CASE", "verification", "VERIFY_REQUEST"),
+    ("CHECK AVAILABILITY", "resource", "RESOURCE_REQUEST"),
+)
+
+
+def _recipient_targets(recipient: str | None, role: str) -> bool:
+    """True when the resolved mention/recipient addresses the given agent role."""
+    normalized = normalize_sender(recipient)
+    if not normalized:
+        return False
+    aliases = {a.lower().replace("@", "") for a in AGENT_ALIASES.get(role, set())}
+    return normalized in aliases
+
+
+def infer_coordinator_routing_stage(
+    agent_role: str | None, content: str, recipient: str | None
+) -> str | None:
+    """Infer a Coordinator-owned routing stage from a clean header plus the
+    mention/recipient payload.
+
+    Only the Coordinator may originate these stages, and BOTH the exact visible
+    header AND a matching recipient mention must be present. That double
+    requirement keeps random text from becoming a stage and stops Intake,
+    Verification, or Resource from faking a Coordinator routing stage.
+    """
+    if (agent_role or "").lower() != "coordinator":
+        return None
+    upper = strip_em_dash(content or "").upper()
+    for header, target_role, stage in COORDINATOR_ROUTING_HEADERS:
+        if header in upper and _recipient_targets(recipient, target_role):
+            return stage
+    return None
+
+
 def enrich_payload_from_case_state(payload: dict[str, Any], case_id: str) -> dict[str, Any]:
     """Merge Postgres case context so Resource/Verification use intake institution and service."""
     state = get_case_state(case_id)
@@ -680,6 +722,11 @@ def evaluate_outbound(
     content = strip_em_dash(content or "")
     payload = try_parse_json_payload(content)
     stage = detect_stage(content, payload)
+    if not stage:
+        # The full @handle may live only in the mentions payload (resolved to
+        # `recipient`), so recover Coordinator routing stages from the clean
+        # header + recipient instead of skipping them as unformatted.
+        stage = infer_coordinator_routing_stage(agent_role, content, recipient)
     case_id = extract_case_id(content) or (payload or {}).get("case_id") or case_id_hint
     if isinstance(case_id, str):
         case_id = case_id.upper()
