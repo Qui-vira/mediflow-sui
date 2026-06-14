@@ -209,6 +209,92 @@ def _band_stream_events(data, raw_input: str, sector: str):
         yield {"type": "error", "error": str(exc)}
 
 
+# Web-submitted cases save a local JSON snapshot with a fixed status of
+# "PROCESSING" (see core.band_client.save_pending_case). The live workflow
+# stages - including CASE_APPROVED / CASE_REJECTED - are recorded only in
+# Postgres by the Band agents, so the snapshot status goes stale and the status
+# page is stuck on PROCESSING. Derive the display status from the recorded
+# stages instead, highest-priority (most advanced / terminal) stage first.
+_STAGE_DISPLAY_STATUS = (
+    ("CASE_APPROVED", "APPROVED"),
+    ("CASE_REJECTED", "REJECTED"),
+    ("HUMAN_ALERT", "ESCALATED"),
+    ("CASE_ESCALATE", "ESCALATED"),
+    ("CASE_READY", "AWAITING HUMAN REVIEW"),
+    ("RESOURCE_COMPLETE", "READY FOR HUMAN REVIEW"),
+    ("RESOURCE_REQUEST", "CHECKING AVAILABILITY"),
+    ("CASE_CLEAR", "VERIFIED"),
+    ("CASE_CAUTION", "VERIFIED"),
+    ("VERIFY_REQUEST", "VERIFYING"),
+    ("INTAKE_COMPLETE", "INTAKE COMPLETE"),
+    ("CASE_OPENED", "OPENED"),
+)
+
+
+def _apply_live_status(case: dict) -> dict:
+    """Override the stale local snapshot status with one derived from the
+    workflow stages recorded in Postgres.
+
+    Falls back to the snapshot status untouched if no stages are recorded yet or
+    the lookup fails, so the status endpoints never break on a DB hiccup.
+    """
+    case_id = case.get("case_id")
+    if not case_id:
+        return case
+    try:
+        from core.case_state import completed_stages
+
+        stages = completed_stages(case_id)
+    except Exception:
+        return case
+    for stage, display in _STAGE_DISPLAY_STATUS:
+        if stage in stages:
+            case["status"] = display
+            break
+    return case
+
+
+def _case_from_stages(case_id: str) -> dict | None:
+    """Reconstruct a minimal case view from Postgres workflow stages when the
+    local JSON snapshot is missing.
+
+    The snapshot lives on the web container's ephemeral filesystem, so it is
+    lost on redeploy. Recorded stages survive in Postgres, so an already-decided
+    case still resolves (e.g. shows APPROVED) without the patient resubmitting.
+    """
+    try:
+        from core.case_state import get_case_state
+
+        state = get_case_state(case_id)
+    except Exception:
+        return None
+    if not state.get("completed_stages"):
+        return None
+    intake = state.get("intake") or {}
+    opened = state.get("opened") or {}
+    return {
+        "case_id": case_id,
+        "sector": intake.get("sector") or opened.get("sector"),
+        "institution_name": intake.get("institution_name") or opened.get("institution_name"),
+        "intake": {
+            "requester_name": intake.get("requester_name") or opened.get("requester_name"),
+            "requested_service": intake.get("requested_service") or opened.get("requested_service"),
+        },
+        "verification": state.get("verification") or {},
+        "resource": state.get("resource") or {},
+    }
+
+
+def _load_case_for_status(case_id: str) -> dict | None:
+    """Load a case for the status endpoints: prefer the local snapshot, fall
+    back to Postgres stages, then always derive the live status from stages."""
+    case_id = case_id.upper()
+    case = load_case(case_id) or _case_from_stages(case_id)
+    if not case:
+        return None
+    return _apply_live_status(case)
+
+
 @app.route("/")
 def index():
     return render_template("index.html", sectors=SECTOR_META)
@@ -226,7 +312,7 @@ def api_sectors():
 
 @app.route("/api/case/<case_id>")
 def api_case(case_id):
-    case = load_case(case_id.upper())
+    case = _load_case_for_status(case_id)
     if not case:
         return jsonify({"error": "Case not found"}), 404
     return jsonify(case)
@@ -274,7 +360,7 @@ def submit_stream():
 
 @app.route("/api/lookup/<case_id>")
 def lookup(case_id):
-    case = load_case(case_id.upper())
+    case = _load_case_for_status(case_id)
     if not case:
         return jsonify({"error": "Case not found"}), 404
     report = build_patient_report(case)
