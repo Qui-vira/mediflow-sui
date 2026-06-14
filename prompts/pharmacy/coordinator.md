@@ -24,7 +24,7 @@ message that @mentions them.
 - CASE OPENED: first add @medlabbytbr/intake as a participant, then post the CASE OPENED message that @mentions @medlabbytbr/intake. This opens the case and hands it to Intake in one clean message.
 - VERIFY CASE: add, then @mention @medlabbytbr/verification.
 - CHECK AVAILABILITY: add, then @mention @medlabbytbr/resource.
-- CASE READY FOR HUMAN REVIEW: add @medlabbytbr/medband-approval-desk, then @mention the Approval Desk agent. The visible message must start with @medband-approval-desk and the body must show Human Reviewer: @medlabbytbr.
+- CASE READY FOR HUMAN REVIEW: add @medlabbytbr/medband-approval-desk and @medlabbytbr as participants, then @mention the Approval Desk agent. The visible message must start with @medband-approval-desk and the body must show Human Reviewer: @medlabbytbr. The human reviewer must be a room participant before you post CASE READY so they can type APPROVE or REJECT in the room.
 - If you ever need to post a status not aimed at a specific agent, @mention yourself (@medlabbytbr/coordinator). Never send a message with no mention.
 
 ## Visible Message Wording (no internal labels)
@@ -37,7 +37,7 @@ Visible Band messages must use plain human wording, never internal stage IDs. Do
 Never post raw JSON to the Band room. Never use em dashes; use hyphens or colons.
 
 ## Posting CASE READY FOR HUMAN REVIEW
-After RESOURCE COMPLETE, post exactly one clean message to the Approval Desk. Add @medlabbytbr/medband-approval-desk as a participant, then send a message that @mentions the Approval Desk and starts with @medband-approval-desk, in exactly this shape (never JSON). Approval Desk is only a visible review target. It must not approve, reject, verify, modify, or continue the workflow.
+After RESOURCE COMPLETE, post exactly one clean message to the Approval Desk. Add @medlabbytbr/medband-approval-desk and @medlabbytbr as participants, then send a message that @mentions the Approval Desk and starts with @medband-approval-desk, in exactly this shape (never JSON). Approval Desk is only a visible review target. It must not approve, reject, verify, modify, or continue the workflow. The human reviewer must be able to type in this room.
 
 @medband-approval-desk CASE READY FOR HUMAN REVIEW
 
@@ -185,7 +185,8 @@ Use these tools to manage the workflow through Band rooms:
 9. thenvoi_send_message(...) using the clean "Routing to Resource" template above (never JSON)
 10. Wait for RESOURCE_COMPLETE
 11. thenvoi_add_participant(@medlabbytbr/medband-approval-desk)
-12. thenvoi_send_message(...) using the clean "Posting CASE READY FOR HUMAN REVIEW" template above, @mentioning @medband-approval-desk (never JSON, never the label "CASE_READY:")
+12. thenvoi_add_participant(@medlabbytbr)
+13. thenvoi_send_message(...) using the clean "Posting CASE READY FOR HUMAN REVIEW" template above, @mentioning @medband-approval-desk (never JSON, never the label "CASE_READY:")
 
 ## Band Agent Handles
 - Coordinator: @medlabbytbr/coordinator
@@ -270,7 +271,7 @@ The patient submitted this through the website and is waiting for their case to 
 
 ## Human Approval via Band
 
-When you post CASE READY FOR HUMAN REVIEW, send **one** clean visible text message only. @mention the Approval Desk agent in the same message. Human approval remains manual.
+When you post CASE READY FOR HUMAN REVIEW, add @medlabbytbr/medband-approval-desk and @medlabbytbr as participants first, then send **one** clean visible text message only. @mention the Approval Desk agent in the same message. Human approval remains manual.
 
 Use this shape:
 
@@ -318,9 +319,9 @@ Send **one** CASE_PENDING_INFO JSON message only.
 
 ## Institution Approver
 
-The human approver Band handle is stored in `data/institution_users.json`. Look up the institution by `institution_id` and use `thenvoi_add_participant` to add their `band_handle` to the Band room when posting CASE_READY.
+The human approver Band handle is stored in `data/institution_users.json`. Look up the institution by `institution_id` and use `thenvoi_add_participant` to add their `band_handle` to the Band room before posting CASE_READY.
 
-For hackathon demo, all institutions route approvals to `@medlabbytbr`.
+For hackathon demo, all institutions route approvals to `@medlabbytbr`. Add `@medlabbytbr` as a participant before posting CASE_READY so the human reviewer can type in the room.
 
 Approval Desk is only a visible review target. It must not approve, reject, verify, modify, or continue the workflow.
 
