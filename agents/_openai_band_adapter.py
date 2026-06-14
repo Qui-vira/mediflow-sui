@@ -42,6 +42,11 @@ CASE_READY_APPROVAL_DESK_MENTION = {
     "name": os.getenv("APPROVAL_DESK_BAND_NAME", "MedBand Approval Desk"),
 }
 
+SEND_TOOL_FAILURE_PREFIXES = (
+    "Error executing band_send_message",
+    "Error executing thenvoi_send_message",
+)
+
 
 def _reconcile_tool_calls(messages: OpenAIMessages) -> OpenAIMessages:
     """Pair assistant tool_calls with their tool results by tool_call_id.
@@ -136,6 +141,21 @@ def _sanitize_openai_messages(
 def _force_case_ready_approval_desk_mention(tool_input: dict[str, Any]) -> dict[str, Any]:
     """Make CASE_READY visible to the Approval Desk review target."""
     return {**tool_input, "mentions": [CASE_READY_APPROVAL_DESK_MENTION]}
+
+
+def _is_send_tool_failure_result(result: Any) -> bool:
+    if isinstance(result, str):
+        stripped = result.strip()
+        return any(stripped.startswith(prefix) for prefix in SEND_TOOL_FAILURE_PREFIXES)
+    if isinstance(result, dict):
+        status = str(result.get("status", "")).lower()
+        if status in {"error", "failed", "failure"}:
+            return True
+        if result.get("success") is False or result.get("is_error") is True:
+            return True
+        error = result.get("error")
+        return isinstance(error, str) and bool(error.strip())
+    return False
 
 
 class OpenAIHistoryConverter(HistoryConverter[OpenAIMessages]):
@@ -353,6 +373,15 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                         None,
                     )
                 raise
+            if _is_send_tool_failure_result(result):
+                logger.info(
+                    "Band send tool returned failure result tool=%s stage=%s case_id=%s room_id=%s",
+                    tool_name,
+                    decision.stage,
+                    decision.case_id or case_id,
+                    room_id,
+                )
+                return result, True, None
             if not decision.skip:
                 record_outbound_success(decision, payload, room_id)
             return result, False, decision.stage
