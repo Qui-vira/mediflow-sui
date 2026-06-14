@@ -312,7 +312,7 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
         tool_input: dict[str, Any],
         room_id: str,
         case_id: str | None,
-    ) -> tuple[Any, bool]:
+    ) -> tuple[Any, bool, str | None]:
         if tool_name in SEND_MESSAGE_TOOLS:
             content = tool_input.get("content", "")
             recipient = extract_recipient(tool_input)
@@ -332,6 +332,7 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                         "case_id": decision.case_id,
                     },
                     False,
+                    None,
                 )
             payload = try_parse_json_payload(content)
             if decision.formatted_content:
@@ -349,11 +350,12 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                             "case_id": case_id,
                         },
                         False,
+                        None,
                     )
                 raise
             if not decision.skip:
                 record_outbound_success(decision, payload, room_id)
-            return result, False
+            return result, False, decision.stage
 
         try:
             result = await tools.execute_tool_call(tool_name, tool_input)
@@ -366,9 +368,10 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                         "case_id": case_id,
                     },
                     False,
+                    None,
                 )
             raise
-        return result, False
+        return result, False, None
 
     async def on_message(
         self,
@@ -537,8 +540,9 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                     ):
                         return
 
+                workflow_stage_sent: str | None = None
                 try:
-                    result, is_error_override = await self._execute_tool(
+                    result, is_error_override, workflow_stage_sent = await self._execute_tool(
                         tools, tool_name, tool_input, room_id, case_id
                     )
                     if isinstance(result, dict) and result.get("reason") == "room_limit_reached":
@@ -581,6 +585,15 @@ class AimlOpenAIAdapter(SimpleAdapter[OpenAIMessages]):
                 }
                 self._message_history[room_id].append(tool_entry)
                 api_messages.append(tool_entry)
+
+                if workflow_stage_sent:
+                    logger.info(
+                        "ending inbound turn after successful workflow send stage=%s case_id=%s room_id=%s",
+                        workflow_stage_sent,
+                        case_id or extract_case_id(result_str),
+                        room_id,
+                    )
+                    return
 
     async def on_cleanup(self, room_id: str) -> None:
         self._message_history.pop(room_id, None)
