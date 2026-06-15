@@ -2,7 +2,7 @@
 
 A human-in-the-loop healthcare workflow MVP where Band AI agents coordinate patient service requests while a human reviewer keeps final approval control.
 
-**AI coordinates. Humans decide.**
+**Tagline: Getting people to the right care, faster.**
 
 Built by **The Billionaire Republic (TBR)** for the Band of Agents Hackathon 2026 — **Track 3: Regulated and High-Stakes Workflows**.
 
@@ -79,6 +79,8 @@ See [demo_flow.md](demo_flow.md) for the full demo script.
 - A human reviewer must **manually** approve or reject in the Band room.
 - The system records the final approval as **human-made**.
 - MedBand is workflow support, **not** a replacement for licensed medical professionals. It does not diagnose, prescribe, or treat patients, and it makes no claim of regulatory compliance or production medical readiness.
+
+**Operating principle: AI coordinates. Humans decide.**
 
 ## Architecture
 

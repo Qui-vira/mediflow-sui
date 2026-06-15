@@ -338,7 +338,7 @@ function HeroSection() {
           animate="show"
           custom={2}
         >
-          Human-in-the-loop healthcare workflow powered by Band AI agents.
+          Getting people to the right care, faster.
         </m.p>
 
         <m.p
@@ -348,20 +348,8 @@ function HeroSection() {
           animate="show"
           custom={3}
         >
-          MedBand coordinates patient service requests across intake,
-          verification, resource availability, and human approval. AI agents
-          move the workflow forward, but the final decision stays with a human
-          reviewer.
-        </m.p>
-
-        <m.p
-          className="mt-6 font-display font-bold text-lg md:text-xl tracking-tight"
-          variants={blurIn}
-          initial="hidden"
-          animate="show"
-          custom={3}
-        >
-          AI coordinates. <span className="text-teal">Humans decide.</span>
+          AI agents coordinate intake, verification, resource checks, and case
+          preparation, while final approval stays with a human reviewer.
         </m.p>
 
         <m.div
