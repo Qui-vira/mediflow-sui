@@ -26,5 +26,11 @@ COMMANDS = {
     ],
 }
 
+# sui-web: the same Flask app as "web", but with the Sui execution path
+# (SUI_MODE=true) enabled. Set SERVICE_TYPE=sui-web on the Railway service.
+COMMANDS["sui-web"] = COMMANDS["web"]
+if SERVICE == "sui-web":
+    os.environ["SUI_MODE"] = "true"
+
 cmd = COMMANDS.get(SERVICE, COMMANDS["web"])
 os.execvp(cmd[0], cmd)

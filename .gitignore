@@ -17,3 +17,8 @@ cases/*.json
 *.egg-info/
 dist/
 build/
+
+# MediFlow-Sui (Sui/Walrus fork)
+node_modules/
+sui/build/
+.env.sui

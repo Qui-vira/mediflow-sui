@@ -1,6 +1,7 @@
 """Verification Agent - Phase 1 run() + Phase 2 Band listener."""
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -45,6 +46,12 @@ def run(case_id: str, requested_service: str, intake_result: dict = None) -> dic
     )
     payload["case_id"] = case_id
     post("verification", payload.get("status", "CASE_CLEAR"), case_id, payload)
+    # SUI_MODE: persist this agent's output to Walrus and attach the blob id.
+    # No-op on the default Band path.
+    if os.environ.get("SUI_MODE", "false").strip().lower() == "true":
+        from core.walrus_client import store_stage_payload
+
+        payload["walrus_blob_id"] = store_stage_payload(case_id, "verification", payload)
     return payload
 
 

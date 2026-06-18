@@ -1,0 +1,12 @@
+[package]
+name = "mediflow_sui"
+edition = "2024"
+
+# The Sui framework is injected automatically by the Sui CLI (>= 1.45),
+# so no explicit git dependency is required here.
+[dependencies]
+
+[addresses]
+# 0x0 during development/build; the real package id is assigned on publish
+# and surfaced as SUI_PACKAGE_ID in the Python/Walrus layer.
+mediflow_sui = "0x0"

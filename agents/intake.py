@@ -1,5 +1,6 @@
 """Intake Agent - Phase 1 run() + Phase 2 Band listener."""
 import asyncio
+import os
 import sys
 from pathlib import Path
 
@@ -40,6 +41,12 @@ def run(case_id: str, raw_input: str, institution: dict | None = None) -> dict:
         payload["institution_id"] = institution.get("id")
         payload["institution_name"] = institution.get("name")
     post("intake", payload.get("status", "INTAKE_COMPLETE"), case_id, payload)
+    # SUI_MODE: persist this agent's output to Walrus and attach the blob id.
+    # No-op on the default Band path.
+    if os.environ.get("SUI_MODE", "false").strip().lower() == "true":
+        from core.walrus_client import store_stage_payload
+
+        payload["walrus_blob_id"] = store_stage_payload(case_id, "intake", payload)
     return payload
 
 

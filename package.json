@@ -1,0 +1,28 @@
+{
+  "name": "mediflow-sui",
+  "version": "1.0.0",
+  "description": "A human-in-the-loop healthcare workflow MVP where Band AI agents coordinate patient service requests while a human reviewer keeps final approval control.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qui-vira/mediflow-sui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Qui-vira/mediflow-sui/issues"
+  },
+  "homepage": "https://github.com/Qui-vira/mediflow-sui#readme",
+  "dependencies": {
+    "@mysten/sui": "^2.19.0",
+    "@mysten/walrus": "^1.2.1"
+  }
+}

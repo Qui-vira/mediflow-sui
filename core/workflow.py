@@ -1,5 +1,6 @@
 """Orchestrates the 4-agent MedBand pipeline (Phase 1: direct function calls)."""
 import json
+import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,6 +16,11 @@ from core.sector_loader import (
 )
 
 CASES_DIR = Path(__file__).resolve().parent.parent / "cases"
+
+# SUI_MODE routes stage completions through the Sui case_router Move contract
+# plus Walrus storage (see core/sui_client.py and core/walrus_client.py). When
+# false, the original Band / Phase-1 audit-log path runs exactly as before.
+SUI_MODE = os.environ.get("SUI_MODE", "false").strip().lower() == "true"
 
 
 def run_case(
@@ -59,6 +65,7 @@ def run_case_stream(
         opened_payload["human_role"] = human_role(sector)
 
     post("coordinator", "CASE_OPENED", case_id, opened_payload)
+    sui_ctx = _sui_open_case(case_id, sector, opened_payload) if SUI_MODE else None
     yield _event("agent_active", agent="coordinator", message="Opening case...", case_id=case_id)
     yield _event("agent_done", agent="coordinator", status="CASE_OPENED", case_id=case_id)
 
@@ -78,15 +85,23 @@ def run_case_stream(
             "intake": intake_result,
             "audit_trail": get_log(case_id),
         }
+        if SUI_MODE and sui_ctx:
+            result["sui"] = sui_ctx
         _save_case(result)
         yield _event("complete", case=result, report=build_patient_report(result))
         return
 
     requested_service = intake_result.get("requested_service", "")
 
+    if SUI_MODE and sui_ctx:
+        _sui_record(sui_ctx, "intake", intake_result)
+
     yield _event("agent_active", agent="verification", message="Checking registry and risk rules...", case_id=case_id)
     verif_result = verification.run(case_id, requested_service, intake_result)
     yield _event("agent_done", agent="verification", status=verif_result.get("status"), case_id=case_id, data=verif_result)
+
+    if SUI_MODE and sui_ctx:
+        _sui_record(sui_ctx, "verification", verif_result)
 
     if verif_result.get("status") == "CASE_ESCALATE":
         post(
@@ -105,6 +120,8 @@ def run_case_stream(
             institution=institution, institution_id=institution_id, band_room=room,
         )
         summary["audit_trail"] = get_log(case_id)
+        if SUI_MODE and sui_ctx:
+            summary["sui"] = sui_ctx
         _save_case(summary)
         yield _event("complete", case=summary, report=build_patient_report(summary))
         return
@@ -112,6 +129,9 @@ def run_case_stream(
     yield _event("agent_active", agent="resource", message="Checking availability and stock...", case_id=case_id)
     resource_result = resource.run(case_id, requested_service, intake_result)
     yield _event("agent_done", agent="resource", status=resource_result.get("status"), case_id=case_id, data=resource_result)
+
+    if SUI_MODE and sui_ctx:
+        _sui_record(sui_ctx, "resource", resource_result)
 
     summary = build_summary(
         case_id, intake_result, verif_result, resource_result,
@@ -131,6 +151,8 @@ def run_case_stream(
     )
     yield _event("agent_done", agent="coordinator", status="CASE_READY", case_id=case_id)
     summary["audit_trail"] = get_log(case_id)
+    if SUI_MODE and sui_ctx:
+        summary["sui"] = sui_ctx
     _save_case(summary)
     yield _event("complete", case=summary, report=build_patient_report(summary))
 
@@ -222,6 +244,8 @@ def process_human_decision(
         "notes": reason,
     }
     case["patient_report"] = build_patient_report(case)
+    if SUI_MODE:
+        _sui_decision(case, decision_key, reason)
     _save_case(case)
     post("human", decision_label, case["case_id"], case["decision"])
     return case
@@ -253,3 +277,70 @@ def list_cases() -> list[str]:
     if not CASES_DIR.exists():
         return []
     return sorted([p.stem for p in CASES_DIR.glob("*.json")], reverse=True)
+
+
+# === SUI_MODE helpers ===
+# These run only when SUI_MODE=true. Each stage payload is stored in Walrus
+# (returns a blob id) and the blob id is then recorded on-chain via the
+# case_router Move contract. They never run on the default Band path.
+
+def _sui_open_case(case_id: str, sector: str, opened_payload: dict) -> dict:
+    """Store the opening case record in Walrus and open the case on-chain."""
+    from core import sui_client, walrus_client
+
+    case_blob = walrus_client.store_case_record(
+        {"case_id": case_id, "sector": sector, **opened_payload}
+    )
+    rec = sui_client.open_case(case_id, sector, case_blob)
+    return {
+        "package_id": os.environ.get("SUI_PACKAGE_ID", ""),
+        "object_id": rec.get("object_id"),
+        "case_blob": case_blob,
+        "open_digest": rec.get("digest"),
+        "dry_run": rec.get("dry_run", True),
+        "stages": {},
+    }
+
+
+def _sui_record(sui_ctx: dict, stage: str, payload: dict) -> dict:
+    """Persist a stage payload to Walrus and record it on-chain."""
+    from core import sui_client, walrus_client
+
+    case_id = payload.get("case_id") or ""
+    blob_id = walrus_client.store_stage_payload(case_id, stage, payload)
+    object_id = sui_ctx.get("object_id")
+
+    if stage == "intake":
+        rec = sui_client.record_intake(object_id, blob_id)
+    elif stage == "verification":
+        rec = sui_client.record_verification(object_id, payload.get("status", ""), blob_id)
+    elif stage == "resource":
+        rec = sui_client.record_resource(object_id, blob_id)
+    else:
+        rec = {"digest": None}
+
+    sui_ctx.setdefault("stages", {})[stage] = {
+        "blob_id": blob_id,
+        "digest": rec.get("digest"),
+    }
+    return sui_ctx
+
+
+def _sui_decision(case: dict, decision_key: str, reason: str | None) -> None:
+    """Record a human approve/reject on-chain using the case's Sui object id."""
+    from core import sui_client
+
+    sui_ctx = case.get("sui") or {}
+    object_id = sui_ctx.get("object_id")
+    if not object_id:
+        return
+
+    if decision_key == "approved":
+        rec = sui_client.approve_case(object_id, reason or "")
+    elif decision_key == "rejected":
+        rec = sui_client.reject_case(object_id, reason or "")
+    else:
+        return
+
+    sui_ctx["decision"] = {"key": decision_key, "digest": rec.get("digest")}
+    case["sui"] = sui_ctx
