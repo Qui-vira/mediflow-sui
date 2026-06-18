@@ -1,13 +1,14 @@
 # Download the Sui CLI (testnet-v1.73.1) Linux binary during the image build and
 # place it at /usr/local/bin/sui so SUI_MODE / core/sui_client.py can shell out
-# to `sui client call`. Only the `sui` member is extracted from the ~1GB tarball.
+# to `sui client call`. The tarball's internal layout is not assumed: we locate
+# the member whose basename is exactly `sui` and extract only that one.
 [phases.setup]
 aptPkgs = ["curl", "ca-certificates"]
 cmds = [
   "curl -fsSL -o /tmp/sui.tgz https://github.com/MystenLabs/sui/releases/download/testnet-v1.73.1/sui-testnet-v1.73.1-ubuntu-x86_64.tgz",
-  "tar -xzf /tmp/sui.tgz -C /usr/local/bin sui",
-  "chmod +x /usr/local/bin/sui",
-  "rm -f /tmp/sui.tgz",
+  "m=$(tar -tzf /tmp/sui.tgz | grep -E '(^|/)sui$' | head -n1) && test -n \"$m\" && tar -xzf /tmp/sui.tgz -C /tmp \"$m\" && install -m 0755 \"/tmp/$m\" /usr/local/bin/sui",
+  "rm -rf /tmp/sui.tgz /tmp/sui-*",
+  "sui --version",
 ]
 
 [start]
