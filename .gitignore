@@ -21,4 +21,5 @@ build/
 # MediFlow-Sui (Sui/Walrus fork)
 node_modules/
 sui/build/
+sui/Published.toml
 .env.sui
