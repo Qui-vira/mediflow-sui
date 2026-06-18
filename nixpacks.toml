@@ -1,2 +1,14 @@
+# Download the Sui CLI (testnet-v1.73.1) Linux binary during the image build and
+# place it at /usr/local/bin/sui so SUI_MODE / core/sui_client.py can shell out
+# to `sui client call`. Only the `sui` member is extracted from the ~1GB tarball.
+[phases.setup]
+aptPkgs = ["curl", "ca-certificates"]
+cmds = [
+  "curl -fsSL -o /tmp/sui.tgz https://github.com/MystenLabs/sui/releases/download/testnet-v1.73.1/sui-testnet-v1.73.1-ubuntu-x86_64.tgz",
+  "tar -xzf /tmp/sui.tgz -C /usr/local/bin sui",
+  "chmod +x /usr/local/bin/sui",
+  "rm -f /tmp/sui.tgz",
+]
+
 [start]
 cmd = "python railway-start.py"

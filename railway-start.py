@@ -1,5 +1,6 @@
 """Railway multi-service start wrapper (web + Band workers)."""
 import os
+import subprocess
 import sys
 
 SERVICE = os.environ.get("SERVICE_TYPE", "web")
@@ -31,6 +32,9 @@ COMMANDS = {
 COMMANDS["sui-web"] = COMMANDS["web"]
 if SERVICE == "sui-web":
     os.environ["SUI_MODE"] = "true"
+    # Bootstrap the Sui CLI keystore/config before serving (idempotent). Fail
+    # fast if it errors, rather than serving with a broken Sui path.
+    subprocess.run([sys.executable, "scripts/bootstrap_sui.py"], check=True)
 
 cmd = COMMANDS.get(SERVICE, COMMANDS["web"])
 os.execvp(cmd[0], cmd)
