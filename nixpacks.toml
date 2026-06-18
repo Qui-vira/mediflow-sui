@@ -1,3 +1,10 @@
+# Force the Python provider in addition to Node. A root package.json makes
+# Nixpacks auto-detect this as a Node-only app, which omits Python and the
+# requirements.txt install -- but the runtime is `python railway-start.py`
+# (Flask via gunicorn). Listing both installs Python deps AND keeps `python`
+# on the runtime PATH, while Node remains available for the @mysten packages.
+providers = ["python", "node"]
+
 # Download the Sui CLI (testnet-v1.73.1) Linux binary during the image build and
 # place it at /usr/local/bin/sui so SUI_MODE / core/sui_client.py can shell out
 # to `sui client call`. The tarball's internal layout is not assumed: we locate
