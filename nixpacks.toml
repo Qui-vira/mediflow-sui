@@ -8,7 +8,7 @@ cmds = [
   "curl -fsSL -o /tmp/sui.tgz https://github.com/MystenLabs/sui/releases/download/testnet-v1.73.1/sui-testnet-v1.73.1-ubuntu-x86_64.tgz",
   "m=$(tar -tzf /tmp/sui.tgz | grep -E '(^|/)sui$' | head -n1) && test -n \"$m\" && tar -xzf /tmp/sui.tgz -C /tmp \"$m\" && install -m 0755 \"/tmp/$m\" /usr/local/bin/sui",
   "rm -rf /tmp/sui.tgz /tmp/sui-*",
-  "sui --version",
+  "/usr/local/bin/sui --version",
 ]
 
 [start]
