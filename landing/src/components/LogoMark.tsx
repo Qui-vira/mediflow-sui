@@ -16,8 +16,8 @@ export function LogoMark({ style }: { style?: CSSProperties }) {
       }}
       aria-label="MediFlow"
     >
-      <span style={{ ...wordStyle, color: "#0E7C7B" }}>Med</span>
-      <span style={{ ...wordStyle, color: "#FFFFFF" }}>Band</span>
+      <span style={{ ...wordStyle, color: "#0E7C7B" }}>Medi</span>
+      <span style={{ ...wordStyle, color: "#FFFFFF" }}>Flow</span>
     </span>
   );
 }

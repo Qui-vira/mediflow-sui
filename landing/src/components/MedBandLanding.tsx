@@ -328,7 +328,7 @@ function HeroSection() {
           animate="show"
           custom={1}
         >
-          Med<span className="text-teal">Band</span>
+          Medi<span className="text-teal">Flow</span>
         </m.h1>
 
         <m.p
