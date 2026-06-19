@@ -93,7 +93,7 @@ export const STEPS: {
     num: "01",
     icon: Activity,
     title: "Patient Submits a Request",
-    body: "A patient fills in the web form for the Pharmacy workflow and describes their need. The case enters MedBand instantly.",
+    body: "A patient fills in the web form for the Pharmacy workflow and describes their need. The case enters MediFlow instantly.",
   },
   {
     num: "02",

@@ -37,7 +37,7 @@ export default function HowItWorks() {
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
         >
-          How MedBand
+          How MediFlow
           <br />
           Works
         </m.h2>

@@ -111,7 +111,7 @@ export default function TrustedInstitutions() {
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
         >
-          Proven first with Pharmacy. MedBand's live MVP is proven through a
+          Proven first with Pharmacy. MediFlow's live MVP is proven through a
           Pharmacy workflow with Peaceway Pharmacy. The same human-in-the-loop
           architecture can later expand to hospitals, labs, HMOs, mental health
           teams, and emergency dispatch partners.

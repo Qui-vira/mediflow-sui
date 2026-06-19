@@ -136,7 +136,7 @@ def _form_requested_service(data, sector: str) -> str:
 def _build_band_case_payload(data, raw_input: str, sector: str) -> dict:
     institution_id = data.get("institution_id") or None
     institution = get_institution(sector, institution_id) if institution_id else None
-    case_id = f"MEDBAND-WEB-{str(uuid.uuid4())[:8].upper()}"
+    case_id = f"MEDIFLOW-WEB-{str(uuid.uuid4())[:8].upper()}"
 
     return {
         "case_id": case_id,

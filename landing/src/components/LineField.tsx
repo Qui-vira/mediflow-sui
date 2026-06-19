@@ -50,16 +50,16 @@ interface Marker {
 
 const MARKERS: Partial<Record<Variant, Marker[]>> = {
   hero: [
-    { lineIndex: 1, t: 0.38, label: "MEDBAND-20250609-ADA001 INTAKE_COMPLETE" },
-    { lineIndex: 3, t: 0.62, label: "MEDBAND-20250609-ROH002 CASE_ESCALATE" },
-    { lineIndex: 5, t: 0.28, label: "MEDBAND-20250609-CHI003 CASE_CLEAR" },
+    { lineIndex: 1, t: 0.38, label: "MEDIFLOW-20250609-ADA001 INTAKE_COMPLETE" },
+    { lineIndex: 3, t: 0.62, label: "MEDIFLOW-20250609-ROH002 CASE_ESCALATE" },
+    { lineIndex: 5, t: 0.28, label: "MEDIFLOW-20250609-CHI003 CASE_CLEAR" },
   ],
   photographer: [
     { lineIndex: 0, t: 0.55, label: "VERIFICATION agent:nafdac_check passed" },
     { lineIndex: 3, t: 0.72, label: "RESOURCE agent:stock_confirmed 450units" },
   ],
   projects: [
-    { lineIndex: 1, t: 0.41, label: "COORDINATOR room:MedBand-ADA001 created" },
+    { lineIndex: 1, t: 0.41, label: "COORDINATOR room:MediFlow-ADA001 created" },
     { lineIndex: 4, t: 0.58, label: "INTAKE agent:structured_payload ready" },
     { lineIndex: 2, t: 0.83, label: "RESOURCE agent:RESOURCE_COMPLETE sent" },
   ],

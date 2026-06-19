@@ -8,13 +8,13 @@ export const Route = createRoute({
   component: MedBandLanding,
   head: () => ({
     meta: [
-      { title: "MedBand — Multi-Agent Healthcare Workflow" },
+      { title: "MediFlow — Multi-Agent Healthcare Workflow" },
       {
         name: "description",
         content:
-          "MedBand by The Billionaire Republic. Four AI agents coordinate through Band rooms to process healthcare requests across six sectors. Human-in-the-loop approval. Band of Agents Hackathon 2026.",
+          "MediFlow by The Billionaire Republic. Four AI agents coordinate through Band rooms to process healthcare requests across six sectors. Human-in-the-loop approval. Band of Agents Hackathon 2026.",
       },
-      { property: "og:title", content: "MedBand — Healthcare, Intelligently Routed" },
+      { property: "og:title", content: "MediFlow — Healthcare, Intelligently Routed" },
       {
         property: "og:description",
         content:

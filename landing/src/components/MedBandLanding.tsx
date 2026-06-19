@@ -425,7 +425,7 @@ function MobileFloatingCTA() {
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none">
       <div className="pointer-events-auto flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/90 backdrop-blur-md px-4 py-3 shadow-[0_-8px_40px_-12px_rgba(0,0,0,0.8)]">
         <p className="text-sm text-white/80 leading-snug">
-          Is your institution on MedBand?
+          Is your institution on MediFlow?
         </p>
         <a
           href={LINKS.register}
@@ -441,7 +441,7 @@ function MobileFloatingCTA() {
 }
 
 const PROOF_ROWS = [
-  { label: "Case ID", value: "MEDBAND-WEB-989E388C" },
+  { label: "Case ID", value: "MEDIFLOW-WEB-989E388C" },
   { label: "Sector", value: "Pharmacy" },
   { label: "Institution", value: "Peaceway Pharmacy (PHM001)" },
   { label: "Patient", value: "Band Human Approval Participant Test" },
@@ -476,7 +476,7 @@ function ProofSection() {
           <span className="text-green">CASE APPROVED</span>
         </h2>
         <p className="mt-6 text-white/60 text-base md:text-lg max-w-2xl leading-relaxed">
-          Case <span className="font-mono text-white/80">MEDBAND-WEB-989E388C</span>{" "}
+          Case <span className="font-mono text-white/80">MEDIFLOW-WEB-989E388C</span>{" "}
           moved from web submission to CASE APPROVED. BODY PAINS, PARACETAMOL,
           and Peaceway Pharmacy were preserved through the workflow.
         </p>
@@ -516,7 +516,7 @@ const SAFETY_POINTS = [
   "AI does not make final approval decisions.",
   "The Approval Desk does not approve cases.",
   "A human reviewer must manually approve or reject.",
-  "MedBand is workflow support, not a replacement for licensed medical professionals.",
+  "MediFlow is workflow support, not a replacement for licensed medical professionals.",
   "This is a hackathon MVP, not a full medical product.",
 ];
 

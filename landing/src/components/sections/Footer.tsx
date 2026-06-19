@@ -111,7 +111,7 @@ export default function Footer() {
 
       <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between flex-wrap gap-4">
         <p className="text-white/30 text-xs">
-          © 2026 MedBand by The Billionaire Republic. All rights reserved.
+          © 2026 MediFlow by The Billionaire Republic. All rights reserved.
         </p>
         <p className="text-white/30 text-xs">
           Band of Agents Hackathon 2026 · Track 3: Regulated Workflows

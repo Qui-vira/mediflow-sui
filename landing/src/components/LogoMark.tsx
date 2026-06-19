@@ -14,7 +14,7 @@ export function LogoMark({ style }: { style?: CSSProperties }) {
         letterSpacing: "-0.02em",
         ...style,
       }}
-      aria-label="MedBand"
+      aria-label="MediFlow"
     >
       <span style={{ ...wordStyle, color: "#0E7C7B" }}>Med</span>
       <span style={{ ...wordStyle, color: "#FFFFFF" }}>Band</span>
